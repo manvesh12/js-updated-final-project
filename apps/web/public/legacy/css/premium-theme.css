@@ -5716,3 +5716,45 @@ body.home-page.page-scrolled .nav-links-hub {
     margin-left: 0 !important;
   }
 }
+
+/* Final force-visible live lines for home and login. */
+body.home-page .live-lines-overlay,
+body.auth-page .live-lines-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  z-index: 2147483000 !important;
+  pointer-events: none !important;
+  opacity: 0.42 !important;
+  mix-blend-mode: multiply !important;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(11, 39, 68, 0.32) 0 1px, transparent 1px 42px),
+    repeating-linear-gradient(90deg, rgba(11, 39, 68, 0.32) 0 1px, transparent 1px 42px),
+    linear-gradient(to bottom, transparent 0%, transparent 44%, rgba(11, 39, 68, 0.00) 47%, rgba(11, 39, 68, 0.62) 50%, rgba(11, 39, 68, 0.00) 53%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, transparent 44%, rgba(196, 154, 88, 0.00) 47%, rgba(196, 154, 88, 0.58) 50%, rgba(196, 154, 88, 0.00) 53%, transparent 100%) !important;
+  background-repeat: repeat, repeat, no-repeat, no-repeat !important;
+  background-size: 42px 42px, 42px 42px, 100% 180px, 180px 100% !important;
+  background-position: 0 0, 0 0, 0 -220px, -220px 0 !important;
+  animation: forceLiveLinesMove 2.2s linear infinite !important;
+}
+
+html.dark body.home-page .live-lines-overlay,
+html.dark body.auth-page .live-lines-overlay {
+  mix-blend-mode: screen !important;
+  opacity: 0.5 !important;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(74, 222, 128, 0.22) 0 1px, transparent 1px 42px),
+    repeating-linear-gradient(90deg, rgba(74, 222, 128, 0.22) 0 1px, transparent 1px 42px),
+    linear-gradient(to bottom, transparent 0%, transparent 44%, rgba(74, 222, 128, 0.00) 47%, rgba(134, 239, 172, 0.68) 50%, rgba(74, 222, 128, 0.00) 53%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, transparent 44%, rgba(196, 154, 88, 0.00) 47%, rgba(196, 154, 88, 0.62) 50%, rgba(196, 154, 88, 0.00) 53%, transparent 100%) !important;
+}
+
+@keyframes forceLiveLinesMove {
+  0% {
+    background-position: 0 0, 0 0, 0 -220px, -220px 0;
+  }
+  100% {
+    background-position: 42px 42px, 42px 42px, 0 calc(100% + 220px), calc(100% + 220px) 0;
+  }
+}
