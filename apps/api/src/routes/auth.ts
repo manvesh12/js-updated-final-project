@@ -3,20 +3,30 @@ import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
 import { z } from "zod";
 import { permissionsFor, roleToFrontend, signToken } from "../lib/auth.js";
+import { recordAudit } from "../lib/audit.js";
+import { config } from "../lib/config.js";
 import { prisma } from "../lib/prisma.js";
 import { jsonSafe } from "../lib/json.js";
 
 const loginSchema = z.object({
-  username: z.string().min(1),
-  password: z.string().min(1)
+  username: z.string().trim().min(3).max(254),
+  password: z.string().min(1).max(256)
 });
 
 const registerSchema = z.object({
-  username: z.string().optional(),
+  username: z.string().trim().min(3).max(64).optional(),
   email: z.string().email(),
   fullName: z.string().min(1),
-  password: z.string().min(6)
+  password: z.string().min(10).max(128).regex(/[A-Za-z]/).regex(/[0-9]/)
 });
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: config.isProduction,
+  sameSite: "strict" as const,
+  path: "/",
+  maxAge: 15 * 60 * 1000
+};
 
 export const authRouter = Router();
 
@@ -35,11 +45,14 @@ authRouter.post("/login", async (req, res) => {
   });
 
   if (!user || !(await bcrypt.compare(parsed.data.password, user.password))) {
+    recordAudit(req, "AUTH_LOGIN_FAILED", { username: usernameOrEmail }, 401);
     res.status(401).json({ error: "Invalid username or password" });
     return;
   }
 
   const token = signToken(user);
+  res.cookie(config.sessionCookieName, token, cookieOptions);
+  recordAudit(req, "AUTH_LOGIN_SUCCESS", { username: user.username, role: user.role }, 200);
   res.json(
     jsonSafe({
       token,
@@ -57,6 +70,12 @@ authRouter.post("/login", async (req, res) => {
       accessLabel: user.accessScope || user.role.replaceAll("_", " ")
     })
   );
+});
+
+authRouter.post("/logout", async (req, res) => {
+  res.clearCookie(config.sessionCookieName, { path: "/" });
+  recordAudit(req, "AUTH_LOGOUT", undefined, 200);
+  res.json({ success: true });
 });
 
 authRouter.post("/register", async (req, res) => {

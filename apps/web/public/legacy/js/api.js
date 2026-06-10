@@ -19,6 +19,7 @@ async function apiFetch(endpoint, options = {}) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
+            credentials: 'same-origin',
             headers
         });
 
@@ -62,6 +63,7 @@ async function apiUploadFile(file) {
         const response = await fetch(`${API_BASE_URL}/files/upload`, {
             method: 'POST',
             body: formData,
+            credentials: 'same-origin',
             headers
         });
 
@@ -99,8 +101,7 @@ async function apiFetchReportHistory(reportId) {
 }
 
 function getDownloadTokenQuery() {
-    const token = localStorage.getItem('dsr_token') || '';
-    return token ? `&token=${encodeURIComponent(token)}` : '';
+    return '';
 }
 
 function projectPdfUrl(annexureId, inline = false) {
@@ -155,6 +156,7 @@ async function downloadStoredPdf(annexureId, fileName, fallbackUrl) {
     const url = projectPdfUrl(annexureId, false);
     try {
         const response = await fetch(url, {
+            credentials: 'same-origin',
             headers: { Authorization: `Bearer ${localStorage.getItem('dsr_token') || ''}` }
         });
         if (!response.ok) throw new Error(await response.text());

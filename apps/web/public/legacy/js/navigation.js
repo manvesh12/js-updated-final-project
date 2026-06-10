@@ -9,6 +9,16 @@ let sidebarTimer;
 function setSidebarCollapsed(collapsed) {
   collapsed = Boolean(collapsed);
   clearTimeout(sidebarTimer);
+  const sidebar = document.getElementById('sidebar');
+  const isMobileShell = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+  if (isMobileShell) {
+    if (sidebar) sidebar.classList.toggle('mobile-open', !collapsed);
+    document.body.classList.toggle('mobile-sidebar-open', !collapsed);
+  } else if (sidebar) {
+    sidebar.classList.remove('mobile-open');
+    document.body.classList.remove('mobile-sidebar-open');
+  }
+
   const isCollapsed = document.body.classList.contains('sidebar-hidden');
   if (isCollapsed !== collapsed) {
     document.body.classList.toggle('sidebar-hidden', collapsed);
@@ -24,7 +34,11 @@ function setSidebarCollapsed(collapsed) {
 function toggleSidebar(event) {
   if (event && typeof event.preventDefault === 'function') event.preventDefault();
   if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
-  const shouldCollapse = !document.body.classList.contains('sidebar-hidden');
+  const sidebar = document.getElementById('sidebar');
+  const isMobileShell = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+  const shouldCollapse = isMobileShell
+    ? Boolean(sidebar && sidebar.classList.contains('mobile-open'))
+    : !document.body.classList.contains('sidebar-hidden');
   setSidebarCollapsed(shouldCollapse);
   return false;
 }
@@ -38,6 +52,14 @@ function collapseSidebar() {
   if (isSidebarPinned) return;
   clearTimeout(sidebarTimer);
 }
+
+window.addEventListener('resize', () => {
+  const sidebar = document.getElementById('sidebar');
+  if (window.matchMedia && !window.matchMedia('(max-width: 900px)').matches) {
+    if (sidebar) sidebar.classList.remove('mobile-open');
+    document.body.classList.remove('mobile-sidebar-open');
+  }
+});
 
 // Initialize history state on load and preserve any valid view hash
 const initialHash = window.location.hash ? window.location.hash.slice(1).trim() : null;
@@ -364,6 +386,13 @@ function repairMainContentStructure() {
 
 function showView(id, btn, push = true) {
   repairMainContentStructure();
+  if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.classList.remove('mobile-open');
+    document.body.classList.remove('mobile-sidebar-open');
+    document.body.classList.add('sidebar-hidden');
+  }
+
   if (typeof hasModuleAccess === 'function' && typeof S !== 'undefined' && S.user && !hasModuleAccess(id)) {
     if (typeof showUnauthorizedAccessError === 'function') showUnauthorizedAccessError();
     else if (typeof toast === 'function') toast('You are not authorized to access this section.', 'error');
@@ -1107,6 +1136,38 @@ function getRiverBadgeHTML(riverName) {
   const style = getRiverStyle(riverName);
   return `<span class="badge river-badge" style="background:${style.bg}; color:${style.color}; border: 1.5px solid ${style.border}; box-shadow: 0 1px 2px ${style.glow}; font-weight:700; transition: all 0.2s ease; cursor: pointer; display: inline-flex; align-items: center;" onmouseover="this.style.boxShadow='0 0 6px ${style.border}', this.style.transform='scale(1.03)'" onmouseout="this.style.boxShadow='0 1px 2px ${style.glow}', this.style.transform='scale(1)'">${riverName}</span>`;
 }
+
+document.addEventListener('click', (event) => {
+  const item = event.target.closest('#sidebar .sb-item');
+  if (!item) return;
+  const onclickAttr = item.getAttribute('onclick') || '';
+  const match = onclickAttr.match(/showView\('([^']+)'/);
+  if (!match || typeof showView !== 'function') return;
+  if (!['front-matter', 'chapters', 'plates', 'graphs'].includes(match[1])) return;
+  event.preventDefault();
+  event.stopPropagation();
+  showView(match[1], item);
+}, true);
+
+function openDistrictMap(btn) {
+  if (typeof clearActiveProject === 'function') clearActiveProject();
+  if (typeof showView === 'function') showView('dashboard', btn || null);
+  setTimeout(() => {
+    document.getElementById('dash-district-map-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 90);
+}
+
+window.openDistrictMap = openDistrictMap;
+
+function openAboutDsr(btn) {
+  if (typeof clearActiveProject === 'function') clearActiveProject();
+  if (typeof showView === 'function') showView('dashboard', btn || null);
+  setTimeout(() => {
+    document.getElementById('dash-about-dsr-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 90);
+}
+
+window.openAboutDsr = openAboutDsr;
 
 function renderRiverTags(riversString) {
   if (!riversString || riversString === 'Not specified') return `<span class="badge" style="background:var(--off); color:var(--text-soft); border: 1px solid var(--border);">No River</span>`;

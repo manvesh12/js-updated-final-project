@@ -389,6 +389,8 @@ function executePDFExport(isLivePreview) {
   }
 }
 
+window.exportAnx1PDF = exportAnx1PDF;
+
 // Auto Live Preview whenever the table changes
 document.addEventListener('input', (e) => {
   if (e.target.closest('#anx1-rivers, #anx1-desilt, #anx1-patta, #anx1-msand')) {

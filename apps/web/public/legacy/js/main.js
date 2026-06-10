@@ -1,17 +1,165 @@
 /* ══════════════════════════════════════
    ENTRY POINT / BOOTSTRAP
 ══════════════════════════════════════ */
-let currentFontScale = 100;
-window.changeFontSize = function(delta) {
-  if (delta === 0) {
-    currentFontScale = 100;
-  } else {
-    currentFontScale = Math.min(120, Math.max(85, currentFontScale + delta * 5));
+const PORTAL_FONT_MIN = 85;
+const PORTAL_FONT_MAX = 125;
+const PORTAL_FONT_STEP = 5;
+let currentFontScale = Number(localStorage.getItem('portalFontScale') || 100);
+
+const PORTAL_I18N = {
+  en: {
+    languageApplied: 'English language enabled.',
+    brandBilingual: 'Government of Punjab - IIT Ropar Research Cell - EMGSM 2020',
+    brandTitle: 'District Survey Report Automation Portal',
+    brandSubtitle: 'DSR Automation for Sand Mining',
+    screenReader: 'Screen Reader',
+    skipContent: 'Skip to Content',
+    navHome: 'Home',
+    navAbout: 'About DSR',
+    navProjects: 'Projects',
+    navNewProject: '+ New Project',
+    navWorkflow: 'Workflow',
+    navAudit: 'Audit Logs',
+    navDistricts: 'Districts',
+    navContact: 'Contact',
+    searchPlaceholder: 'Search portal...',
+    noticeLabel: 'Notice',
+    noticeText: 'DSR submissions for Punjab districts 2025-26 are now open - Deadline: 30 September 2026 - New: Digital E-Sign integration live for all districts - EMGSM 2020 compliance mandatory',
+    langEnglish: 'English',
+    langHindi: 'Hindi',
+    langPunjabi: 'Punjabi'
+  },
+  hi: {
+    languageApplied: 'हिंदी भाषा सक्षम है।',
+    brandBilingual: 'पंजाब सरकार - आईआईटी रोपड़ रिसर्च सेल - EMGSM 2020',
+    brandTitle: 'जिला सर्वेक्षण रिपोर्ट ऑटोमेशन पोर्टल',
+    brandSubtitle: 'रेत खनन के लिए DSR ऑटोमेशन',
+    screenReader: 'स्क्रीन रीडर',
+    skipContent: 'मुख्य सामग्री पर जाएं',
+    navHome: 'होम',
+    navAbout: 'DSR के बारे में',
+    navProjects: 'परियोजनाएं',
+    navNewProject: '+ नई परियोजना',
+    navWorkflow: 'वर्कफ्लो',
+    navAudit: 'ऑडिट लॉग',
+    navDistricts: 'जिले',
+    navContact: 'संपर्क',
+    searchPlaceholder: 'पोर्टल खोजें...',
+    noticeLabel: 'सूचना',
+    noticeText: 'पंजाब जिलों के लिए DSR जमा करना 2025-26 के लिए खुला है - अंतिम तिथि: 30 सितंबर 2026 - नया: सभी जिलों के लिए डिजिटल ई-साइन लाइव - EMGSM 2020 अनुपालन अनिवार्य',
+    langEnglish: 'अंग्रेजी',
+    langHindi: 'हिंदी',
+    langPunjabi: 'पंजाबी'
+  },
+  pa: {
+    languageApplied: 'ਪੰਜਾਬੀ ਭਾਸ਼ਾ ਚਾਲੂ ਹੈ।',
+    brandBilingual: 'ਪੰਜਾਬ ਸਰਕਾਰ - ਆਈਆਈਟੀ ਰੋਪੜ ਰਿਸਰਚ ਸੈੱਲ - EMGSM 2020',
+    brandTitle: 'ਜ਼ਿਲ੍ਹਾ ਸਰਵੇਖਣ ਰਿਪੋਰਟ ਆਟੋਮੇਸ਼ਨ ਪੋਰਟਲ',
+    brandSubtitle: 'ਰੇਤ ਖਣਨ ਲਈ DSR ਆਟੋਮੇਸ਼ਨ',
+    screenReader: 'ਸਕ੍ਰੀਨ ਰੀਡਰ',
+    skipContent: 'ਮੁੱਖ ਸਮੱਗਰੀ ਤੇ ਜਾਓ',
+    navHome: 'ਹੋਮ',
+    navAbout: 'DSR ਬਾਰੇ',
+    navProjects: 'ਪ੍ਰੋਜੈਕਟ',
+    navNewProject: '+ ਨਵਾਂ ਪ੍ਰੋਜੈਕਟ',
+    navWorkflow: 'ਵਰਕਫਲੋ',
+    navAudit: 'ਆਡਿਟ ਲਾਗ',
+    navDistricts: 'ਜ਼ਿਲ੍ਹੇ',
+    navContact: 'ਸੰਪਰਕ',
+    searchPlaceholder: 'ਪੋਰਟਲ ਖੋਜੋ...',
+    noticeLabel: 'ਸੂਚਨਾ',
+    noticeText: 'ਪੰਜਾਬ ਦੇ ਜ਼ਿਲ੍ਹਿਆਂ ਲਈ DSR ਜਮ੍ਹਾਂ 2025-26 ਲਈ ਖੁੱਲ੍ਹੇ ਹਨ - ਆਖਰੀ ਤਾਰੀਖ: 30 ਸਤੰਬਰ 2026 - ਨਵਾਂ: ਸਾਰੇ ਜ਼ਿਲ੍ਹਿਆਂ ਲਈ ਡਿਜ਼ਿਟਲ ਈ-ਸਾਈਨ ਲਾਈਵ - EMGSM 2020 ਦੀ ਪਾਲਣਾ ਲਾਜ਼ਮੀ',
+    langEnglish: 'ਅੰਗਰੇਜ਼ੀ',
+    langHindi: 'ਹਿੰਦੀ',
+    langPunjabi: 'ਪੰਜਾਬੀ'
   }
-  document.documentElement.style.fontSize = `${(currentFontScale / 100) * 15}px`;
+};
+
+let currentPortalLanguage = localStorage.getItem('portalLanguage') || 'en';
+
+function clampPortalFontScale(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 100;
+  return Math.min(PORTAL_FONT_MAX, Math.max(PORTAL_FONT_MIN, parsed));
+}
+
+function refreshFontControls() {
+  document.querySelectorAll('.dash-font-btn').forEach((btn) => {
+    const label = (btn.textContent || '').trim();
+    const isActive = (label === 'A' && currentFontScale === 100)
+      || (label === 'A-' && currentFontScale < 100)
+      || (label === 'A+' && currentFontScale > 100);
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function applyPortalFontScale() {
+  currentFontScale = clampPortalFontScale(currentFontScale);
+  const scale = currentFontScale / 100;
+  document.documentElement.style.fontSize = `${scale * 15}px`;
+  document.documentElement.style.setProperty('--portal-font-scale', String(scale));
+  if (document.body) {
+    document.body.style.zoom = String(scale);
+    document.body.classList.toggle('portal-font-custom', currentFontScale !== 100);
+  }
+  localStorage.setItem('portalFontScale', String(currentFontScale));
+  refreshFontControls();
+}
+
+window.changeFontSize = function(delta) {
+  currentFontScale = delta === 0 ? 100 : currentFontScale + (delta * PORTAL_FONT_STEP);
+  applyPortalFontScale();
+};
+
+function refreshLanguageControls(lang) {
+  const labels = PORTAL_I18N[lang] || PORTAL_I18N.en;
+  const buttonText = {
+    en: labels.langEnglish,
+    hi: labels.langHindi,
+    pa: labels.langPunjabi
+  };
+
+  document.querySelectorAll('.dash-lang-btn').forEach((btn) => {
+    const btnLang = btn.dataset.lang || 'en';
+    btn.textContent = buttonText[btnLang] || btnLang.toUpperCase();
+    const isActive = btnLang === lang;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+window.applyPortalLanguage = function(lang, showToast = true) {
+  const nextLang = PORTAL_I18N[lang] ? lang : 'en';
+  const labels = PORTAL_I18N[nextLang];
+  currentPortalLanguage = nextLang;
+  localStorage.setItem('portalLanguage', nextLang);
+  document.documentElement.lang = nextLang === 'pa' ? 'pa-IN' : nextLang === 'hi' ? 'hi-IN' : 'en-IN';
+  document.documentElement.dataset.portalLanguage = nextLang;
+
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const key = el.dataset.i18n;
+    if (key && labels[key]) el.textContent = labels[key];
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    const key = el.dataset.i18nPlaceholder;
+    if (key && labels[key]) {
+      el.setAttribute('placeholder', labels[key]);
+      el.setAttribute('aria-label', labels[key]);
+    }
+  });
+
+  refreshLanguageControls(nextLang);
+  if (showToast && typeof dashPortalToast === 'function') {
+    dashPortalToast(labels.languageApplied, 'success');
+  }
 };
 
 window.addEventListener('DOMContentLoaded',()=>{
+  applyPortalFontScale();
+  applyPortalLanguage(currentPortalLanguage, false);
+
   if (typeof repairMainContentStructure === 'function') {
     repairMainContentStructure();
     setTimeout(repairMainContentStructure, 0);

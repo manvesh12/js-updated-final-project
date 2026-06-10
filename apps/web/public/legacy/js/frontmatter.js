@@ -27,6 +27,26 @@ function syncPreview() {
   console.log("Front Matter preview synced.");
 }
 
+async function uploadFrontMatterPdfToBackend(type, file) {
+  if (!file || file.type !== 'application/pdf') return;
+  if (!window.S || !S.activeProject || !S.activeProject.id) {
+    toast('Please open a project before uploading this PDF.', 'warn');
+    return;
+  }
+  if (typeof window.storeProjectPdf !== 'function') {
+    console.warn('Backend PDF upload helper is not available.');
+    return;
+  }
+
+  try {
+    await window.storeProjectPdf(type, file);
+    toast(`${file.name} saved to project storage.`, 'success');
+  } catch (err) {
+    console.error('Front matter backend PDF upload failed:', err);
+    toast(err.message || 'PDF preview updated, but server upload failed.', 'error');
+  }
+}
+
 /**
  * Converts a PDF file into an array of image data URLs using PDF.js.
  * @param {File} file 
@@ -103,6 +123,7 @@ function handleFMUpload(e, type) {
 
   // If PDF, convert pages to images and store in S.uploadedPDFs
   if (f.type === 'application/pdf') {
+    uploadFrontMatterPdfToBackend(type, f);
     renderPdfToImages(f, (err, imgs) => {
       if (err) {
         console.error(err);

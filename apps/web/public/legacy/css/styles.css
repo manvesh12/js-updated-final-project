@@ -1004,6 +1004,35 @@ html.dark .tb-dropdown-menu { background: var(--card); border-color: var(--borde
 .tb-action-btn:hover { background: var(--off); border-color: var(--primary); color: var(--primary); }
 .tb-district { font-size: 12px; font-weight: 600; color: var(--text-mid); padding: 6px 12px; background: var(--off); border: 1px solid var(--border); border-radius: var(--r-md); }
 
+.dash-lang-btn,
+.dash-font-btn {
+  min-height: 26px;
+  padding: 4px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.dash-lang-btn:hover,
+.dash-font-btn:hover,
+.dash-lang-btn.active,
+.dash-font-btn.active {
+  background: #C49A58;
+  border-color: #C49A58;
+  color: #17324D;
+}
+
+.dash-font-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 /* ———————————————————————————————————————————————————————— 
    VIEWS & MAIN CONTENT
 ————————————————————————————————————————————————————————  */
@@ -4687,5 +4716,388 @@ body:not(.view-dashboard-active) .sidebar {
 
   .anx-tbl {
     min-width: 640px;
+  }
+}
+
+/* Device-wide responsive hardening */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+}
+
+.screen,
+.view,
+.page-body,
+.main-content,
+.app-workspace,
+.dash-portal-wrapper,
+.projects-content-shell,
+.card,
+.modal-box {
+  min-width: 0;
+}
+
+.tbl,
+.anx-tbl,
+.console-table,
+table {
+  max-width: 100%;
+}
+
+.tbl-wrap,
+.table-wrap,
+.summary-tbl-wrap,
+.console-table-wrap,
+.annexure-line-main {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 1180px) {
+  .dash-gov-brand-row,
+  .dash-gov-menu-bar,
+  .dash-district-context-card,
+  .header-row,
+  .card-hd,
+  .proj-card-top,
+  .proj-card-bd,
+  .modal-ft {
+    gap: 12px;
+  }
+
+  .dash-brand-left,
+  .dash-brand-right,
+  .dash-menu-links,
+  .dash-menu-search,
+  .dash-district-context-left,
+  .dash-district-context-right {
+    min-width: 0;
+  }
+
+  .dash-brand-title,
+  .page-title,
+  .card-title {
+    overflow-wrap: anywhere;
+  }
+
+  .g4,
+  .kpi-grid,
+  .project-stats-grid,
+  .dashboard-grid,
+  .console-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .dash-menu-links {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --sidebar-w: 0px;
+    --topbar-h: 196px;
+  }
+
+  body.mobile-sidebar-open {
+    overflow: hidden;
+  }
+
+  body.mobile-sidebar-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 290;
+    background: rgba(15, 23, 42, 0.42);
+  }
+
+  .sidebar {
+    width: min(86vw, 320px) !important;
+    max-width: 320px;
+    transform: translateX(-105%) !important;
+    z-index: 300 !important;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0) !important;
+  }
+
+  .topbar.dash-global-topbar {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: min(58vh, 310px);
+    display: block !important;
+    padding: 0 !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .app-workspace,
+  body:not(.view-dashboard-active) .app-workspace {
+    margin-left: 0 !important;
+    padding-top: var(--topbar-h) !important;
+  }
+
+  .dash-switcher-bar,
+  .dash-gov-utility-strip,
+  .dash-gov-brand-row,
+  .dash-gov-menu-bar,
+  .dash-gov-notice-ticker,
+  .dash-district-context-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dash-gov-utility-strip,
+  .dash-gov-brand-row,
+  .dash-gov-menu-bar,
+  .dash-district-context-card {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .dash-gov-left,
+  .dash-gov-right,
+  .dash-brand-left,
+  .dash-brand-right,
+  .dash-district-context-left,
+  .dash-district-context-right {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .dash-brand-left {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .dash-brand-title {
+    font-size: clamp(18px, 4.5vw, 24px) !important;
+    line-height: 1.15 !important;
+  }
+
+  .dash-brand-bilingual,
+  .dash-brand-subtitle {
+    white-space: normal !important;
+  }
+
+  .dash-menu-links {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .dash-menu-link-item {
+    flex: 0 0 auto;
+  }
+
+  .dash-menu-link-item button,
+  .tb-sub-nav-btn {
+    white-space: nowrap;
+  }
+
+  .dash-menu-search,
+  .dash-menu-search input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .main-content {
+    overflow-x: hidden;
+  }
+
+  .page-body,
+  body:not(.view-dashboard-active) .page-body {
+    padding: 18px 14px 30px !important;
+  }
+
+  .header-row,
+  .card-hd,
+  .modal-ft,
+  .proj-card-actions,
+  .section-footer,
+  .final-actions {
+    flex-wrap: wrap !important;
+  }
+
+  .field-row,
+  .g2,
+  .g3,
+  .g4,
+  .kpi-grid,
+  .project-stats-grid,
+  .dashboard-grid,
+  .console-body,
+  .console-metrics-grid,
+  .annexure-unified-layout,
+  .annexure-line-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .pdf-preview-panel {
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --topbar-h: 232px;
+  }
+
+  .topbar.dash-global-topbar {
+    max-height: min(64vh, 360px);
+  }
+
+  .dash-switcher-info,
+  .dash-brand-subtitle,
+  .dash-notice-label {
+    display: none !important;
+  }
+
+  .dash-switcher-tabs,
+  .dash-gov-right,
+  .dash-brand-right,
+  .dash-font-btns {
+    width: 100%;
+  }
+
+  .dash-switcher-tab,
+  .dash-lang-btn,
+  .dash-font-btn,
+  .dash-brand-right > button,
+  .dash-btn-logout,
+  .dash-gov-badge {
+    min-height: 36px;
+  }
+
+  .dash-brand-left {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .dash-brand-left > svg {
+    width: 42px;
+    height: 42px;
+  }
+
+  .dash-brand-title {
+    font-size: 18px !important;
+  }
+
+  .dash-gov-utility-strip,
+  .dash-gov-brand-row,
+  .dash-gov-menu-bar,
+  .dash-gov-notice-ticker,
+  .dash-district-context-card {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .page-body,
+  body:not(.view-dashboard-active) .page-body {
+    padding: 14px 10px 26px !important;
+  }
+
+  .card,
+  .modal-box,
+  .upload-box,
+  .notif {
+    border-radius: 8px !important;
+  }
+
+  .card-hd,
+  .card-bd,
+  .modal-hd,
+  .modal-bd,
+  .modal-ft {
+    padding: 14px !important;
+  }
+
+  .modal-overlay {
+    padding: 8px;
+    align-items: stretch;
+  }
+
+  .modal-box {
+    max-width: none;
+    max-height: calc(100vh - 16px);
+    margin: 0 !important;
+  }
+
+  .modal-ft .btn,
+  .header-row .btn,
+  .section-footer .btn,
+  .final-actions .btn,
+  .proj-card-actions .btn,
+  .dash-district-context-card .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tbl,
+  .anx-tbl,
+  .console-table,
+  table {
+    font-size: 12px;
+  }
+
+  .tbl th,
+  .tbl td,
+  .anx-tbl th,
+  .anx-tbl td {
+    padding: 8px 9px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --topbar-h: 250px;
+  }
+
+  .dash-gov-left {
+    font-size: 11px;
+  }
+
+  .dash-brand-title {
+    font-size: 16px !important;
+  }
+
+  .dash-menu-link-item button {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    font-size: 12px !important;
+  }
+
+  .page-title {
+    font-size: 20px !important;
+  }
+
+  .stat-val {
+    font-size: 24px !important;
   }
 }

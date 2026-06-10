@@ -4,6 +4,7 @@ import { Role } from "@prisma/client";
 import { canAdmin, permissionsFor } from "../lib/auth.js";
 import { jsonSafe } from "../lib/json.js";
 import { prisma } from "../lib/prisma.js";
+import { parseBigIntParam } from "../lib/validation.js";
 
 export const usersRouter = Router();
 
@@ -52,12 +53,17 @@ usersRouter.post("/", async (req, res) => {
     res.status(400).json({ error: "Username/email is required" });
     return;
   }
+  const password = String(req.body?.password || "");
+  if (password.length < 10 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+    res.status(400).json({ error: "Password must be at least 10 characters and include letters and numbers" });
+    return;
+  }
   const user = await prisma.user.create({
     data: {
       username,
       email,
       fullName: req.body?.fullName || username,
-      password: await bcrypt.hash(req.body?.password || "password123", 10),
+      password: await bcrypt.hash(password, 10),
       role: normalizeRole(req.body?.role),
       district: req.body?.district || "",
       blockName: req.body?.block || req.body?.blockName || "",
@@ -70,6 +76,8 @@ usersRouter.post("/", async (req, res) => {
 });
 
 usersRouter.put("/:id", async (req, res) => {
+  const id = parseBigIntParam(req.params.id, res, "user id");
+  if (!id) return;
   const data: Record<string, unknown> = {};
   if (req.body?.fullName !== undefined) data.fullName = req.body.fullName;
   if (req.body?.email !== undefined) data.email = req.body.email;
@@ -79,21 +87,32 @@ usersRouter.put("/:id", async (req, res) => {
   if (req.body?.block !== undefined || req.body?.blockName !== undefined) data.blockName = req.body.block || req.body.blockName || "";
   if (req.body?.section !== undefined || req.body?.sectionName !== undefined) data.sectionName = req.body.section || req.body.sectionName || "";
   if (req.body?.accessScope !== undefined) data.accessScope = req.body.accessScope;
-  if (req.body?.password) data.password = await bcrypt.hash(req.body.password, 10);
+  if (req.body?.password) {
+    const password = String(req.body.password);
+    if (password.length < 10 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+      res.status(400).json({ error: "Password must be at least 10 characters and include letters and numbers" });
+      return;
+    }
+    data.password = await bcrypt.hash(password, 10);
+  }
 
-  const user = await prisma.user.update({ where: { id: BigInt(req.params.id) }, data });
+  const user = await prisma.user.update({ where: { id }, data });
   res.json(jsonSafe(toUserDto(user)));
 });
 
 usersRouter.patch("/:id/active", async (req, res) => {
+  const id = parseBigIntParam(req.params.id, res, "user id");
+  if (!id) return;
   const user = await prisma.user.update({
-    where: { id: BigInt(req.params.id) },
+    where: { id },
     data: { active: Boolean(req.body?.active) }
   });
   res.json(jsonSafe(toUserDto(user)));
 });
 
 usersRouter.delete("/:id", async (req, res) => {
-  await prisma.user.delete({ where: { id: BigInt(req.params.id) } });
+  const id = parseBigIntParam(req.params.id, res, "user id");
+  if (!id) return;
+  await prisma.user.delete({ where: { id } });
   res.json({ success: true });
 });

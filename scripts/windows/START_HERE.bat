@@ -37,6 +37,25 @@ if not exist node_modules\effect\dist\cjs\Arbitrary.js (
   )
 )
 
+node -e "require('esbuild').transformSync('let x: number = 1', { loader: 'ts' })" >nul 2>nul
+if errorlevel 1 (
+  echo Repairing esbuild native binary...
+  call npm rebuild esbuild
+  if errorlevel 1 (
+    echo.
+    echo esbuild repair failed. Run REPAIR_INSTALL.bat, then START_HERE.bat again.
+    pause
+    exit /b 1
+  )
+  node -e "require('esbuild').transformSync('let x: number = 1', { loader: 'ts' })" >nul 2>nul
+  if errorlevel 1 (
+    echo.
+    echo esbuild still cannot run. Run REPAIR_INSTALL.bat, then START_HERE.bat again.
+    pause
+    exit /b 1
+  )
+)
+
 echo Starting database, Redis, and MinIO...
 netstat -ano | findstr ":5440" >nul
 if not errorlevel 1 (

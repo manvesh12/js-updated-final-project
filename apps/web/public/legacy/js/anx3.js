@@ -769,3 +769,5 @@ document.addEventListener('change', (e) => {
     }, 300);
   }
 });
+
+window.exportAnx3PDF = exportAnx3PDF;

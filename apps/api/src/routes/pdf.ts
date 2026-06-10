@@ -2,17 +2,20 @@ import { Router } from "express";
 import { canAdmin, canUpload } from "../lib/auth.js";
 import { prisma } from "../lib/prisma.js";
 import { deletePdf, getPdf, putPdf } from "../lib/storage.js";
+import { boundedString } from "../lib/validation.js";
 
 export const pdfRouter = Router();
+const maxPdfSizeBytes = 200 * 1024 * 1024;
 
 function objectKey(projectId: bigint | number | string, annexureId: string) {
   return `${annexureId}-${projectId}.pdf`;
 }
 
 pdfRouter.post("/upload-pdf", async (req, res) => {
-  const projectId = req.body?.projectId ? BigInt(req.body.projectId) : null;
-  const annexureId = req.body?.annexureId || "anx3";
-  const fileName = req.body?.fileName;
+  const projectIdValue = String(req.body?.projectId || "");
+  const projectId = /^\d+$/.test(projectIdValue) ? BigInt(projectIdValue) : null;
+  const annexureId = boundedString(req.body?.annexureId || "anx3", 32);
+  const fileName = boundedString(req.body?.fileName, 255);
   const pdf = req.body?.pdf;
 
   if (annexureId === "final" && !canAdmin(req.user!.role)) {
@@ -29,14 +32,23 @@ pdfRouter.post("/upload-pdf", async (req, res) => {
   }
 
   const key = objectKey(projectId, annexureId);
-  if (fileName == null || pdf == null) {
+  if (!fileName || pdf == null) {
     await deletePdf(key).catch(() => undefined);
     await prisma.dsrFile.deleteMany({ where: { projectId, annexureId } });
     res.json({ success: true });
     return;
   }
 
-  const bytes = Buffer.from(String(pdf), "base64");
+  const pdfText = String(pdf);
+  if (!/^[A-Za-z0-9+/=]+$/.test(pdfText)) {
+    res.status(400).json({ success: false, error: "Invalid PDF payload" });
+    return;
+  }
+  const bytes = Buffer.from(pdfText, "base64");
+  if (bytes.byteLength > maxPdfSizeBytes || bytes.subarray(0, 4).toString("utf8") !== "%PDF") {
+    res.status(400).json({ success: false, error: "Only PDF files up to 200 MB are allowed" });
+    return;
+  }
   await putPdf(key, bytes);
   await prisma.dsrFile.upsert({
     where: { projectId_annexureId: { projectId, annexureId } },
@@ -80,8 +92,9 @@ pdfRouter.post("/upload-pdf", async (req, res) => {
 });
 
 pdfRouter.get("/download-pdf", async (req, res) => {
-  const projectId = req.query.projectId ? BigInt(String(req.query.projectId)) : null;
-  const annexureId = String(req.query.annexureId || "anx3");
+  const projectIdValue = String(req.query.projectId || "");
+  const projectId = /^\d+$/.test(projectIdValue) ? BigInt(projectIdValue) : null;
+  const annexureId = boundedString(req.query.annexureId || "anx3", 32);
   const inline = String(req.query.inline || "false") === "true";
 
   if (annexureId === "final" && !canAdmin(req.user!.role)) {
@@ -114,9 +127,12 @@ pdfRouter.post("/email-final-pdf", async (req, res) => {
     res.status(403).type("text/plain").send("Access Denied - Only Administrators can download or email the Final DSR PDF.");
     return;
   }
-  if (!req.body?.projectId || !req.body?.email) {
+  const projectIdValue = String(req.body?.projectId || "");
+  const projectId = /^\d+$/.test(projectIdValue) ? BigInt(projectIdValue) : null;
+  const email = boundedString(req.body?.email, 254);
+  if (!projectId || !email.includes("@")) {
     res.status(400).json({ success: false, error: "Missing projectId or email" });
     return;
   }
-  res.json({ success: true, message: `Final DSR PDF queued for ${req.body.email}` });
+  res.json({ success: true, message: `Final DSR PDF queued for ${email}` });
 });

@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { ReportStatus } from "@prisma/client";
-import { canAdmin, canReview, canUpload } from "../lib/auth.js";
+import { canReview, canUpload } from "../lib/auth.js";
 import { jsonSafe } from "../lib/json.js";
 import { prisma } from "../lib/prisma.js";
 import { projectName } from "../lib/projects.js";
+import { boundedString, parseBigIntParam } from "../lib/validation.js";
 
 export const reportsRouter = Router();
 
@@ -35,8 +36,14 @@ reportsRouter.patch("/:id/status", async (req, res) => {
     res.status(403).json({ error: "Access denied" });
     return;
   }
+  const id = parseBigIntParam(req.params.id, res, "report id");
+  if (!id) return;
   const status = String(req.query.status || req.body?.status || "UNDER_REVIEW").toUpperCase() as ReportStatus;
-  const report = await prisma.report.update({ where: { id: BigInt(req.params.id) }, data: { status } });
+  if (!Object.values(ReportStatus).includes(status)) {
+    res.status(400).json({ error: "Invalid report status" });
+    return;
+  }
+  const report = await prisma.report.update({ where: { id }, data: { status } });
   res.json(jsonSafe(report));
 });
 
@@ -52,13 +59,14 @@ reportsRouter.post("/:id/workflow", async (req, res) => {
     return;
   }
 
-  const reportId = BigInt(req.params.id);
+  const reportId = parseBigIntParam(req.params.id, res, "report id");
+  if (!reportId) return;
   const project = await prisma.project.findUnique({ where: { id: reportId } }).catch(() => null);
   const entry = await prisma.workflowHistory.create({
     data: {
       reportId,
       action,
-      remarks: req.body?.remarks || "",
+      remarks: boundedString(req.body?.remarks, 2000),
       performedBy: req.user!.id
     }
   });
@@ -75,18 +83,16 @@ reportsRouter.post("/:id/workflow", async (req, res) => {
 });
 
 reportsRouter.get("/:id/history", async (req, res) => {
+  const id = parseBigIntParam(req.params.id, res, "report id");
+  if (!id) return;
   const history = await prisma.workflowHistory.findMany({
-    where: { reportId: BigInt(req.params.id) },
+    where: { reportId: id },
     orderBy: { performedAt: "desc" }
   });
   res.json(jsonSafe(history));
 });
 
 reportsRouter.get("/audit-logs", async (req, res) => {
-  if (!canAdmin(req.user!.role)) {
-    res.status(403).json({ error: "Access denied" });
-    return;
-  }
   const logs = await prisma.workflowHistory.findMany({ orderBy: { performedAt: "desc" } });
   const projectIds = [...new Set(logs.map((log) => log.reportId))];
   const projects = await prisma.project.findMany({ where: { id: { in: projectIds } } });

@@ -785,3 +785,5 @@ document.addEventListener('change', (e) => {
     }, 300);
   }
 });
+
+window.exportAnx2PDF = exportAnx2PDF;

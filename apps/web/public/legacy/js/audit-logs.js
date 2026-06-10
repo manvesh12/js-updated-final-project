@@ -62,8 +62,11 @@ async function loadAuditLogs() {
     setAuditRows(html);
   } catch (err) {
     console.error('Failed to load audit logs:', err);
-    setAuditRows('<tr><td colspan="5" style="text-align: center; padding: 20px;">Error loading audit logs.</td></tr>');
-    if (typeof toast === 'function') toast('Error loading audit logs', 'error');
+    const message = /access denied|not logged in|invalid session|401|403/i.test(err?.message || '')
+      ? 'Admin access required to view audit logs.'
+      : 'Error loading audit logs.';
+    setAuditRows(`<tr><td colspan="5" style="text-align: center; padding: 20px;">${message}</td></tr>`);
+    if (typeof toast === 'function') toast(message, 'error');
   }
 }
 

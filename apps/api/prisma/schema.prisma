@@ -99,6 +99,19 @@ model WorkflowHistory {
   performedAt DateTime @default(now())
 }
 
+model AuditLog {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt?
+  action    String
+  method    String
+  path      String
+  ip        String?
+  userAgent String?
+  status    Int?
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
 model DsrFile {
   id          BigInt   @id @default(autoincrement())
   projectId   BigInt

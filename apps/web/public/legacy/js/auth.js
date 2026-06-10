@@ -70,7 +70,7 @@ async function doLogin() {
           method: 'POST',
           body: JSON.stringify({ username: email, password: pass })
       });
-      localStorage.setItem('dsr_token', data.token);
+      localStorage.removeItem('dsr_token');
       
       const backendRole = data.role || 'ROLE_OFFICER';
       S.backendRole = backendRole;
@@ -154,7 +154,11 @@ async function doSignup() {
   const err = document.getElementById('signup-error');
   const ok = document.getElementById('signup-success');
   if (!name||!email||!pass) { err.style.display='block'; err.textContent='Please fill all required fields.'; return; }
-  if (pass.length<6) { err.style.display='block'; err.textContent='Password must be at least 6 characters.'; return; }
+  if (pass.length<10 || !/[A-Za-z]/.test(pass) || !/[0-9]/.test(pass)) {
+    err.style.display='block';
+    err.textContent='Password must be at least 10 characters and include letters and numbers.';
+    return;
+  }
   err.style.display='none'; 
 
   try {
@@ -172,6 +176,9 @@ async function doSignup() {
 }
 
 function doLogout() {
+  try {
+    apiFetch('/auth/logout', { method: 'POST' }).catch(() => {});
+  } catch (e) {}
   localStorage.removeItem('dsr_token');
   if (typeof clearActiveProject === 'function') {
     clearActiveProject();
@@ -211,7 +218,7 @@ async function doSdlcLogin() {
       method: 'POST',
       body: JSON.stringify({ username: email, password: pass })
     });
-    localStorage.setItem('dsr_token', data.token);
+    localStorage.removeItem('dsr_token');
     S.backendRole = data.role || 'ROLE_SDLC';
     S.permissions = data.permissions || [];
     S.scope = data.scope || {};

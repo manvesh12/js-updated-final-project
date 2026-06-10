@@ -19,6 +19,12 @@ const pdfPreview = {
   _annexureRefreshTimers: {},
   _objectUrls: {},
 
+  fitPdfViewerUrl(src) {
+    if (!src || src === 'about:blank' || src.startsWith('blob:') || src.startsWith('data:')) return src || 'about:blank';
+    const base = String(src).split('#')[0];
+    return `${base}#view=FitH&zoom=page-width`;
+  },
+
   SECTION_TITLES: {
     'front-matter': 'PDF Preview',
     'chapters': 'PDF Preview',
@@ -52,6 +58,10 @@ const pdfPreview = {
     'anx7': 'pdf-iframe-anx7',
     'annexure-f': 'pdf-iframe-annexure-f-preview',
     'annexure-k': 'pdf-iframe-annexure-k-preview'
+  },
+
+  isAnnexureView(viewId) {
+    return !!viewId && (viewId.startsWith('anx') || viewId.startsWith('annexure-'));
   },
 
   FM_ORDER: ['cover', 'toc', 'pref', 'ack', 'cert'],
@@ -141,7 +151,7 @@ const pdfPreview = {
     if (this.titleEl) this.titleEl.textContent = this.SECTION_TITLES[viewId] || 'PDF Preview';
     
     // Manage iframe vs scroll container display
-    const isAnnexure = (viewId.startsWith('anx') && !viewId.startsWith('annexure-')) || viewId === 'annexure-f' || viewId === 'annexure-k';
+    const isAnnexure = this.isAnnexureView(viewId);
     const scrollContainer = this.scrollEl;
     const iframe = document.getElementById('pdf-preview-iframe') || document.querySelector('.pdf-preview-viewer iframe');
     const innerBar = document.querySelector('.pdf-preview-inner-bar');
@@ -163,7 +173,7 @@ const pdfPreview = {
         // Load existing PDF if available
         const savedPdf = S.activeProject && S.activeProject.pdfData && S.activeProject.pdfData[viewId];
         if (savedPdf) {
-          iframe.src = savedPdf;
+          iframe.src = this.fitPdfViewerUrl(savedPdf);
         } else {
           iframe.src = 'about:blank';
           this.generateAnnexureLivePreview(viewId, 700);
@@ -220,7 +230,7 @@ const pdfPreview = {
     if (!this.currentView) return;
     
     const viewId = this.currentView;
-    const isAnnexure = (viewId.startsWith('anx') && !viewId.startsWith('annexure-')) || viewId === 'annexure-f' || viewId === 'annexure-k';
+    const isAnnexure = this.isAnnexureView(viewId);
     
     if (isAnnexure) {
       const uploadedImgs = S.uploadedPDFs && S.uploadedPDFs[viewId];
@@ -251,8 +261,9 @@ const pdfPreview = {
         if (iframe) {
           iframe.style.display = 'block';
           const savedPdf = S.activeProject && S.activeProject.pdfData && S.activeProject.pdfData[viewId];
-          if (savedPdf && iframe.src !== savedPdf) {
-            iframe.src = savedPdf;
+          const fittedPdf = this.fitPdfViewerUrl(savedPdf);
+          if (savedPdf && iframe.src !== fittedPdf) {
+            iframe.src = fittedPdf;
           } else if (!savedPdf) {
             iframe.src = 'about:blank';
             this.generateAnnexureLivePreview(viewId, 300);
@@ -284,9 +295,149 @@ const pdfPreview = {
     return 'export' + viewId.charAt(0).toUpperCase() + viewId.slice(1) + 'PDF';
   },
 
+  annexureNeedsPdfVendors(viewId) {
+    return viewId !== 'anx1';
+  },
+
+  getAnnexureSourceView(viewId) {
+    return document.getElementById(`view-${viewId}`);
+  },
+
+  escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  },
+
+  cleanupAnnexurePreviewClone(clone) {
+    clone.querySelectorAll([
+      'script',
+      'style',
+      'input[type="file"]',
+      'button',
+      '.btn',
+      '.actions',
+      '.toolbar',
+      '.page-actions',
+      '.upload-actions',
+      '.header-row',
+      '.notif',
+      '.page-title',
+      '.page-sub',
+      '.annexure-line-instructions',
+      '.annexure-instructions-card'
+    ].join(',')).forEach(el => el.remove());
+    clone.querySelectorAll('input, textarea, select').forEach(el => {
+      const value = el.tagName === 'SELECT'
+        ? (el.options[el.selectedIndex] ? el.options[el.selectedIndex].text : el.value)
+        : el.value;
+      const span = document.createElement('span');
+      span.className = 'field-value';
+      span.textContent = value || 'NUL';
+      el.replaceWith(span);
+    });
+    clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    clone.querySelectorAll('[style]').forEach(el => {
+      const keep = [];
+      const style = el.getAttribute('style') || '';
+      style.split(';').forEach(part => {
+        if (/grid-template-columns|min-width|text-align/i.test(part)) keep.push(part);
+      });
+      if (keep.length) el.setAttribute('style', keep.join(';'));
+      else el.removeAttribute('style');
+    });
+    clone.querySelectorAll('table').forEach(table => {
+      const rows = table.querySelectorAll('tr');
+      rows.forEach(row => {
+        const cells = Array.from(row.children);
+        const last = cells[cells.length - 1];
+        if (last && /action|delete|remove/i.test(last.textContent || '')) last.remove();
+      });
+    });
+    return clone;
+  },
+
+  buildAnnexureHtmlDocument(viewId) {
+    const source = this.getAnnexureSourceView(viewId);
+    if (!source) return '';
+    const clone = this.cleanupAnnexurePreviewClone(source.cloneNode(true));
+    const title = this.SECTION_TITLES[viewId] || 'Annexure Preview';
+    const district = (window.S && S.frontMatter && S.frontMatter.district) || 'Jalandhar';
+    const year = (window.S && S.frontMatter && S.frontMatter.year) || '2025-26';
+    const bodyHtml = clone.innerHTML.trim() || '<p class="empty">No annexure data entered yet.</p>';
+    return `<!doctype html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            *{box-sizing:border-box}
+            body{margin:0;background:#e9eef5;color:#111827;font-family:Arial,Helvetica,sans-serif;}
+            .sheet{width:min(100%,1040px);min-height:100vh;margin:0 auto;padding:30px;background:#fff;box-shadow:0 14px 34px rgba(15,23,42,.14);}
+            .doc-head{border-bottom:2px solid #17324d;padding-bottom:14px;margin-bottom:20px;text-align:center;}
+            .doc-head h1{margin:0 0 8px;color:#17324d;font-size:24px;line-height:1.2;}
+            .doc-head p{margin:0;color:#526172;font-size:13px;}
+            h1,h2,h3{color:#17324d;line-height:1.25;}
+            h1{font-size:24px;margin:0 0 14px;} h2{font-size:18px;margin:20px 0 10px;} h3{font-size:15px;margin:16px 0 8px;}
+            p,.muted,label{color:#526172;font-size:13px;line-height:1.55;}
+            .card,.section,.panel,.annexure-line-main{border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;margin:0 0 18px!important;}
+            .g2,.grid,.annexure-line-layout{display:block!important;}
+            table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:11px;table-layout:auto;}
+            th,td{border:1px solid #111827;padding:6px 7px;vertical-align:top;word-break:break-word;overflow-wrap:anywhere;}
+            th{background:#f3f4f6;font-weight:700;text-align:left;}
+            .field-value{display:inline-block;min-width:80px;padding:4px 6px;border-bottom:1px solid #cbd5e1;color:#111827;}
+            .empty{padding:24px;border:1px dashed #cbd5e1;border-radius:8px;text-align:center;}
+            img{max-width:100%;height:auto;}
+          </style>
+        </head>
+        <body>
+          <main class="sheet">
+            <header class="doc-head">
+              <h1>${this.escapeHtml(title)}</h1>
+              <p>District Survey Report - ${this.escapeHtml(district)} | ${this.escapeHtml(year)}</p>
+            </header>
+            ${bodyHtml}
+          </main>
+        </body>
+      </html>`;
+  },
+
+  renderAnnexureHtmlPreview(viewId) {
+    const iframe = getAnnexurePreviewIframe(viewId);
+    const html = this.buildAnnexureHtmlDocument(viewId);
+    if (!iframe || !html) return false;
+    iframe.style.display = 'block';
+    iframe.removeAttribute('src');
+    iframe.srcdoc = html;
+    return true;
+  },
+
+  renderAnnexureFallback(viewId, message) {
+    const iframe = getAnnexurePreviewIframe(viewId);
+    if (!iframe) return;
+    iframe.style.display = 'block';
+    iframe.removeAttribute('src');
+    const title = this.SECTION_TITLES[viewId] || 'Annexure Preview';
+    iframe.srcdoc = `<!doctype html>
+      <html><head><meta charset="utf-8">
+      <style>
+        body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#17324d;}
+        .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;box-sizing:border-box;}
+        .box{max-width:620px;border:1px solid #d7dee8;border-radius:10px;background:#fff;padding:28px;box-shadow:0 12px 30px rgba(23,50,77,.12);}
+        h1{font-size:24px;margin:0 0 12px;} p{font-size:14px;line-height:1.55;margin:0;color:#526172;}
+      </style></head><body><div class="wrap"><div class="box"><h1>${title}</h1><p>${message || 'Live preview is preparing. Use Refresh if it does not appear automatically.'}</p></div></div></body></html>`;
+  },
+
   generateAnnexureLivePreview(viewId, delay = 0) {
+    if (this.renderAnnexureHtmlPreview(viewId)) return;
+
     const exportFnName = this.getAnnexureExportFnName(viewId);
-    if (typeof window[exportFnName] !== 'function') return;
+    if (typeof window[exportFnName] !== 'function') {
+      this.renderAnnexureFallback(viewId, 'Live preview function is loading. Please switch back to this annexure or click Refresh once.');
+      return;
+    }
 
     clearTimeout(this._annexureRefreshTimers[viewId]);
     this._annexureRefreshTimers[viewId] = setTimeout(() => {
@@ -296,13 +447,17 @@ const pdfPreview = {
           window[exportFnName](null, true);
         } catch (err) {
           console.error(`Live preview failed for ${viewId}:`, err);
+          this.renderAnnexureFallback(viewId, 'Live preview could not be generated from the current table data. Please check the annexure entries and try Refresh.');
           if (typeof toast === 'function') toast('Live preview could not be generated. Please try refresh.', 'error');
         }
       };
 
-      if (typeof ensurePortalVendors === 'function') {
+      if (!this.annexureNeedsPdfVendors(viewId)) {
+        runExport();
+      } else if (typeof ensurePortalVendors === 'function') {
         ensurePortalVendors(['jspdf', 'autotable']).then(runExport).catch(err => {
           console.error(`PDF tools failed for ${viewId}:`, err);
+          this.renderAnnexureFallback(viewId, 'PDF preview tools could not load. Please check your connection and try Refresh.');
           if (typeof toast === 'function') toast('PDF preview tools could not load. Please check your connection.', 'error');
         });
       } else {

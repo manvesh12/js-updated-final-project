@@ -5,6 +5,7 @@ import { jsonSafe } from "../lib/json.js";
 import { prisma } from "../lib/prisma.js";
 import { toProjectDto } from "../lib/projects.js";
 import { deletePdf } from "../lib/storage.js";
+import { parseBigIntParam } from "../lib/validation.js";
 
 export const projectsRouter = Router();
 
@@ -89,8 +90,10 @@ projectsRouter.post("/", async (req, res) => {
 });
 
 projectsRouter.get("/:id", async (req, res) => {
+  const id = parseBigIntParam(req.params.id, res, "project id");
+  if (!id) return;
   const project = await prisma.project.findUnique({
-    where: { id: BigInt(req.params.id) },
+    where: { id },
     include: { files: true }
   });
   if (!project) {
@@ -101,8 +104,10 @@ projectsRouter.get("/:id", async (req, res) => {
 });
 
 projectsRouter.put("/:id/state", async (req, res) => {
+  const id = parseBigIntParam(req.params.id, res, "project id");
+  if (!id) return;
   const project = await prisma.project.update({
-    where: { id: BigInt(req.params.id) },
+    where: { id },
     data: {
       projectState: req.body?.state == null ? null : typeof req.body.state === "string" ? req.body.state : JSON.stringify(req.body.state)
     },
@@ -116,7 +121,8 @@ projectsRouter.delete("/:id", async (req, res) => {
     res.status(403).json({ error: "Access denied" });
     return;
   }
-  const id = BigInt(req.params.id);
+  const id = parseBigIntParam(req.params.id, res, "project id");
+  if (!id) return;
   const files = await prisma.dsrFile.findMany({ where: { projectId: id } });
   await Promise.all(files.map((file) => deletePdf(file.objectKey).catch(() => undefined)));
   await prisma.project.delete({ where: { id } });

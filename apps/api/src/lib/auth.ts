@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { Role, type User } from "@prisma/client";
-import jwt from "jsonwebtoken";
+import jwt, { type SignOptions } from "jsonwebtoken";
 import { config } from "./config.js";
 import { prisma } from "./prisma.js";
 
@@ -15,30 +15,33 @@ declare global {
 }
 
 export function roleToFrontend(role: Role) {
+  const reviewerRoles: Role[] = [Role.REVIEWER, Role.REVIEWER_1, Role.REVIEWER_2, Role.IIT_ROPAR, Role.GIS];
   if (role === Role.ADMIN || role === Role.STATE_ADMIN) return "admin";
   if (role === Role.SDLC) return "sdlc";
   if (role === Role.DISTRICT_OWNER) return "authority";
-  if ([Role.REVIEWER, Role.REVIEWER_1, Role.REVIEWER_2, Role.IIT_ROPAR, Role.GIS].includes(role)) return "reviewer";
+  if (reviewerRoles.includes(role)) return "reviewer";
   return "user";
 }
 
 export function permissionsFor(role: Role) {
+  const reviewerRoles: Role[] = [Role.REVIEWER, Role.REVIEWER_1, Role.REVIEWER_2, Role.IIT_ROPAR, Role.GIS, Role.DISTRICT_OWNER];
+  const uploaderRoles: Role[] = [Role.OFFICER, Role.SDLC, Role.SDO, Role.JE, Role.AXEN];
   if (role === Role.ADMIN || role === Role.STATE_ADMIN) return ["UPLOAD", "REVIEW", "ADMIN"];
-  if ([Role.REVIEWER, Role.REVIEWER_1, Role.REVIEWER_2, Role.IIT_ROPAR, Role.GIS, Role.DISTRICT_OWNER].includes(role)) return ["REVIEW"];
-  if ([Role.OFFICER, Role.SDLC, Role.SDO, Role.JE, Role.AXEN].includes(role)) return ["UPLOAD"];
+  if (reviewerRoles.includes(role)) return ["REVIEW"];
+  if (uploaderRoles.includes(role)) return ["UPLOAD"];
   return [];
 }
 
 export function signToken(user: AuthUser) {
   return jwt.sign({ sub: String(user.id), role: user.role, username: user.username }, config.jwtSecret, {
-    expiresIn: config.jwtExpiresIn
+    expiresIn: config.jwtExpiresIn as SignOptions["expiresIn"]
   });
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
   const header = req.header("authorization") || "";
-  const queryToken = typeof req.query.token === "string" ? req.query.token : "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : queryToken;
+  const cookieToken = typeof req.cookies?.[config.sessionCookieName] === "string" ? req.cookies[config.sessionCookieName] : "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : cookieToken;
   if (!token) {
     res.status(401).json({ error: "Not logged in" });
     return;

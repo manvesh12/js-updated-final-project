@@ -196,11 +196,13 @@
                 <span style="font-weight: 700; color: #E2E8F0;">Government of Punjab | DSR Portal</span>
               </div>
               <div class="dash-gov-right">
-                <button onclick="dashPortalToast('Hindi language resource is enabled for this portal.')">Hindi</button>
+                <button class="dash-lang-btn" data-lang="en" onclick="applyPortalLanguage('en')">English</button>
                 <span style="color: rgba(255,255,255,0.2);">|</span>
-                <button onclick="dashPortalToast('Punjabi language resource is enabled for this portal.')">Punjabi</button>
+                <button class="dash-lang-btn" data-lang="hi" onclick="applyPortalLanguage('hi')">Hindi</button>
                 <span style="color: rgba(255,255,255,0.2);">|</span>
-                <button onclick="dashPortalToast('Screen reader mode is ready. Use browser accessibility tools to continue.')" style="display: inline-flex; align-items: center; gap: 4px;"><i data-lucide="eye" style="width:13px; height:13px;"></i> Screen Reader</button>
+                <button class="dash-lang-btn" data-lang="pa" onclick="applyPortalLanguage('pa')">Punjabi</button>
+                <span style="color: rgba(255,255,255,0.2);">|</span>
+                <button onclick="dashPortalToast('Screen reader mode is ready. Use browser accessibility tools to continue.')" style="display: inline-flex; align-items: center; gap: 4px;"><i data-lucide="eye" style="width:13px; height:13px;"></i> <span data-i18n="screenReader">Screen Reader</span></button>
                 <span style="color: rgba(255,255,255,0.2);">|</span>
                 <div class="dash-font-btns">
                   <button class="dash-font-btn" onclick="changeFontSize(-1)">A-</button>
@@ -208,7 +210,7 @@
                   <button class="dash-font-btn" onclick="changeFontSize(1)">A+</button>
                 </div>
                 <span style="color: rgba(255,255,255,0.2);">|</span>
-                <button onclick="document.getElementById('projects-grid')?.scrollIntoView({behavior:'smooth', block:'start'})">Skip to Content</button>
+                <button onclick="document.getElementById('projects-grid')?.scrollIntoView({behavior:'smooth', block:'start'})" data-i18n="skipContent">Skip to Content</button>
               </div>
             </div>
 
@@ -223,9 +225,9 @@
                   <line x1="35" y1="50" x2="65" y2="50" stroke="#17324D" stroke-width="2"/>
                 </svg>
                 <div class="dash-brand-texts">
-                  <span class="dash-brand-bilingual">Government of Punjab - IIT Ropar Research Cell - EMGSM 2020</span>
-                  <h1 class="dash-brand-title">District Survey Report Automation Portal</h1>
-                  <span class="dash-brand-subtitle">DSR Automation for Sand Mining</span>
+                  <span class="dash-brand-bilingual" data-i18n="brandBilingual">Government of Punjab - IIT Ropar Research Cell - EMGSM 2020</span>
+                  <h1 class="dash-brand-title" data-i18n="brandTitle">District Survey Report Automation Portal</h1>
+                  <span class="dash-brand-subtitle" data-i18n="brandSubtitle">DSR Automation for Sand Mining</span>
                 </div>
               </div>
               <div class="dash-brand-right">
@@ -245,43 +247,43 @@
             <div class="dash-gov-menu-bar">
               <ul class="dash-menu-links">
                 <li class="dash-menu-link-item">
-                  <button onclick="clearActiveProject(); showView('dashboard', null)"><i data-lucide="home" style="width:15px; height:15px; opacity:0.8;"></i> Home</button>
+                  <button onclick="clearActiveProject(); showView('dashboard', null)"><i data-lucide="home" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navHome">Home</span></button>
                 </li>
                 <li class="dash-menu-link-item">
-                  <button onclick="clearActiveProject(); showView('dashboard', null)"><i data-lucide="info" style="width:15px; height:15px; opacity:0.8;"></i> About DSR</button>
+                  <button onclick="clearActiveProject(); showView('dashboard', null)"><i data-lucide="info" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navAbout">About DSR</span></button>
                 </li>
                 <li class="dash-menu-link-item active">
-                  <button onclick="showView('projects', null)"><i data-lucide="folder" style="width:15px; height:15px; color: #C49A58;"></i> Projects</button>
+                  <button onclick="showView('projects', null)"><i data-lucide="folder" style="width:15px; height:15px; color: #C49A58;"></i> <span data-i18n="navProjects">Projects</span></button>
                 </li>
                 <li class="dash-menu-link-item">
-                  <button onclick="newProjectModal()"><i data-lucide="plus-circle" style="width:15px; height:15px; opacity:0.8;"></i> + New Project</button>
+                  <button onclick="newProjectModal()"><i data-lucide="plus-circle" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navNewProject">+ New Project</span></button>
                 </li>
                 <li class="dash-menu-link-item">
-                  <button onclick="showView('workflow', null)"><i data-lucide="activity" style="width:15px; height:15px; opacity:0.8;"></i> Workflow</button>
+                  <button onclick="showView('workflow', null)"><i data-lucide="activity" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navWorkflow">Workflow</span></button>
                 </li>
                 <li class="dash-menu-link-item" id="projects-menu-audit-logs">
-                  <button onclick="showView('audit-logs', null)"><i data-lucide="clipboard-list" style="width:15px; height:15px; opacity:0.8;"></i> Audit Logs</button>
+                  <button onclick="showView('audit-logs', null)"><i data-lucide="clipboard-list" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navAudit">Audit Logs</span></button>
                 </li>
                 <li class="dash-menu-link-item">
-                  <button onclick="clearActiveProject(); showView('dashboard', null)"><i data-lucide="map-pin" style="width:15px; height:15px; opacity:0.8;"></i> Districts</button>
+                  <button onclick="openDistrictMap(null)"><i data-lucide="map-pin" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navDistricts">Districts</span></button>
                 </li>
                 <li class="dash-menu-link-item">
-                  <button onclick="clearActiveProject(); showView('dashboard', null); setTimeout(()=>document.getElementById('dash-contact-section')?.scrollIntoView({behavior:'smooth', block:'start'}), 80);"><i data-lucide="phone" style="width:15px; height:15px; opacity:0.8;"></i> Contact</button>
+                  <button onclick="clearActiveProject(); showView('dashboard', null); setTimeout(()=>document.getElementById('dash-contact-section')?.scrollIntoView({behavior:'smooth', block:'start'}), 80);"><i data-lucide="phone" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navContact">Contact</span></button>
                 </li>
               </ul>
               <div class="dash-menu-search">
                 <i data-lucide="search" style="width: 14px; height: 14px;"></i>
-                <input id="projects-portal-search" type="text" placeholder="Search portal..." onkeydown="dashRunSearch(event)" aria-label="Search portal">
+                <input id="projects-portal-search" type="text" placeholder="Search portal..." data-i18n-placeholder="searchPlaceholder" onkeydown="dashRunSearch(event)" aria-label="Search portal">
               </div>
             </div>
 
             <div class="dash-gov-notice-ticker">
               <div class="dash-notice-label">
-                <i data-lucide="megaphone" style="width:12px; height:12px; stroke-width: 2.5;"></i> Notice
+                <i data-lucide="megaphone" style="width:12px; height:12px; stroke-width: 2.5;"></i> <span data-i18n="noticeLabel">Notice</span>
               </div>
               <div class="dash-notice-marquee-container">
                 <div class="dash-notice-marquee-text">
-                  DSR submissions for Punjab districts 2025-26 are now open - Deadline: 30 September 2026 - New: Digital E-Sign integration live for all districts - EMGSM 2020 compliance mandatory
+                  <span data-i18n="noticeText">DSR submissions for Punjab districts 2025-26 are now open - Deadline: 30 September 2026 - New: Digital E-Sign integration live for all districts - EMGSM 2020 compliance mandatory</span>
                 </div>
               </div>
             </div>

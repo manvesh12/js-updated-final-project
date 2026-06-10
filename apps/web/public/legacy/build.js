@@ -44,7 +44,7 @@ const JS_FILES = [
   'js/main.js'
 ];
 
-const ASSET_VERSION = 'live-fixes-20260609-notifications-workflow-districts';
+const ASSET_VERSION = 'live-fixes-20260610-accessibility-language';
 
 function compile() {
   console.log('Compiling DSR Portal...');

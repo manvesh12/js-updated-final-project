@@ -90,6 +90,8 @@ const S = {
   }
 };
 
+window.S = S;
+
 // Deep copy of the initial state to restore on logout
 const DEFAULT_STATE = JSON.parse(JSON.stringify(S));
 

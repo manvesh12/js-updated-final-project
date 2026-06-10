@@ -894,3 +894,5 @@ document.addEventListener('input', (e) => {
     }, 1500); // 1.5 seconds after typing stops
   }
 });
+
+window.exportAnx4PDF = exportAnx4PDF;

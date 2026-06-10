@@ -1314,11 +1314,13 @@
         <span style="font-weight: 700; color: #E2E8F0;">Government of Punjab | W375-61487</span>
       </div>
       <div class="dash-gov-right">
-        <button onclick="dashPortalToast('Hindi language resource is enabled for this portal.')">हिंदी</button>
+        <button class="dash-lang-btn" data-lang="en" onclick="applyPortalLanguage('en')">English</button>
         <span style="color: rgba(255,255,255,0.2);">|</span>
-        <button onclick="dashPortalToast('Punjabi language resource is enabled for this portal.')">ਪੰਜਾਬੀ</button>
+        <button class="dash-lang-btn" data-lang="hi" onclick="applyPortalLanguage('hi')">Hindi</button>
         <span style="color: rgba(255,255,255,0.2);">|</span>
-        <button onclick="dashPortalToast('Screen reader mode is ready. Use browser accessibility tools to continue.')" style="display: inline-flex; align-items: center; gap: 4px;"><i data-lucide="eye" style="width:13px; height:13px;"></i> Screen Reader</button>
+        <button class="dash-lang-btn" data-lang="pa" onclick="applyPortalLanguage('pa')">Punjabi</button>
+        <span style="color: rgba(255,255,255,0.2);">|</span>
+        <button onclick="dashPortalToast('Screen reader mode is ready. Use browser accessibility tools to continue.')" style="display: inline-flex; align-items: center; gap: 4px;"><i data-lucide="eye" style="width:13px; height:13px;"></i> <span data-i18n="screenReader">Screen Reader</span></button>
         <span style="color: rgba(255,255,255,0.2);">|</span>
         <div class="dash-font-btns">
           <button class="dash-font-btn" onclick="changeFontSize(-1)">A-</button>
@@ -1326,7 +1328,7 @@
           <button class="dash-font-btn" onclick="changeFontSize(1)">A+</button>
         </div>
         <span style="color: rgba(255,255,255,0.2);">|</span>
-        <button onclick="document.getElementById('dash-main-content')?.scrollIntoView({behavior:'smooth', block:'start'})">Skip to Content</button>
+        <button onclick="document.getElementById('dash-main-content')?.scrollIntoView({behavior:'smooth', block:'start'})" data-i18n="skipContent">Skip to Content</button>
       </div>
     </div>
 
@@ -1342,9 +1344,9 @@
           <line x1="35" y1="50" x2="65" y2="50" stroke="#17324D" stroke-width="2"/>
         </svg>
         <div class="dash-brand-texts">
-          <span class="dash-brand-bilingual">Government of Punjab - IIT Ropar Research Cell - EMGSM 2020</span>
-          <h1 class="dash-brand-title">District Survey Report Automation Portal</h1>
-          <span class="dash-brand-subtitle">DSR Automation for Sand Mining</span>
+          <span class="dash-brand-bilingual" data-i18n="brandBilingual">Government of Punjab - IIT Ropar Research Cell - EMGSM 2020</span>
+          <h1 class="dash-brand-title" data-i18n="brandTitle">District Survey Report Automation Portal</h1>
+          <span class="dash-brand-subtitle" data-i18n="brandSubtitle">DSR Automation for Sand Mining</span>
         </div>
       </div>
       <div class="dash-brand-right">
@@ -1365,41 +1367,41 @@
     <div class="dash-gov-menu-bar">
       <ul class="dash-menu-links">
         <li class="dash-menu-link-item active">
-          <button onclick="clearActiveProject(); showView('dashboard', null)"><i data-lucide="home" style="width:15px; height:15px; color: #C49A58;"></i> Home</button>
+          <button onclick="clearActiveProject(); showView('dashboard', null)"><i data-lucide="home" style="width:15px; height:15px; color: #C49A58;"></i> <span data-i18n="navHome">Home</span></button>
         </li>
         <li class="dash-menu-link-item">
-          <button onclick="document.getElementById('dash-about-section')?.scrollIntoView({behavior:'smooth', block:'start'})"><i data-lucide="info" style="width:15px; height:15px; opacity:0.8;"></i> About DSR</button>
+          <button onclick="openAboutDsr(null)"><i data-lucide="info" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navAbout">About DSR</span></button>
         </li>
         <li class="dash-menu-link-item">
-          <button onclick="showView('projects', null)"><i data-lucide="folder" style="width:15px; height:15px; opacity:0.8;"></i> Projects</button>
+          <button onclick="showView('projects', null)"><i data-lucide="folder" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navProjects">Projects</span></button>
         </li>
         <li class="dash-menu-link-item">
-          <button onclick="showView('workflow', null)"><i data-lucide="activity" style="width:15px; height:15px; opacity:0.8;"></i> Workflow</button>
+          <button onclick="showView('workflow', null)"><i data-lucide="activity" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navWorkflow">Workflow</span></button>
         </li>
         <li class="dash-menu-link-item" id="dash-menu-audit-logs" style="display: none;">
-          <button onclick="showView('audit-logs', null)"><i data-lucide="clipboard-list" style="width:15px; height:15px; opacity:0.8;"></i> Audit Logs</button>
+          <button onclick="showView('audit-logs', null)"><i data-lucide="clipboard-list" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navAudit">Audit Logs</span></button>
         </li>
         <li class="dash-menu-link-item">
-          <button onclick="clearActiveProject(); showView('dashboard', null)"><i data-lucide="map-pin" style="width:15px; height:15px; opacity:0.8;"></i> Districts</button>
+          <button onclick="openDistrictMap(null)"><i data-lucide="map-pin" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navDistricts">Districts</span></button>
         </li>
         <li class="dash-menu-link-item">
-          <button onclick="document.getElementById('dash-contact-section')?.scrollIntoView({behavior:'smooth', block:'start'})"><i data-lucide="phone" style="width:15px; height:15px; opacity:0.8;"></i> Contact</button>
+          <button onclick="document.getElementById('dash-contact-section')?.scrollIntoView({behavior:'smooth', block:'start'})"><i data-lucide="phone" style="width:15px; height:15px; opacity:0.8;"></i> <span data-i18n="navContact">Contact</span></button>
         </li>
       </ul>
       <div class="dash-menu-search">
         <i data-lucide="search" style="width: 14px; height: 14px;"></i>
-        <input id="dash-portal-search" type="text" placeholder="Search portal..." onkeydown="dashRunSearch(event)" aria-label="Search portal">
+        <input id="dash-portal-search" type="text" placeholder="Search portal..." data-i18n-placeholder="searchPlaceholder" onkeydown="dashRunSearch(event)" aria-label="Search portal">
       </div>
     </div>
 
     <!-- Row 4: Notice Ticker -->
     <div class="dash-gov-notice-ticker">
       <div class="dash-notice-label">
-        <i data-lucide="megaphone" style="width:12px; height:12px; stroke-width: 2.5;"></i> Notice
+          <i data-lucide="megaphone" style="width:12px; height:12px; stroke-width: 2.5;"></i> <span data-i18n="noticeLabel">Notice</span>
       </div>
       <div class="dash-notice-marquee-container">
         <div class="dash-notice-marquee-text">
-          DSR submissions for Punjab districts 2025–26 are now open · Deadline: 30 September 2026 · New: Digital E-Sign integration live for all districts · EMGSM 2020 compliance mandatory
+          <span data-i18n="noticeText">DSR submissions for Punjab districts 2025-26 are now open - Deadline: 30 September 2026 - New: Digital E-Sign integration live for all districts - EMGSM 2020 compliance mandatory</span>
         </div>
       </div>
     </div>
@@ -1502,6 +1504,87 @@
         </div>
       </div>
     </div>
+
+    <section id="dash-about-dsr-section" class="dash-about-dsr-section">
+      <div class="dash-about-dsr-copy">
+        <span class="dash-map-kicker">About DSR</span>
+        <h3>District Survey Report for Sustainable Sand Mining</h3>
+        <p>
+          A District Survey Report is the official district-level document used to assess mineral availability, river morphology,
+          replenishment, environmental safeguards, transport routes, and compliance requirements before sand mining activities are reviewed.
+        </p>
+        <div class="dash-about-dsr-actions">
+          <button class="dash-map-action" onclick="showView('generate', null)">
+            <i data-lucide="file-text" style="width:15px;height:15px;"></i> Guidelines
+          </button>
+          <button class="dash-map-action dash-map-action-light" onclick="showView('workflow', null)">
+            <i data-lucide="activity" style="width:15px;height:15px;"></i> Workflow
+          </button>
+        </div>
+      </div>
+      <div class="dash-about-dsr-text">
+        <p>
+          The DSR workflow covers district profile, river systems, mining lease context, cross-section studies, mineral estimation,
+          replenishment assessment, transport routes, environmental safeguards, authority review, e-sign approval, and final report generation.
+        </p>
+        <p>
+          This portal keeps the complete process in one place so district teams can upload chapter PDFs, maintain annexures, preview the
+          live report, track progress, and submit a compliant final DSR under the EMGSM 2020 framework.
+        </p>
+      </div>
+    </section>
+
+    <section id="dash-district-map-section" class="dash-district-map-section">
+      <div class="dash-district-map-header">
+        <div>
+          <span class="dash-map-kicker">Punjab District Map</span>
+          <h3>Colored District Coverage</h3>
+          <p>All 23 Punjab districts are shown with DSR workflow context.</p>
+        </div>
+        <button class="dash-map-action" onclick="document.getElementById('dash-district-filter')?.focus()">
+          <i data-lucide="map-pin" style="width:15px;height:15px;"></i> Select District
+        </button>
+      </div>
+      <div class="dash-punjab-map-layout">
+        <div class="dash-punjab-map-stage" aria-label="Colored Punjab district map">
+          <img src="assets/punjab-reference-map.png" alt="Punjab district reference map">
+          <span class="map-district-chip c1" style="--x:51%;--y:19%;">Gurdaspur</span>
+          <span class="map-district-chip c2" style="--x:66%;--y:23%;">Pathankot</span>
+          <span class="map-district-chip c3" style="--x:75%;--y:27%;">Hoshiarpur</span>
+          <span class="map-district-chip c4" style="--x:58%;--y:38%;">Kapurthala</span>
+          <span class="map-district-chip c5" style="--x:63%;--y:43%;">Jalandhar</span>
+          <span class="map-district-chip c6" style="--x:50%;--y:45%;">Tarn Taran</span>
+          <span class="map-district-chip c7" style="--x:42%;--y:50%;">Amritsar</span>
+          <span class="map-district-chip c8" style="--x:51%;--y:58%;">Ferozepur</span>
+          <span class="map-district-chip c9" style="--x:60%;--y:60%;">Moga</span>
+          <span class="map-district-chip c10" style="--x:70%;--y:56%;">Ludhiana</span>
+          <span class="map-district-chip c11" style="--x:82%;--y:52%;">Rupnagar</span>
+          <span class="map-district-chip c12" style="--x:86%;--y:61%;">SAS Nagar</span>
+          <span class="map-district-chip c13" style="--x:78%;--y:69%;">Fatehgarh Sahib</span>
+          <span class="map-district-chip c14" style="--x:70%;--y:73%;">Malerkotla</span>
+          <span class="map-district-chip c15" style="--x:76%;--y:80%;">Patiala</span>
+          <span class="map-district-chip c16" style="--x:60%;--y:77%;">Sangrur</span>
+          <span class="map-district-chip c17" style="--x:51%;--y:80%;">Barnala</span>
+          <span class="map-district-chip c18" style="--x:45%;--y:72%;">Bathinda</span>
+          <span class="map-district-chip c19" style="--x:35%;--y:68%;">Faridkot</span>
+          <span class="map-district-chip c20" style="--x:30%;--y:78%;">Sri Muktsar Sahib</span>
+          <span class="map-district-chip c21" style="--x:22%;--y:71%;">Fazilka</span>
+          <span class="map-district-chip c22" style="--x:53%;--y:89%;">Mansa</span>
+          <span class="map-district-chip c23" style="--x:73%;--y:39%;">SBS Nagar</span>
+        </div>
+        <div class="dash-district-legend">
+          <h4>All Districts</h4>
+          <div class="district-color-grid">
+            <span>Amritsar</span><span>Barnala</span><span>Bathinda</span><span>Faridkot</span>
+            <span>Fatehgarh Sahib</span><span>Fazilka</span><span>Ferozepur</span><span>Gurdaspur</span>
+            <span>Hoshiarpur</span><span>Jalandhar</span><span>Kapurthala</span><span>Ludhiana</span>
+            <span>Malerkotla</span><span>Mansa</span><span>Moga</span><span>Pathankot</span>
+            <span>Patiala</span><span>Rupnagar</span><span>SAS Nagar</span><span>Sangrur</span>
+            <span>SBS Nagar</span><span>Sri Muktsar Sahib</span><span>Tarn Taran</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Bottom layout columns (Updates & Quick Access) -->
     <div class="dash-bottom-layout-grid">
