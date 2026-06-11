@@ -1,6 +1,4 @@
-<!-- ═══ DASHBOARD ═══ -->
 <div id="view-dashboard" class="view active" style="position: relative; z-index: 1; padding: 0 !important; margin: 0 !important; background: var(--dash-page-bg, #ffffff);">
-
   <style>
     /* Scoped Dashboard styles mimicking the mockup exactly */
     .dash-portal-wrapper {
@@ -11,7 +9,6 @@
       line-height: 1.5;
       font-size: 15px;
     }
-
     /* Switcher bar inside app header */
     .dash-switcher-bar {
       display: flex;
@@ -24,16 +21,13 @@
       color: #ffffff;
       box-sizing: border-box;
     }
-
     .dash-portal-wrapper > .dash-switcher-bar {
       display: none;
     }
-
     .dash-switcher-tabs {
       display: flex;
       gap: 8px;
     }
-
     .dash-switcher-tab {
       display: inline-flex;
       align-items: center;
@@ -45,23 +39,19 @@
       font-size: 11px;
       transition: all 0.2s;
     }
-
     .dash-switcher-tab.active {
       background: #F2A123;
       color: #17324D;
       cursor: default;
     }
-
     .dash-switcher-tab.inactive {
       background: #233549;
       color: #ffffff;
       cursor: pointer;
     }
-
     .dash-switcher-tab.inactive:hover {
       background: #2d425b;
     }
-
     .dash-switcher-info {
       color: #a0aec0;
       font-size: 11px;
@@ -69,7 +59,6 @@
       align-items: center;
       gap: 4px;
     }
-
     /* Row 1: Official Gov Bar */
     .dash-gov-utility-strip {
       background: linear-gradient(90deg, #0B2B52 0%, #071B33 100%);
@@ -81,13 +70,11 @@
       font-size: 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     .dash-gov-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-
     .dash-badge-in {
       background: #F2A123;
       color: #0F1C2A;
@@ -96,13 +83,11 @@
       border-radius: 3px;
       font-size: 10px;
     }
-
     .dash-gov-right {
       display: flex;
       align-items: center;
       gap: 14px;
     }
-
     .dash-gov-right button, .dash-gov-right a {
       color: #CBD5E1;
       text-decoration: none;
@@ -113,16 +98,13 @@
       font-weight: 600;
       transition: color 0.2s;
     }
-
     .dash-gov-right button:hover, .dash-gov-right a:hover {
       color: #ffffff;
     }
-
     .dash-font-btns {
       display: flex;
       gap: 6px;
     }
-
     .dash-font-btn {
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -133,11 +115,9 @@
       font-size: 11px;
       font-weight: 600;
     }
-
     .dash-font-btn:hover {
       background: rgba(255, 255, 255, 0.1);
     }
-
     /* Row 2: Brand Header Row */
     .dash-gov-brand-row {
       background: #ffffff;
@@ -147,18 +127,15 @@
       align-items: center;
       border-bottom: 1px solid #E2E8F0;
     }
-
     .dash-brand-left {
       display: flex;
       align-items: center;
       gap: 16px;
     }
-
     .dash-brand-texts {
       display: flex;
       flex-direction: column;
     }
-
     .dash-brand-bilingual {
       color: #F2A123;
       font-size: 10px;
@@ -167,7 +144,6 @@
       text-transform: uppercase;
       margin-bottom: 2px;
     }
-
     .dash-brand-title {
       font-family: 'Outfit', sans-serif;
       font-size: 32px;
@@ -175,19 +151,16 @@
       color: #17324D;
       line-height: 1.15;
     }
-
     .dash-brand-subtitle {
       font-size: 15px;
       color: #0f172a;
       font-weight: 500;
     }
-
     .dash-brand-right {
       display: flex;
       align-items: center;
       gap: 16px;
     }
-
     .dash-gov-badge {
       display: inline-flex;
       align-items: center;
@@ -198,19 +171,16 @@
       font-weight: 700;
       text-decoration: none;
     }
-
     .dash-badge-emgsm {
       background: #EBFDF5;
       color: #047857;
       border: 1px solid #A7F3D0;
     }
-
     .dash-badge-support {
       background: #EFF6FF;
       color: #1D4ED8;
       border: 1px solid #BFDBFE;
     }
-
     .dash-action-icon-btn {
       width: 36px;
       height: 36px;
@@ -224,34 +194,28 @@
       background: #ffffff;
       transition: all 0.2s;
     }
-
     .dash-action-icon-btn:hover {
       background: #F8FAFC;
       color: #17324D;
     }
-
     .dash-theme-toggle {
       color: #17324D;
       border-color: #C49A58;
       background: #fffaf0;
     }
-
     .dash-theme-toggle:hover {
       background: #C49A58;
       color: #17324D;
     }
-
     html.dark .dash-theme-toggle {
       background: #0B1E33;
       color: #F8FAFC;
       border-color: #C49A58;
     }
-
     html.dark .dash-theme-toggle:hover {
       background: #17324D;
       color: #F2A123;
     }
-
     .dash-btn-logout {
       display: inline-flex;
       align-items: center;
@@ -266,13 +230,11 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .dash-btn-logout:hover {
       border-color: #ef4444;
       color: #ef4444;
       background: #FEF2F2;
     }
-
     /* Row 3: Menu Bar */
     .dash-gov-menu-bar {
       background: #05264a;
@@ -282,12 +244,10 @@
       padding: 0 24px;
       border-bottom: 3px solid #C49A58;
     }
-
     .dash-menu-links {
       display: flex;
       list-style: none;
     }
-
     .dash-menu-link-item button {
       display: flex;
       align-items: center;
@@ -301,25 +261,21 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .dash-menu-link-item.active button {
       background: rgba(255, 255, 255, 0.1);
       color: #ffffff;
       border-bottom: 3px solid #C49A58;
       margin-bottom: -3px;
     }
-
     .dash-menu-link-item button:hover {
       background: rgba(255, 255, 255, 0.06);
       color: #ffffff;
     }
-
     .dash-menu-search {
       position: relative;
       display: flex;
       align-items: center;
     }
-
     .dash-menu-search input {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -331,23 +287,19 @@
       transition: all 0.2s;
       width: 180px;
     }
-
     .dash-menu-search input::placeholder {
       color: rgba(255, 255, 255, 0.6);
     }
-
     .dash-menu-search input:focus {
       background: rgba(255, 255, 255, 0.15);
       border-color: #C49A58;
       width: 220px;
     }
-
     .dash-menu-search i {
       position: absolute;
       left: 10px;
       color: rgba(255, 255, 255, 0.6);
     }
-
     /* Row 4: Notice Ticker */
     .dash-gov-notice-ticker {
       background: #fff8ec;
@@ -358,7 +310,6 @@
       overflow: hidden;
       height: 34px;
     }
-
     .dash-notice-label {
       background: #F2A123;
       color: #0F1C2A;
@@ -377,14 +328,12 @@
       position: relative;
       box-shadow: 2px 0 5px rgba(0,0,0,0.05);
     }
-
     .dash-notice-marquee-container {
       overflow: hidden;
       white-space: nowrap;
       flex: 1;
       position: relative;
     }
-
     .dash-notice-marquee-text {
       display: inline-block;
       padding-left: 100%;
@@ -394,16 +343,13 @@
       font-weight: 600;
       color: #111827;
     }
-
     .dash-notice-marquee-text:hover {
       animation-play-state: paused;
     }
-
     @keyframes dashMarquee {
       0% { transform: translate3d(0, 0, 0); }
       100% { transform: translate3d(-100%, 0, 0); }
     }
-
     /* District context and map-backed hero */
     .dash-district-context-card {
       margin: 16px 30px 14px;
@@ -418,7 +364,6 @@
       border-radius: 8px;
       box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
     }
-
     .dash-district-context-left,
     .dash-district-highlight {
       display: flex;
@@ -426,7 +371,6 @@
       gap: 12px;
       min-width: 0;
     }
-
     .dash-context-label {
       font-size: 12.5px;
       font-weight: 800;
@@ -435,7 +379,6 @@
       letter-spacing: 0.05em;
       white-space: nowrap;
     }
-
     .dash-district-select {
       min-width: 210px;
       padding: 8px 34px 8px 14px;
@@ -449,13 +392,11 @@
       cursor: pointer;
       box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
     }
-
     .dash-district-highlight {
       color: #64748b;
       font-size: 13px;
       font-weight: 700;
     }
-
     .dash-gov-hero-section {
       position: relative;
       isolation: isolate;
@@ -466,7 +407,6 @@
       padding: 0 30px;
       border-bottom: 1px solid #e2e8f0;
     }
-
     .dash-gov-hero-section::before {
       content: "";
       position: absolute;
@@ -479,7 +419,6 @@
       -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.02) 22%, rgba(0, 0, 0, 0.18) 34%, rgba(0, 0, 0, 0.58) 47%, #000000 64%, #000000 100%);
       mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.02) 22%, rgba(0, 0, 0, 0.18) 34%, rgba(0, 0, 0, 0.58) 47%, #000000 64%, #000000 100%);
     }
-
     .dash-gov-hero-section::after {
       content: "";
       position: absolute;
@@ -490,7 +429,6 @@
         linear-gradient(180deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.0) 22%, rgba(15, 23, 42, 0.0) 76%, rgba(15, 23, 42, 0.07) 100%);
       pointer-events: none;
     }
-
     .dash-hero-container {
       max-width: none;
       min-height: 450px;
@@ -500,7 +438,6 @@
       gap: 18px;
       align-items: center;
     }
-
     .dash-hero-content {
       display: flex;
       flex-direction: column;
@@ -508,7 +445,6 @@
       max-width: 700px;
       padding-left: clamp(24px, 4.8vw, 88px);
     }
-
     .dash-hero-eyebrow {
       color: #f6df45;
       font-weight: 800;
@@ -517,7 +453,6 @@
       margin-bottom: 18px;
       text-transform: uppercase;
     }
-
     .dash-hero-heading {
       font-family: 'Outfit', sans-serif;
       font-size: clamp(42px, 3.6vw, 56px);
@@ -528,7 +463,6 @@
       letter-spacing: 0;
       text-shadow: 0 3px 14px rgba(2, 8, 23, 0.18);
     }
-
     .dash-hero-desc {
       color: rgba(255, 255, 255, 0.92);
       font-size: 17px;
@@ -536,18 +470,15 @@
       margin-bottom: 24px;
       max-width: 620px;
     }
-
     .dash-hero-desc span {
       display: block;
       margin-top: 3px;
     }
-
     .dash-hero-btn-row {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
     }
-
     .dash-btn-hero-outline {
       display: inline-flex;
       align-items: center;
@@ -565,14 +496,12 @@
       transition: all 0.2s;
       backdrop-filter: blur(8px);
     }
-
     .dash-btn-hero-outline:hover {
       background: #ffffff;
       color: #17324D;
       border-color: #ffffff;
       transform: translateY(-2px);
     }
-
     .dash-hero-stats-stack {
       display: none;
       align-self: stretch;
@@ -582,7 +511,6 @@
       position: relative;
       pointer-events: none;
     }
-
     .dash-hero-stat-card {
       position: absolute;
       min-width: 142px;
@@ -600,33 +528,27 @@
       pointer-events: auto;
       backdrop-filter: blur(10px);
     }
-
     .dash-hero-stat-card:hover {
       background: #ffffff;
       border-color: #C49A58;
       transform: translateY(-2px);
     }
-
     .dash-hero-stat-card:nth-child(1) {
       right: 13%;
       top: 20%;
     }
-
     .dash-hero-stat-card:nth-child(2) {
       right: 34%;
       top: 48%;
     }
-
     .dash-hero-stat-card:nth-child(3) {
       right: 8%;
       bottom: 18%;
     }
-
     .dash-stat-card-left {
       display: flex;
       flex-direction: column;
     }
-
     .dash-stat-val {
       font-family: 'Outfit', sans-serif;
       font-size: 26px;
@@ -635,7 +557,6 @@
       line-height: 1;
       margin-bottom: 2px;
     }
-
     .dash-stat-lbl {
       font-size: 11px;
       color: #475569;
@@ -643,14 +564,12 @@
       font-weight: 700;
       letter-spacing: 0.5px;
     }
-
     /* Info Bar */
     .dash-gov-info-bar {
       background: #ffffff;
       border-bottom: 1px solid #E2E8F0;
       padding: 12px 24px;
     }
-
     .dash-info-bar-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -662,7 +581,6 @@
       gap: 20px;
       flex-wrap: wrap;
     }
-
     .dash-info-bar-left {
       display: flex;
       align-items: center;
@@ -670,18 +588,15 @@
       line-height: 1.4;
       max-width: 80%;
     }
-
     .dash-info-bar-left strong {
       color: #17324D;
     }
-
     .dash-info-bar-right {
       display: flex;
       align-items: center;
       gap: 6px;
       font-weight: 600;
     }
-
     /* Bottom Grid (Updates & Quick Access) */
     .dash-bottom-layout-grid {
       width: min(98%, 1560px);
@@ -692,7 +607,6 @@
       grid-template-columns: minmax(0, 1.35fr) minmax(390px, 1fr);
       gap: 16px;
     }
-
     .dash-panel-card {
       background: #ffffff;
       border: 1.5px solid #E2E8F0;
@@ -701,7 +615,6 @@
       display: flex;
       flex-direction: column;
     }
-
     .dash-panel-header {
       display: flex;
       justify-content: space-between;
@@ -710,7 +623,6 @@
       padding-bottom: 15px;
       margin-bottom: 20px;
     }
-
     .dash-panel-title {
       font-size: clamp(20px, 1.25vw, 22px);
       font-weight: 600;
@@ -720,31 +632,26 @@
       gap: 10px;
       line-height: 1.2;
     }
-
     .dash-panel-link-all {
       font-size: 13px;
       font-weight: 700;
       color: #17324D;
       cursor: pointer;
     }
-
     .dash-panel-link-all:hover {
       text-decoration: underline;
     }
-
     .dash-updates-list {
       display: flex;
       flex-direction: column;
       gap: 16px;
       list-style: none;
     }
-
     .dash-update-item {
       display: flex;
       gap: 12px;
       align-items: flex-start;
     }
-
     .dash-update-dot {
       width: 8px;
       height: 8px;
@@ -753,20 +660,17 @@
       margin-top: 9px;
       flex-shrink: 0;
     }
-
     .dash-update-content {
       display: flex;
       flex-direction: column;
       gap: 5px;
     }
-
     .dash-update-text {
       font-size: clamp(15px, 0.98vw, 17px);
       font-weight: 600;
       line-height: 1.55;
       color: #1E293B;
     }
-
     .dash-update-meta {
       display: flex;
       align-items: center;
@@ -775,7 +679,6 @@
       color: #64748B;
       font-weight: 600;
     }
-
     .dash-badge-new {
       background: #EBFDF5;
       color: #10B981;
@@ -785,14 +688,12 @@
       font-weight: 800;
       text-transform: uppercase;
     }
-
     /* Quick Access Grid */
     .dash-quick-access-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
     }
-
     .dash-quick-access-btn {
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
@@ -804,14 +705,12 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .dash-quick-access-btn:hover {
       background: #ffffff;
       border-color: #17324D;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(23, 50, 77, 0.05);
     }
-
     .dash-quick-icon-box {
       width: 42px;
       height: 42px;
@@ -822,26 +721,22 @@
       justify-content: center;
       border: 1px solid #E2E8F0;
     }
-
     .dash-quick-text-box {
       display: flex;
       flex-direction: column;
       gap: 3px;
       line-height: 1.28;
     }
-
     .dash-quick-title {
       font-size: clamp(16px, 1vw, 17px);
       font-weight: 600;
       color: #17324D;
     }
-
     .dash-quick-subtitle {
       font-size: clamp(12px, 0.8vw, 13px);
       color: #64748B;
       font-weight: 600;
     }
-
     /* Reliable dashboard layout fixes */
     .dash-switcher-tabs,
     .dash-gov-utility-strip,
@@ -852,110 +747,89 @@
     .dash-menu-links {
       flex-wrap: wrap;
     }
-
     .dash-gov-utility-strip,
     .dash-gov-brand-row,
     .dash-gov-menu-bar {
       gap: 14px;
     }
-
     .dash-brand-left {
       min-width: 280px;
       flex: 1 1 420px;
     }
-
     .dash-brand-right {
       justify-content: flex-end;
       flex: 1 1 320px;
     }
-
     .dash-menu-links {
       padding: 0;
       margin: 0;
     }
-
     .dash-menu-link-item button {
       padding: 14px 14px;
     }
-
     .dash-gov-notice-ticker {
       height: auto;
       min-height: 34px;
     }
-
     .dash-gov-hero-section {
       padding: 0 24px;
     }
-
     .dash-hero-heading {
       font-size: clamp(40px, 3.4vw, 54px);
     }
-
     .dash-panel-card {
       min-width: 0;
       padding: 26px;
     }
-
     .dash-update-content,
     .dash-quick-text-box {
       min-width: 0;
     }
-
     .dash-quick-access-btn {
       min-height: 74px;
     }
-
     /* Dashboard dark mode: scoped to this page so other portal screens keep their own theme */
     html.dark #view-dashboard {
       --dash-page-bg: #07111f;
     }
-
     html.dark #view-dashboard,
     html.dark #view-dashboard .dash-portal-wrapper {
       background: #07111f;
       color: #e5edf6;
     }
-
     html.dark #view-dashboard .dash-switcher-bar,
     html.dark #view-dashboard .dash-gov-utility-strip {
       background: #020817;
       color: #e5edf6;
       border-color: rgba(148, 163, 184, 0.18);
     }
-
     html.dark #view-dashboard .dash-switcher-tab.inactive {
       background: #142237;
       color: #dbeafe;
     }
-
     html.dark #view-dashboard .dash-switcher-info,
     html.dark #view-dashboard .dash-gov-right button,
     html.dark #view-dashboard .dash-gov-right a {
       color: #b6c4d6;
     }
-
     html.dark #view-dashboard .dash-gov-right button:hover,
     html.dark #view-dashboard .dash-gov-right a:hover {
       color: #ffffff;
     }
-
     html.dark #view-dashboard .dash-font-btn {
       color: #e5edf6;
       border-color: rgba(226, 232, 240, 0.22);
       background: rgba(255, 255, 255, 0.04);
     }
-
     html.dark #view-dashboard .dash-gov-brand-row,
     html.dark #view-dashboard .dash-gov-info-bar,
     html.dark #view-dashboard .dash-bottom-layout-grid {
       background: #07111f;
     }
-
     html.dark #view-dashboard .dash-gov-brand-row,
     html.dark #view-dashboard .dash-gov-info-bar {
       border-color: rgba(148, 163, 184, 0.16);
     }
-
     html.dark #view-dashboard .dash-brand-title,
     html.dark #view-dashboard .dash-info-bar-left strong,
     html.dark #view-dashboard .dash-panel-title,
@@ -963,174 +837,143 @@
     html.dark #view-dashboard .dash-quick-title {
       color: #f8fafc;
     }
-
     html.dark #view-dashboard .dash-brand-subtitle,
     html.dark #view-dashboard .dash-info-bar-container,
     html.dark #view-dashboard .dash-update-meta,
     html.dark #view-dashboard .dash-quick-subtitle {
       color: #a9b8ca;
     }
-
     html.dark #view-dashboard .dash-gov-menu-bar {
       background: #0f2338;
       border-bottom-color: #d0a35d;
     }
-
     html.dark #view-dashboard .dash-menu-link-item button {
       color: #dbe7f5;
     }
-
     html.dark #view-dashboard .dash-menu-link-item.active button,
     html.dark #view-dashboard .dash-menu-link-item button:hover {
       background: rgba(255, 255, 255, 0.10);
       color: #ffffff;
     }
-
     html.dark #view-dashboard .dash-menu-search input {
       background: rgba(15, 23, 42, 0.7);
       border-color: rgba(226, 232, 240, 0.20);
       color: #ffffff;
     }
-
     html.dark #view-dashboard .dash-gov-notice-ticker {
       background: #21190b;
       border-bottom-color: rgba(208, 163, 93, 0.28);
     }
-
     html.dark #view-dashboard .dash-notice-marquee-text {
       color: #f6d79e;
     }
-
     html.dark #view-dashboard .dash-district-context-card {
       background: #0d1a2b;
       border-color: rgba(148, 163, 184, 0.22);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
     }
-
     html.dark #view-dashboard .dash-context-label,
     html.dark #view-dashboard .dash-district-highlight {
       color: #b6c4d6;
     }
-
     html.dark #view-dashboard .dash-district-select {
       background: #07111f;
       color: #f8fafc;
       border-color: rgba(148, 163, 184, 0.30);
     }
-
     html.dark #view-dashboard .dash-gov-hero-section {
       background: #07111f;
       border-bottom-color: rgba(148, 163, 184, 0.20);
     }
-
     html.dark #view-dashboard .dash-gov-hero-section::before {
       opacity: 0.9;
       filter: saturate(0.92) brightness(0.92) contrast(1.04);
       -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.02) 22%, rgba(0, 0, 0, 0.16) 34%, rgba(0, 0, 0, 0.54) 49%, #000000 67%, #000000 100%);
       mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.02) 22%, rgba(0, 0, 0, 0.16) 34%, rgba(0, 0, 0, 0.54) 49%, #000000 67%, #000000 100%);
     }
-
     html.dark #view-dashboard .dash-gov-hero-section::after {
       background:
         linear-gradient(90deg, #07111f 0%, #07111f 27%, rgba(7, 17, 31, 0.96) 37%, rgba(7, 17, 31, 0.74) 49%, rgba(7, 17, 31, 0.34) 64%, rgba(7, 17, 31, 0.12) 82%, rgba(7, 17, 31, 0.02) 100%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.0) 20%, rgba(2, 8, 23, 0.04) 100%);
     }
-
     html.dark #view-dashboard .dash-hero-desc,
     html.dark #view-dashboard .dash-stat-lbl {
       color: #b6c4d6;
     }
-
     html.dark #view-dashboard .dash-hero-stat-card {
       background: rgba(255, 255, 255, 0.055);
       border-color: rgba(226, 232, 240, 0.14);
     }
-
     html.dark #view-dashboard .dash-panel-card,
     html.dark #view-dashboard .dash-quick-access-btn {
       background: #0d1a2b;
       border-color: rgba(148, 163, 184, 0.22);
       box-shadow: none;
     }
-
     html.dark #view-dashboard .dash-quick-access-btn:hover {
       background: #122238;
       border-color: #d0a35d;
       box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
     }
-
     html.dark #view-dashboard .dash-quick-icon-box {
       background: #07111f;
       border-color: rgba(148, 163, 184, 0.22);
       color: #d0a35d;
     }
-
     html.dark #view-dashboard .dash-panel-header {
       border-bottom-color: rgba(148, 163, 184, 0.18);
     }
-
     html.dark #view-dashboard .dash-update-text {
       color: #e5edf6;
     }
-
     html.dark #view-dashboard .dash-badge-emgsm,
     html.dark #view-dashboard .dash-badge-new {
       background: rgba(16, 185, 129, 0.14);
       color: #7dd3aa;
       border-color: rgba(16, 185, 129, 0.28);
     }
-
     html.dark #view-dashboard .dash-badge-support {
       background: rgba(59, 130, 246, 0.14);
       color: #93c5fd;
       border-color: rgba(59, 130, 246, 0.28);
     }
-
     html.dark #view-dashboard .dash-action-icon-btn,
     html.dark #view-dashboard .dash-btn-logout {
       background: #0d1a2b;
       color: #cbd5e1;
       border-color: rgba(148, 163, 184, 0.22);
     }
-
     html.dark #view-dashboard .dash-action-icon-btn:hover {
       background: #142237;
       color: #ffffff;
       border-color: #d0a35d;
     }
-
     html.dark #view-dashboard .dash-btn-logout:hover {
       background: rgba(239, 68, 68, 0.12);
       border-color: #ef4444;
       color: #fca5a5;
     }
-
     html.dark #view-dashboard #dash-review-banner {
       background: #241707 !important;
       border-color: #b7791f !important;
     }
-
     html.dark #view-dashboard #dash-review-banner strong,
     html.dark #view-dashboard #dash-review-banner-text {
       color: #f6d79e !important;
     }
-
     @media (max-width: 1100px) {
       .dash-hero-container,
       .dash-bottom-layout-grid {
         grid-template-columns: 1fr;
         width: min(96%, 1040px);
       }
-
       .dash-hero-stats-stack {
         max-width: none;
         justify-self: stretch;
         display: none;
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
-
     }
-
     @media (max-width: 760px) {
       .dash-switcher-bar,
       .dash-gov-utility-strip,
@@ -1141,84 +984,67 @@
         padding-left: 16px;
         padding-right: 16px;
       }
-
       .dash-switcher-bar {
         height: auto;
         gap: 8px;
       }
-
       .dash-switcher-info,
       .dash-brand-subtitle {
         display: none;
       }
-
       .dash-gov-right,
       .dash-brand-right {
         justify-content: flex-start;
       }
-
       .dash-brand-left {
         min-width: 0;
         align-items: flex-start;
       }
-
       .dash-brand-title {
         font-size: 20px;
       }
-
       .dash-menu-links,
       .dash-menu-search {
         width: 100%;
       }
-
       .dash-menu-link-item button {
         padding: 11px 10px;
         font-size: 12px;
       }
-
       .dash-menu-search {
         margin-bottom: 10px;
       }
-
       .dash-menu-search input,
       .dash-menu-search input:focus {
         width: 100%;
       }
-
       .dash-gov-hero-section {
         min-height: 520px;
         padding: 0 16px;
       }
-
       .dash-gov-hero-section::before {
         background-position: center bottom;
         background-size: 120% 60%;
         -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.02) 34%, rgba(0, 0, 0, 0.32) 54%, #000000 82%, #000000 100%);
         mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.02) 34%, rgba(0, 0, 0, 0.32) 54%, #000000 82%, #000000 100%);
       }
-
       .dash-gov-hero-section::after {
         background:
           linear-gradient(180deg, rgba(15, 32, 49, 0.98) 0%, rgba(23, 50, 77, 0.94) 47%, rgba(23, 50, 77, 0.48) 70%, rgba(23, 50, 77, 0.08) 100%);
       }
-
       .dash-hero-heading {
         font-size: 36px;
       }
-
       .dash-hero-desc {
         margin-bottom: 22px;
         font-size: 16px;
       }
-
       .dash-quick-access-grid {
         grid-template-columns: 1fr;
       }
-
       .dash-panel-card {
         padding: 18px;
       }
-
       .dash-panel-header {
         align-items: flex-start;
         gap: 12px;
@@ -1226,63 +1052,49 @@
         padding-bottom: 14px;
         margin-bottom: 18px;
       }
-
       .dash-panel-title {
         font-size: 20px;
       }
-
       .dash-panel-link-all {
         font-size: 14px;
       }
-
       .dash-updates-list {
         gap: 15px;
       }
-
       .dash-update-text {
         font-size: 15px;
         line-height: 1.5;
       }
-
       .dash-update-meta {
         font-size: 12.5px;
       }
-
       .dash-quick-access-btn {
         min-height: 70px;
         padding: 14px 15px;
       }
-
       .dash-quick-icon-box {
         width: 40px;
         height: 40px;
       }
-
       .dash-quick-title {
         font-size: 16px;
       }
-
       .dash-quick-subtitle {
         font-size: 12.5px;
       }
-
       html.dark #view-dashboard .dash-gov-hero-section {
         background: #07111f;
       }
-
       html.dark #view-dashboard .dash-gov-hero-section::after {
         background:
           linear-gradient(180deg, rgba(2, 8, 23, 0.99) 0%, rgba(9, 24, 43, 0.96) 52%, rgba(8, 17, 31, 0.68) 78%, rgba(8, 17, 31, 0.22) 100%);
       }
-
       .dash-bottom-layout-grid {
         margin: 16px auto;
         width: calc(100% - 32px);
       }
     }
   </style>
-
-  <!-- Reviewer Return Alert Banner (Preserves Returned Review logic) -->
   <div id="dash-review-banner" class="notif notif-warn" style="display:none; margin: 20px 24px; align-items: start; gap: 12px; border: 1px solid #f59e0b; background: #fffbeb; border-radius: 8px; padding: 16px;">
     <i data-lucide="alert-triangle" style="color: #f59e0b; flex-shrink:0;"></i>
     <div style="flex:1;">
@@ -1290,9 +1102,7 @@
       <div id="dash-review-banner-text" style="color: #92400e; font-size: 13px; white-space: pre-wrap;"></div>
     </div>
   </div>
-
   <div class="dash-portal-wrapper">
-    <!-- Fixed Top Switcher Bar -->
     <div class="dash-switcher-bar">
       <div class="dash-switcher-tabs">
         <a href="home.html" class="dash-switcher-tab inactive">
@@ -1306,8 +1116,6 @@
         <i data-lucide="info" style="width: 12px; height: 12px;"></i> Click tabs to switch...
       </div>
     </div>
-
-    <!-- Row 1: Official Gov Bar -->
     <div class="dash-gov-utility-strip">
       <div class="dash-gov-left">
         <span class="dash-badge-in">IN</span>
@@ -1331,8 +1139,6 @@
         <button onclick="document.getElementById('dash-main-content')?.scrollIntoView({behavior:'smooth', block:'start'})" data-i18n="skipContent">Skip to Content</button>
       </div>
     </div>
-
-    <!-- Row 2: Brand Header Row -->
     <div class="dash-gov-brand-row">
       <div class="dash-brand-left">
         <svg viewBox="0 0 100 100" width="54" height="54" style="flex-shrink:0;">
@@ -1362,8 +1168,6 @@
         </button>
       </div>
     </div>
-
-    <!-- Row 3: Menu Bar -->
     <div class="dash-gov-menu-bar">
       <ul class="dash-menu-links">
         <li class="dash-menu-link-item active">
@@ -1393,8 +1197,6 @@
         <input id="dash-portal-search" type="text" placeholder="Search portal..." data-i18n-placeholder="searchPlaceholder" onkeydown="dashRunSearch(event)" aria-label="Search portal">
       </div>
     </div>
-
-    <!-- Row 4: Notice Ticker -->
     <div class="dash-gov-notice-ticker">
       <div class="dash-notice-label">
           <i data-lucide="megaphone" style="width:12px; height:12px; stroke-width: 2.5;"></i> <span data-i18n="noticeLabel">Notice</span>
@@ -1405,8 +1207,6 @@
         </div>
       </div>
     </div>
-
-    <!-- District Context Selector Bar -->
     <div class="dash-district-context-card">
       <div class="dash-district-context-left">
         <i data-lucide="filter" style="width:16px; height:16px; color:#17324D;"></i>
@@ -1442,8 +1242,6 @@
         Active District Highlight: <span id="dash-active-district-badge" class="badge" style="background:#e2e8f0; color:#475569; padding: 4px 10px; border-radius: 4px; font-weight: 800;">None</span>
       </div>
     </div>
-
-    <!-- Hero Section -->
     <section class="dash-gov-hero-section">
       <div class="dash-hero-container">
         <div class="dash-hero-content">
@@ -1463,8 +1261,6 @@
             </button>
           </div>
         </div>
-
-        <!-- Right column stats block (populated by JS bindings) -->
         <div class="dash-hero-stats-stack">
           <div class="dash-hero-stat-card">
             <div class="dash-stat-card-left">
@@ -1490,8 +1286,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Info Bar -->
     <div id="dash-about-section" class="dash-gov-info-bar">
       <div class="dash-info-bar-container">
         <div class="dash-info-bar-left">
@@ -1504,7 +1298,6 @@
         </div>
       </div>
     </div>
-
     <section id="dash-about-dsr-section" class="dash-about-dsr-section">
       <div class="dash-about-dsr-copy">
         <span class="dash-map-kicker">About DSR</span>
@@ -1533,7 +1326,6 @@
         </p>
       </div>
     </section>
-
     <section id="dash-district-map-section" class="dash-district-map-section">
       <div class="dash-district-map-header">
         <div>
@@ -1585,10 +1377,7 @@
         </div>
       </div>
     </section>
-
-    <!-- Bottom layout columns (Updates & Quick Access) -->
     <div class="dash-bottom-layout-grid">
-      <!-- Latest Updates Panel -->
       <div class="dash-panel-card">
         <div class="dash-panel-header">
           <span class="dash-panel-title">
@@ -1637,8 +1426,6 @@
           </li>
         </ul>
       </div>
-
-      <!-- Quick Access Panel -->
       <div class="dash-panel-card">
         <div class="dash-panel-header">
           <span class="dash-panel-title">
@@ -1691,7 +1478,6 @@
         </div>
       </div>
     </div>
-
     <section id="dash-contact-section" class="dash-bottom-layout-grid" style="grid-template-columns: minmax(0, 1fr); margin-top: 0;">
       <div class="dash-panel-card">
         <div class="dash-panel-header">
@@ -1732,8 +1518,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Hidden element placeholder inputs for stats compiler to prevent errors -->
     <div style="display:none;">
       <span id="d-done">0</span>
       <span id="d-sigs">0</span>
@@ -1746,7 +1530,5 @@
       <span id="d-sigs-pct">0%</span>
       <span id="d-pdfs-pct">0%</span>
     </div>
-
   </div>
-
 </div>

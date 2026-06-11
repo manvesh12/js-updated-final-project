@@ -1,5 +1,4 @@
 /* Role, module, chapter, and table-level access rules */
-
 const RBAC_ROLE_RULES = {
   ADMIN: {
     label: 'Admin',
@@ -116,7 +115,6 @@ const RBAC_ROLE_RULES = {
     access: 'State review'
   }
 };
-
 const RBAC_TABLE_COLUMN_RULES = {
   IIT_ROPAR: {
     default: [1, 2],
@@ -221,7 +219,6 @@ const RBAC_TABLE_COLUMN_RULES = {
     default: [2, 3, 4, 5, 6, 7, 8]
   }
 };
-
 function getBackendRole() {
   const raw = (window.S && (S.backendRole || S.user?.backendRole || S.user?.roleCode)) || '';
   const cleaned = String(raw).replace(/^ROLE_/, '').toUpperCase();
@@ -231,11 +228,9 @@ function getBackendRole() {
   if (S?.role === 'sdlc') return 'SDLC';
   return 'OFFICER';
 }
-
 function getRoleRule() {
   return RBAC_ROLE_RULES[getBackendRole()] || RBAC_ROLE_RULES.OFFICER;
 }
-
 function hasPermission(permission) {
   const perms = S?.permissions || [];
   if (perms.includes(permission)) return true;
@@ -245,7 +240,6 @@ function hasPermission(permission) {
   if (permission === 'ADMIN') return !!rule.admin;
   return false;
 }
-
 function hasModuleAccess(viewId) {
   if (!viewId) return true;
   if (viewId === 'audit-logs') return true;
@@ -253,7 +247,6 @@ function hasModuleAccess(viewId) {
   if (rule.modules?.includes('*')) return true;
   return rule.modules?.includes(viewId);
 }
-
 function getFirstAllowedView() {
   const preferredViews = [
     'dashboard', 'projects', 'front-matter', 'chapters', 'plates', 'graphs',
@@ -264,7 +257,6 @@ function getFirstAllowedView() {
   ];
   return preferredViews.find(viewId => hasModuleAccess(viewId) && document.getElementById('view-' + viewId)) || 'dashboard';
 }
-
 function getFirstAllowedProjectView() {
   const projectViews = [
     'front-matter', 'chapters', 'plates', 'graphs',
@@ -275,14 +267,13 @@ function getFirstAllowedProjectView() {
   ];
   return projectViews.find(viewId => hasModuleAccess(viewId) && document.getElementById('view-' + viewId)) || 'projects';
 }
-
 function showUnauthorizedAccessError() {
   const message = 'Access not provided. You are not authorized to access this section.';
   if (typeof toast === 'function') toast(message, 'error');
   else alert(message);
 }
-
 function canEditView(viewId) {
+  if (typeof isActivePhaseLocked === 'function' && isActivePhaseLocked()) return false;
   const role = getBackendRole();
   const rule = getRoleRule();
   if (role === 'ADMIN' || role === 'OFFICER' || role === 'DATA_ENTRY') return true;
@@ -291,7 +282,6 @@ function canEditView(viewId) {
   if (viewId === 'dashboard' || viewId === 'projects' || viewId === 'workflow' || viewId === 'history') return false;
   return hasModuleAccess(viewId);
 }
-
 function canEditChapter(chapterNo) {
   const role = getBackendRole();
   const rule = getRoleRule();
@@ -299,28 +289,23 @@ function canEditChapter(chapterNo) {
   if (rule.chapters === 'all') return true;
   return Array.isArray(rule.chapters) && rule.chapters.includes(Number(chapterNo));
 }
-
 function hasWriteAccess() {
   if (typeof S === 'undefined' || !S || !S.user) return false;
   const activeView = document.querySelector('.view.active');
   const viewId = activeView ? activeView.id.replace('view-', '') : '';
   return canEditView(viewId);
 }
-
 function isUserReadOnly() {
   return !hasWriteAccess();
 }
-
 function hasReviewAccess() {
   if (typeof S === 'undefined' || !S || !S.user) return false;
   return hasPermission('REVIEW');
 }
-
 function hasAdminAccess() {
   if (typeof S === 'undefined' || !S || !S.user) return false;
   return hasPermission('ADMIN') || getBackendRole() === 'ADMIN';
 }
-
 function setLockedElement(el, locked, label) {
   if (!el) return;
   el.classList.toggle('rbac-locked', locked);
@@ -334,7 +319,6 @@ function setLockedElement(el, locked, label) {
     delete el.dataset.rbacBadge;
   }
 }
-
 function lockFormElement(el, locked, label) {
   if (!el) return;
   if (el.matches('[contenteditable], td, th')) {
@@ -344,7 +328,6 @@ function lockFormElement(el, locked, label) {
   }
   setLockedElement(el, locked, label);
 }
-
 function isNavigationOrSafeButton(btn) {
   const onclickAttr = btn.getAttribute('onclick') || '';
   return btn.closest('#reviewer-actions') ||
@@ -358,7 +341,6 @@ function isNavigationOrSafeButton(btn) {
     onclickAttr.includes('toggle') ||
     onclickAttr.includes('closeModal');
 }
-
 function isEditActionElement(el) {
   const text = (el.textContent || '').toLowerCase();
   const attrs = `${el.getAttribute('onclick') || ''} ${el.getAttribute('onchange') || ''}`;
@@ -367,13 +349,11 @@ function isEditActionElement(el) {
     el.classList.contains('upload-zone') ||
     el.querySelector?.('input[type="file"]');
 }
-
 function applyMoreAnnexureAccess(root) {
   const container = root || document.querySelector('.view.active');
   if (!container || !container.id || !container.id.startsWith('view-annexure-')) return;
   applyAnnexureColumnLocks(container);
 }
-
 function applyChapterAccess(root) {
   const container = root || document.getElementById('view-chapters');
   if (!container) return;
@@ -387,7 +367,6 @@ function applyChapterAccess(root) {
     setLockedElement(item, !allowed, label);
   });
 }
-
 function getTableColumnPolicy(role, viewId, table) {
   const tableId = table?.id || '';
   const policy = RBAC_TABLE_COLUMN_RULES[role];
@@ -402,7 +381,6 @@ function getTableColumnPolicy(role, viewId, table) {
   }
   return policy.default || null;
 }
-
 function getEditableColumnsForTable(table) {
   const role = getBackendRole();
   const view = table?.closest?.('.view');
@@ -412,12 +390,10 @@ function getEditableColumnsForTable(table) {
   if (fullAccess) return null;
   return getTableColumnPolicy(role, viewId, table) || rule.annexureColumns || [];
 }
-
 function isActionCellContent(value) {
   const text = String(value === undefined || value === null ? '' : value);
   return /<button|onclick=|btn-danger|trash-2/i.test(text);
 }
-
 function setRbacUploadCellValue(cell, value) {
   if (!cell) return;
   const valueText = String(value === undefined || value === null || value === '' ? 'NUL' : value);
@@ -433,7 +409,6 @@ function setRbacUploadCellValue(cell, value) {
     cell.textContent = valueText;
   }
 }
-
 function buildSafeUploadRowForTable(table, rowData, editableColumns) {
   if (!Array.isArray(rowData)) return [];
   if (!editableColumns) return rowData.slice();
@@ -443,12 +418,10 @@ function buildSafeUploadRowForTable(table, rowData, editableColumns) {
     return editableColumns.includes(colNo) ? value : 'LOCKED';
   });
 }
-
 function rbacApplyExcelRowsToTable(tableOrId, rows, addRowFn, options = {}) {
   const table = typeof tableOrId === 'string' ? document.getElementById(tableOrId) : tableOrId;
   const tbody = table ? table.querySelector('tbody') : null;
   if (!table || !tbody || !Array.isArray(rows)) return { updated: 0, protected: 0 };
-
   const editableColumns = getEditableColumnsForTable(table);
   const fullAccess = editableColumns === null;
   const addRow = typeof addRowFn === 'function'
@@ -463,17 +436,14 @@ function rbacApplyExcelRowsToTable(tableOrId, rows, addRowFn, options = {}) {
       });
       tbody.appendChild(tr);
     };
-
   if (fullAccess || options.replaceForPartial === true) {
     tbody.innerHTML = '';
     rows.forEach(row => addRow(row));
     if (typeof enforceActiveViewHierarchy === 'function') enforceActiveViewHierarchy(true);
     return { updated: rows.length, protected: 0 };
   }
-
   let updated = 0;
   let protectedCells = 0;
-
   rows.forEach((rowData, rowIndex) => {
     let row = tbody.rows[rowIndex];
     if (!row) {
@@ -481,7 +451,6 @@ function rbacApplyExcelRowsToTable(tableOrId, rows, addRowFn, options = {}) {
       row = tbody.rows[rowIndex];
     }
     if (!row) return;
-
     Array.from(rowData).forEach((value, idx) => {
       if (isActionCellContent(value)) return;
       const colNo = idx + 1;
@@ -494,27 +463,22 @@ function rbacApplyExcelRowsToTable(tableOrId, rows, addRowFn, options = {}) {
     });
     updated += 1;
   });
-
   if (typeof enforceActiveViewHierarchy === 'function') enforceActiveViewHierarchy(true);
   if (typeof initLucide === 'function') initLucide();
-
   if (protectedCells && typeof toast === 'function' && options.silent !== true) {
     toast(`${protectedCells} locked cell(s) were protected during Excel sync.`, 'info');
   }
   return { updated, protected: protectedCells };
 }
-
 function applyAnnexureColumnLocks(root) {
   const container = root || document.querySelector('.view.active');
   if (!container) return;
   const viewId = container.id.replace('view-', '');
   if (!/^anx[1-7]$/.test(viewId) && !/^annexure-[b-k]$/.test(viewId)) return;
-
   const role = getBackendRole();
   const rule = getRoleRule();
   const fullAccess = role === 'ADMIN' || role === 'OFFICER' || role === 'DATA_ENTRY';
   const canModuleEdit = canEditView(viewId);
-
   container.querySelectorAll('table').forEach(table => {
     const tableColumns = getTableColumnPolicy(role, viewId, table);
     const editableColumns = fullAccess ? null : (tableColumns || rule.annexureColumns || []);
@@ -529,7 +493,6 @@ function applyAnnexureColumnLocks(root) {
       });
     });
   });
-
   if (canModuleEdit && !fullAccess) {
     container.querySelectorAll('button, label.btn, .upload-zone').forEach(el => {
       const text = (el.textContent || '').toLowerCase();
@@ -540,10 +503,8 @@ function applyAnnexureColumnLocks(root) {
     });
   }
 }
-
 function updateRolePermissionUI() {
   const adminAccess = hasAdminAccess();
-
   [
     document.getElementById('tb-btn-new-project'),
     document.getElementById('view-btn-new-project'),
@@ -551,11 +512,9 @@ function updateRolePermissionUI() {
   ].forEach(el => {
     if (el) el.style.display = adminAccess ? '' : 'none';
   });
-
   document.querySelectorAll('[onclick*="newProjectModal"], [onclick*="deleteProject"]').forEach(el => {
     el.style.display = adminAccess ? '' : 'none';
   });
-
   const navAuditLogs = document.getElementById('nav-audit-logs');
   if (navAuditLogs) navAuditLogs.style.display = 'block';
   const tbNavAuditLogs = document.getElementById('tb-nav-audit-logs');
@@ -566,15 +525,12 @@ function updateRolePermissionUI() {
   if (projectsMenuAuditLogs) projectsMenuAuditLogs.style.display = 'block';
   const navUsers = document.getElementById('nav-users');
   if (navUsers) navUsers.style.display = adminAccess ? 'block' : 'none';
-
   const roleText = document.querySelector('.sb-role-text');
   if (roleText && S?.user) roleText.textContent = getRoleRule().label;
 }
-
 function enforceActiveViewHierarchy(force = false) {
   const activeView = document.querySelector('.view.active');
   if (!activeView || typeof S === 'undefined' || !S.user) return;
-
   const viewId = activeView.id.replace('view-', '');
   const rbacSignature = [
     getBackendRole(),
@@ -588,19 +544,15 @@ function enforceActiveViewHierarchy(force = false) {
     updateRolePermissionUI();
     return;
   }
-
   const canEdit = canEditView(viewId);
   const label = `${getRoleRule().label} cannot edit this section`;
-
   activeView.querySelectorAll('input, textarea, select').forEach(el => {
     if (el.closest('#modal-review') || el.id === 'dash-district-filter' || el.closest('#reviewer-actions') || el.closest('#reviewer-floating-notes')) return;
     lockFormElement(el, !canEdit, label);
   });
-
   activeView.querySelectorAll('[contenteditable], [contenteditable="true"]').forEach(el => {
     lockFormElement(el, !canEdit, label);
   });
-
   activeView.querySelectorAll('button, label.btn, .upload-zone').forEach(el => {
     if (el.tagName === 'BUTTON' && isNavigationOrSafeButton(el)) return;
     if (!isEditActionElement(el)) return;
@@ -610,20 +562,16 @@ function enforceActiveViewHierarchy(force = false) {
     }
     el.style.display = canEdit ? '' : 'none';
   });
-
   if (viewId === 'chapters') applyChapterAccess(activeView);
   applyAnnexureColumnLocks(activeView);
   applyMoreAnnexureAccess(activeView);
-
   const reviewerActions = document.getElementById('reviewer-actions');
   if (reviewerActions) {
     reviewerActions.style.display = (hasReviewAccess() && S.activeProject) ? 'flex' : 'none';
   }
-
   updateRolePermissionUI();
   activeView.dataset.rbacSignature = rbacSignature;
 }
-
 function ensureRbacStyles() {
   if (document.getElementById('rbac-style')) return;
   const style = document.createElement('style');
@@ -677,7 +625,6 @@ function ensureRbacStyles() {
   `;
   document.head.appendChild(style);
 }
-
 function bindRbacLockedClickHandler() {
   if (window.__rbacLockedClickHandlerBound) return;
   window.__rbacLockedClickHandlerBound = true;
@@ -689,7 +636,6 @@ function bindRbacLockedClickHandler() {
     showUnauthorizedAccessError();
   }, true);
 }
-
 document.addEventListener('DOMContentLoaded', ensureRbacStyles);
 document.addEventListener('DOMContentLoaded', bindRbacLockedClickHandler);
 ensureRbacStyles();

@@ -1,12 +1,9 @@
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    ANNEXURE I â€” SAND SOURCES
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-
-// --- 1. TEMPLATE DOWNLOAD ---
 function downloadSectionTemplate(sectionType) {
   let csvContent = "";
   let filename = "";
-
   switch(sectionType) {
     case 'A':
       csvContent = "River Name/M-Sand Plant,Total Stretch of River (in KM),Type of River (Perennial or Non Perennial)\n";
@@ -25,7 +22,6 @@ function downloadSectionTemplate(sectionType) {
       filename = "Table_D_MSand_Template.csv";
       break;
   }
-
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
@@ -36,12 +32,9 @@ function downloadSectionTemplate(sectionType) {
   link.click();
   document.body.removeChild(link);
 }
-
-// --- 2. EXCEL UPLOAD PARSING ---
 function handleSectionUpload(event, sectionType) {
   const file = event.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
@@ -49,12 +42,10 @@ function handleSectionUpload(event, sectionType) {
       const workbook = XLSX.read(data, { type: 'array' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-      
       if (rows.length === 0) {
         toast("The uploaded file is empty.", "warn");
         return;
       }
-
       processExcelData(rows, sectionType);
     } catch (error) {
       toast("Error parsing file. Please ensure it is a valid Excel or CSV file.", "error");
@@ -64,11 +55,9 @@ function handleSectionUpload(event, sectionType) {
   };
   reader.readAsArrayBuffer(file);
 }
-
 function processExcelData(rows, sectionType) {
   const validRows = rows.filter(row => row.some(cell => String(cell !== undefined && cell !== null ? cell : "").trim() !== ""));
   let startIndex = 0; 
-
   const headerIdx = validRows.findIndex(row => {
     const rowStr = row.map(c => String(c || '')).join(' ').toLowerCase();
     if (sectionType === 'A') return rowStr.includes('river');
@@ -77,32 +66,25 @@ function processExcelData(rows, sectionType) {
     if (sectionType === 'D') return rowStr.includes('plant');
     return false;
   });
-
   if (headerIdx >= 0) {
     startIndex = headerIdx + 1;
   }
-
   const dataRows = validRows.slice(startIndex);
-  
   if(dataRows.length === 0) {
     toast("No data found after the header in the uploaded file.", "warn");
     return;
   }
-  
   let tableId = '';
   if (sectionType === 'A') tableId = 'anx1-rivers';
   if (sectionType === 'B') tableId = 'anx1-desilt';
   if (sectionType === 'C') tableId = 'anx1-patta';
   if (sectionType === 'D') tableId = 'anx1-msand';
-
   const uploadRows = [];
   dataRows.forEach(rowData => {
     while (rowData.length < 8) rowData.push(""); 
-
     let cellDataArray = [];
     const isReadOnly = isUserReadOnly();
     const actionBtn = `<button class='btn btn-xs btn-danger' onclick='delRow(this)' style='display:${isReadOnly ? 'none' : 'inline-flex'};align-items:center;justify-content:center;padding:4px;'><i data-lucide='trash-2' style='width:12px;height:12px;'></i></button>`;
-
     if (sectionType === 'A') {
       let typeVal = String(rowData[2] || "").trim();
       let isNonPerennial = typeVal.toLowerCase().includes("non");
@@ -132,20 +114,16 @@ function processExcelData(rows, sectionType) {
   toast(`Uploaded section ${sectionType} data successfully`, 'success');
   scheduleAnx1LivePreview(200);
 }
-
 function addRowAnx1(tableId, cellDataArray) {
   const tbody = document.querySelector('#' + tableId + ' tbody');
   if (!tbody) return;
   const tr = document.createElement('tr');
-  
   cellDataArray.forEach((data) => {
     const td = document.createElement('td');
     let dataStr = String(data !== undefined && data !== null ? data : '').trim();
-
     if (dataStr === '' && !dataStr.includes('<button') && !dataStr.includes('<select')) {
       dataStr = 'NUL';
     }
-
     if (!dataStr.includes('<button') && !dataStr.includes('<select')) {
       if (isUserReadOnly()) {
         td.contentEditable = "false";
@@ -160,13 +138,10 @@ function addRowAnx1(tableId, cellDataArray) {
     }
     tr.appendChild(td);
   });
-  
   tbody.appendChild(tr);
   if (window.initLucide) window.initLucide();
   scheduleAnx1LivePreview(250);
 }
-
-// --- 3. FLAWLESS PAGINATED PDF GENERATOR ---
 function escapeAnx1Html(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -175,7 +150,6 @@ function escapeAnx1Html(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
-
 function getAnx1TableRows(tableId) {
   return Array.from(document.querySelectorAll(`#${tableId} tbody tr`)).map(row => (
     Array.from(row.querySelectorAll('td')).slice(0, -1).map(cell => {
@@ -184,7 +158,6 @@ function getAnx1TableRows(tableId) {
     })
   ));
 }
-
 function buildAnx1PreviewMarkup() {
   const sections = [
     {
@@ -208,13 +181,11 @@ function buildAnx1PreviewMarkup() {
       headers: ['Plant Name', 'Owner', 'District', 'Tehsil', 'Village', 'Geo-location', 'Quantity Tonnes/Annum']
     }
   ];
-
   const sectionHtml = sections.map(section => {
     const rows = getAnx1TableRows(section.id);
     const body = rows.length
       ? rows.map(row => `<tr>${section.headers.map((_, i) => `<td>${escapeAnx1Html(row[i] || 'NUL')}</td>`).join('')}</tr>`).join('')
       : `<tr><td colspan="${section.headers.length}" class="empty">Data not provided</td></tr>`;
-
     return `
       <section class="anx1-section">
         <h2>${escapeAnx1Html(section.title)}</h2>
@@ -224,7 +195,6 @@ function buildAnx1PreviewMarkup() {
         </table>
       </section>`;
   }).join('');
-
   return `<!doctype html>
 <html>
   <head>
@@ -259,7 +229,6 @@ function buildAnx1PreviewMarkup() {
   </body>
 </html>`;
 }
-
 function renderAnx1LivePreviewHtml() {
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx1') : document.getElementById('pdf-preview-iframe'));
   if (!iframe) return null;
@@ -268,7 +237,6 @@ function renderAnx1LivePreviewHtml() {
   iframe.srcdoc = buildAnx1PreviewMarkup();
   return iframe;
 }
-
 function scheduleAnx1LivePreview(delay = 500) {
   if (window.anx1DebounceTimer) clearTimeout(window.anx1DebounceTimer);
   window.anx1DebounceTimer = setTimeout(() => {
@@ -277,36 +245,29 @@ function scheduleAnx1LivePreview(delay = 500) {
     }
   }, delay);
 }
-
 function exportAnx1PDF(btn, isLivePreview = false) {
   if (isLivePreview) {
     renderAnx1LivePreviewHtml();
     return;
   }
-
   if (typeof html2pdf === 'undefined') {
     const originalText = btn ? btn.innerText : 'Loading...';
     if (btn) btn.innerText = "Loading PDF Engine...";
-    
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-    
     script.onload = () => {
       if (btn) btn.innerText = originalText;
       executePDFExport(isLivePreview);
     };
-    
     script.onerror = () => {
       if (btn) btn.innerText = originalText;
       toast("Failed to load PDF engine. Please check your internet connection.", "error");
     };
-    
     document.head.appendChild(script);
   } else {
     executePDFExport(isLivePreview);
   }
 }
-
 function executePDFExport(isLivePreview) {
   const mainView = document.getElementById('view-anx1');
   const printElement = document.createElement('div');
@@ -317,17 +278,13 @@ function executePDFExport(isLivePreview) {
   printElement.style.fontFamily = 'Arial, Helvetica, sans-serif';
   printElement.style.color = '#000000';
   printElement.style.backgroundColor = '#ffffff';
-
   printElement.innerHTML = buildAnx1PreviewMarkup();
-  
-  // We attach it invisibly so html2pdf can process it
   printElement.style.position = 'absolute';
   printElement.style.top = '0';
   printElement.style.left = '0';
   printElement.style.zIndex = '-9999';
   printElement.style.opacity = '0';
   document.body.appendChild(printElement);
-
   const opt = {
     margin:       10,
     filename:     'Annexure_1_Sources.pdf',
@@ -336,7 +293,6 @@ function executePDFExport(isLivePreview) {
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak:    { mode: ['css', 'legacy'], avoid: ['tr', 'h4'] }
   };
-
   if (isLivePreview) {
     html2pdf().set(opt).from(printElement).toPdf().get('pdf').then(function(pdf) {
       const totalPages = pdf.internal.getNumberOfPages();
@@ -346,10 +302,8 @@ function executePDFExport(isLivePreview) {
         pdf.setTextColor(0, 0, 0);
         pdf.text("Page " + i, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, { align: 'center' });
       }
-      
       const blob = pdf.output('blob');
       const blobUrl = URL.createObjectURL(blob);
-      
       document.body.removeChild(printElement);
       const iframe = window.setAnnexurePreviewIframeSrc
         ? window.setAnnexurePreviewIframeSrc('anx1', blobUrl)
@@ -360,12 +314,10 @@ function executePDFExport(isLivePreview) {
       console.error(err);
     });
   } else {
-    // Generate and download
     let originalBodyPadding = document.body.style.padding;
     let originalBodyBg = document.body.style.backgroundColor;
     document.body.style.padding = '0';
     document.body.style.backgroundColor = '#ffffff';
-    
     html2pdf().set(opt).from(printElement).toPdf().get('pdf').then(function(pdf) {
       const totalPages = pdf.internal.getNumberOfPages();
       for (let i = 1; i <= totalPages; i++) {
@@ -388,17 +340,12 @@ function executePDFExport(isLivePreview) {
     });
   }
 }
-
 window.exportAnx1PDF = exportAnx1PDF;
-
-// Auto Live Preview whenever the table changes
 document.addEventListener('input', (e) => {
   if (e.target.closest('#anx1-rivers, #anx1-desilt, #anx1-patta, #anx1-msand')) {
     scheduleAnx1LivePreview(700);
   }
 });
-
-// --- 4. HANDLE PDF UPLOAD & PREVIEW ---
 function renderPdfUploadUIAnx1() {
   const nameEl = document.getElementById('anx1-uploaded-filename');
   const dlBtn = document.getElementById('anx1-download-btn');
@@ -406,9 +353,7 @@ function renderPdfUploadUIAnx1() {
   const previewBtn = document.getElementById('anx1-preview-btn');
   const previewSection = document.getElementById('pdf-preview-section');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx1') : document.getElementById('pdf-iframe'));
-  
   if (!nameEl || !dlBtn) return;
-
   if (!S.activeProject) {
     nameEl.style.display = 'none';
     dlBtn.style.display = 'none';
@@ -416,38 +361,30 @@ function renderPdfUploadUIAnx1() {
     if (previewBtn) previewBtn.style.display = 'none';
     return;
   }
-
   const pdfName = S.activeProject.anx1PdfName;
-
-  // Role-based restrictions: Only officers (user) and admins can upload/delete
   const canEdit = !isUserReadOnly();
   const uploadInput = document.getElementById('anx1-upload');
   if (uploadInput) {
     uploadInput.disabled = !canEdit;
     uploadInput.parentElement.style.display = canEdit ? 'inline-block' : 'none';
   }
-
   if (!pdfName) {
     nameEl.style.display = 'none';
     dlBtn.style.display = 'none';
     if (delBtn) delBtn.style.display = 'none';
     if (previewBtn) previewBtn.style.display = 'none';
-    // Do NOT hide the previewSection here anymore, as it's a live preview now.
   } else {
     nameEl.textContent = pdfName;
     nameEl.style.display = 'inline-block';
     dlBtn.style.display = 'inline-flex';
     if (delBtn) delBtn.style.display = canEdit ? 'inline-flex' : 'none';
     if (previewBtn) previewBtn.style.display = 'inline-flex';
-    
-    // Trigger live preview auto-generation when this UI is rendered
     if (previewSection && previewSection.style.display !== 'none' && iframe) {
       if (S.activeProject.pdfData && S.activeProject.pdfData.anx1) {
         if (iframe.src !== S.activeProject.pdfData.anx1) {
           iframe.src = S.activeProject.pdfData.anx1;
         }
       } else {
-        // Automatically generate live preview if no uploaded PDF exists
         if (!window.anx1InitialPreviewGenerated) {
            setTimeout(() => { exportAnx1PDF(null, true); }, 500);
            window.anx1InitialPreviewGenerated = true;
@@ -455,24 +392,18 @@ function renderPdfUploadUIAnx1() {
       }
     }
   }
-
   if (window.initLucide) window.initLucide();
 }
 window.renderPdfUploadUIAnx1 = renderPdfUploadUIAnx1;
-
 function togglePDFPreviewAnx1() {
   if (window.pdfPreview) window.pdfPreview.show('anx1');
   exportAnx1PDF(null, true);
 }
-
 async function deletePdfAnx1() {
   if (!S.activeProject) return;
-  
   if (!confirm("Are you sure you want to delete the uploaded PDF? This will remove the file from the server.")) {
     return;
   }
-  
-  // Hide preview and clear iframe first to release Windows file lock
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx1') : document.getElementById('pdf-iframe'));
   if (iframe) {
     iframe.removeAttribute('srcdoc');
@@ -481,9 +412,7 @@ async function deletePdfAnx1() {
     }
     iframe.src = 'about:blank';
   }
-
   toast("Deleting PDF...", "info");
-  
   S.activeProject.anx1PdfName = null;
   if (S.activeProject.pdfData) {
     if (S.activeProject.pdfData.anx1 && S.activeProject.pdfData.anx1.startsWith('blob:')) {
@@ -491,29 +420,23 @@ async function deletePdfAnx1() {
     }
     S.activeProject.pdfData.anx1 = null;
   }
-  
   const pIdx = S.projects.findIndex(p => p.id === S.activeProject.id);
   if (pIdx !== -1) {
     S.projects[pIdx].anx1PdfName = null;
     if (S.projects[pIdx].pdfData) S.projects[pIdx].pdfData.anx1 = null;
   }
-  
   renderPdfUploadUIAnx1();
   toast("PDF deleted successfully.", "success");
 }
-
 function handlePDFUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
-
   if (!file.name.toLowerCase().endsWith('.pdf')) {
     toast('Error: Only PDF files are allowed.', 'danger');
     event.target.value = '';
     return;
   }
-
   toast('Uploading PDF...', 'info');
-
   const fileURL = URL.createObjectURL(file);
   S.activeProject.anx1PdfName = file.name;
   if (!S.activeProject.pdfData) S.activeProject.pdfData = {};
@@ -521,7 +444,6 @@ function handlePDFUpload(event) {
   if (window.storeProjectPdf) {
     window.storeProjectPdf('anx1', file).catch(err => console.error('Backend PDF upload failed:', err));
   }
-
   if (window.renderPdfToImages) {
     window.renderPdfToImages(file, (err, imgs) => {
       if (!err && imgs) {
@@ -531,25 +453,21 @@ function handlePDFUpload(event) {
       }
     });
   }
-
   const pIdx = S.projects.findIndex(p => p.id === S.activeProject.id);
   if (pIdx !== -1) {
     S.projects[pIdx].anx1PdfName = file.name;
     if (!S.projects[pIdx].pdfData) S.projects[pIdx].pdfData = {};
     S.projects[pIdx].pdfData.anx1 = fileURL;
   }
-  
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx1') : document.getElementById('pdf-iframe'));
   if (iframe) {
     iframe.removeAttribute('srcdoc');
     iframe.src = fileURL;
   }
-  
   renderPdfUploadUIAnx1();
   toast('PDF uploaded and preview loaded!', 'success');
   event.target.value = '';
 }
-
 function closePDFPreview() {
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx1') : document.getElementById('pdf-iframe'));
   if (iframe) {
@@ -560,7 +478,6 @@ function closePDFPreview() {
     iframe.src = 'about:blank';
   }
 }
-
 function downloadPdfAnx1() {
   if (!S.activeProject) {
     toast('Please select and open a project first.', 'warn');
@@ -582,15 +499,11 @@ function downloadPdfAnx1() {
   a.click();
   document.body.removeChild(a);
 }
-
-// Auto Live Preview whenever the table changes
 document.addEventListener('input', (e) => {
   if (e.target.closest('#view-anx1 table')) {
     scheduleAnx1LivePreview(700);
   }
 });
-
-
 document.addEventListener('change', (e) => {
   if (e.target.closest('#view-anx1 table')) {
     scheduleAnx1LivePreview(300);

@@ -1,16 +1,13 @@
 /* ══════════════════════════════════════
    PLATES SECTION MANAGEMENT
    ══════════════════════════════════════ */
-
 function renderPlates() {
   const el = document.getElementById('plate-list');
   if (!el) return;
-
   if (!S.plates.length) {
     el.innerHTML = '<div class="empty-state"><span class="empty-icon">🗂️</span><h3>No plates added yet</h3><p>Click "Add Plate" to setup maps, graphs, and images</p></div>';
     return;
   }
-
   el.innerHTML = S.plates.map((p, i) => {
     let fileInfoHTML = '';
     if (p.fileName) {
@@ -38,7 +35,6 @@ function renderPlates() {
           </label>
         </div>`;
     }
-
     return `
     <div class="chapter-item">
       <div class="ch-num" style="background:var(--teal)">P${i + 1}</div>
@@ -57,7 +53,6 @@ function renderPlates() {
     </div>`;
   }).join('');
 }
-
 function addPlate() {
   S.plates.push({
     id: Date.now(),
@@ -70,7 +65,6 @@ function addPlate() {
   renderPlates();
   if (window.debouncedSaveState) window.debouncedSaveState();
 }
-
 function deletePlateReq(id) {
   customConfirm('Remove this plate completely?', () => {
     S.plates = S.plates.filter(p => p.id !== id);
@@ -80,29 +74,22 @@ function deletePlateReq(id) {
     toast('Plate removed', 'info');
   });
 }
-
 function movePlate(idx, dir) {
   [S.plates[idx], S.plates[idx + dir]] = [S.plates[idx + dir], S.plates[idx]];
   renderPlates();
   if (window.pdfPreview) window.pdfPreview.notifyUpdate('plates');
   if (window.debouncedSaveState) window.debouncedSaveState();
 }
-
 function handlePlateUpload(e, id) {
   const f = e.target.files[0];
   if (!f) return;
-
   const p = S.plates.find(x => x.id === id);
   if (!p) return;
-
   const sizeStr = (f.size / 1024).toFixed(1) + ' KB';
-
   if (f.type === 'application/pdf') {
-    // Show temporary spinner or state
     p.fileName = f.name;
     p.fileSize = 'Processing PDF...';
     renderPlates();
-
     if (typeof renderPdfToImages === 'function') {
       renderPdfToImages(f, (err, imgs) => {
         if (err) {
@@ -147,7 +134,6 @@ function handlePlateUpload(e, id) {
     toast('❌ Unsupported file format. Please upload a PDF or an Image.', 'error');
   }
 }
-
 function deletePlateFile(id) {
   const p = S.plates.find(x => x.id === id);
   if (p) {
@@ -160,8 +146,6 @@ function deletePlateFile(id) {
     toast('Plate file removed', 'success');
   }
 }
-
-// Expose functions globally
 window.deletePlateFile = deletePlateFile;
 window.handlePlateUpload = handlePlateUpload;
 window.addPlate = addPlate;

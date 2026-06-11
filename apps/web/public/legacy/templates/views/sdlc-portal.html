@@ -1,4 +1,3 @@
-<!-- templates/views/sdlc-portal.html -->
 <div class="view" id="view-sdlc-portal">
   <div class="card" style="margin-bottom: 24px; border:1px solid var(--border);">
     <div class="card-hd" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border);">
@@ -13,9 +12,7 @@
       </div>
       <span class="badge badge-amber" style="font-size:11px; padding:5px 10px;" id="sdlc-portal-status">Awaiting Upload</span>
     </div>
-    
     <div class="card-bd" style="padding: 24px;">
-      <!-- Step 1 & 2: Project Selection and File Upload -->
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom:28px;">
         <div style="background:var(--bg); padding:16px 20px; border-radius:var(--r-md); border:1px solid var(--border-2);">
           <h4 style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.04em;">
@@ -24,7 +21,6 @@
           <div class="field">
             <label style="font-size:11.5px; margin-bottom:6px;">Choose Active District Project</label>
             <select id="sdlc-project-select" style="width:100%; padding:10px; border:1px solid var(--border-2); border-radius:8px; background:var(--card); color:var(--text);" onchange="onSdlcProjectChanged()">
-              <!-- Populated dynamically -->
               <option value="">-- Select Project --</option>
             </select>
           </div>
@@ -32,7 +28,6 @@
             The uploaded SDLC survey data will be compared against the selected DSR project's official entries.
           </p>
         </div>
-
         <div style="background:var(--bg); padding:16px 20px; border-radius:var(--r-md); border:1px solid var(--border-2);">
           <h4 style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.04em;">
             2. Upload SDLC Survey Report
@@ -53,19 +48,14 @@
           </p>
         </div>
       </div>
-
-      <!-- Step 3: Comparison Panel (Hidden until data is loaded) -->
       <div id="sdlc-comparison-container" style="display:none; border-top:1px dashed var(--border); padding-top:24px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <h4 style="font-size:14px; font-weight:700; color:var(--text); margin:0;">
             3. Side-by-Side Data Verification & Discrepancies
           </h4>
           <div style="display:flex; gap:8px;" id="sdlc-discrepancy-summary-badges">
-            <!-- Populated dynamically -->
           </div>
         </div>
-
-        <!-- Comparative Tabs -->
         <div class="auth-tabs" style="margin-bottom:16px; background:var(--bg); border:1px solid var(--border-2); border-radius:8px; padding:4px;">
           <div class="auth-tab active" id="tab-sdlc-anx4" onclick="switchSdlcTab('anx4')" style="padding:10px 14px; font-size:12.5px;">
             Annexure IV (Carrying Capacity)
@@ -80,8 +70,6 @@
             Annexure VII (Traffic Density)
           </div>
         </div>
-
-        <!-- Comparative Tables -->
         <div id="sdlc-tab-content-anx4" class="sdlc-tab-content">
           <table class="table" style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -96,7 +84,6 @@
             <tbody id="sdlc-tbody-anx4"></tbody>
           </table>
         </div>
-
         <div id="sdlc-tab-content-anx5" class="sdlc-tab-content" style="display:none;">
           <table class="table" style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -111,7 +98,6 @@
             <tbody id="sdlc-tbody-anx5"></tbody>
           </table>
         </div>
-
         <div id="sdlc-tab-content-anx6" class="sdlc-tab-content" style="display:none;">
           <table class="table" style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -126,7 +112,6 @@
             <tbody id="sdlc-tbody-anx6"></tbody>
           </table>
         </div>
-
         <div id="sdlc-tab-content-anx7" class="sdlc-tab-content" style="display:none;">
           <table class="table" style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -141,8 +126,6 @@
             <tbody id="sdlc-tbody-anx7"></tbody>
           </table>
         </div>
-
-        <!-- Reconciliation Signoff Zone -->
         <div style="background:rgba(224,123,0,0.06); border:1px solid rgba(224,123,0,0.2); border-radius:12px; padding:20px; margin-top:24px;">
           <h4 style="color:var(--text); font-size:13.5px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
             <i data-lucide="info" style="color:var(--saffron); width:16px; height:16px;"></i>

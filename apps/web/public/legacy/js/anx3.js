@@ -1,15 +1,11 @@
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    ANNEXURE III â€” CLUSTERS & CONTIGUOUS CLUSTERS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-
 /* â”€â”€â”€ Base64 Excel templates â”€â”€â”€ */
 const CLUSTER_B64    = "UEsDBBQAAAAIACFVvlxGx01IlQAAAM0AAAAQAAAAZG9jUHJvcHMvYXBwLnhtbE3PTQvCMAwG4L9SdreZih6kDkQ9ip68zy51hbYpbYT67+0EP255ecgboi6JIia2mEXxLuRtMzLHDUDWI/o+y8qhiqHke64x3YGMsRoPpB8eA8OibdeAhTEMOMzit7Dp1C5GZ3XPlkJ3sjpRJsPiWDQ6sSctxD0sThDneiU+ixNLOZcrBf+LU8sVU57mym/8ZAW/B7oXUEsDBBQAAAAIACFVvly+E5jb7gAAACsCAAARAAAAZG9jUHJvcHMvY29yZS54bWzNksFOwzAMhl8F5d46aWGHqOtlEyeQkJgE4hYl3hataaLEqN3b04atE4IH4Bj7z+fPkhsdpPYRX6IPGMliuhtd1yepw5odiYIESPqITqVySvRTc++jUzQ94wGC0id1QKg4X4FDUkaRghlYhIXI2sZoqSMq8vGCN3rBh8/YZZjRgB067CmBKAWwdp4YzmPXwA0wwwijS98FNAsxV//E5g6wS3JMdkkNw1AOdc5NOwh4f356zesWtk+keo3Tr2QlnQOu2XXyW73Z7h5ZW/FqVfCHouY7weW9kLz+mF1/+N2EnTd2b/+x8VWwbeDXXbRfUEsDBBQAAAAIACFVvlyZXJwjEAYAAJwnAAATAAAAeGwvdGhlbWUvdGhlbWUxLnhtbO1aW3PaOBR+76/QeGf2bQvGNoG2tBNzaXbbtJmE7U4fhRFYjWx5ZJGEf79HNhDLlg3tkk26mzwELOn7zkVH5+g4efPuLmLohoiU8nhg2S/b1ru3L97gVzIkEUEwGaev8MAKpUxetVppAMM4fckTEsPcgosIS3gUy9Zc4FsaLyPW6rTb3VaEaWyhGEdkYH1eLGhA0FRRWm9fILTlHzP4FctUjWWjARNXQSa5iLTy+WzF/NrePmXP6TodMoFuMBtYIH/Ob6fkTlqI4VTCxMBqZz9Wa8fR0kiAgsl9lAW6Sfaj0xUIMg07Op1YznZ89sTtn4zK2nQ0bRrg4/F4OLbL0otwHATgUbuewp30bL+kQQm0o2nQZNj22q6RpqqNU0/T933f65tonAqNW0/Ta3fd046Jxq3QeA2+8U+Hw66JxqvQdOtpJif9rmuk6RZoQkbj63oSFbXlQNMgAFhwdtbM0gOWXin6dZQa2R273UFc8FjuOYkR/sbFBNZp0hmWNEZynZAFDgA3xNFMUHyvQbaK4MKS0lyQ1s8ptVAaCJrIgfVHgiHF3K/99Ze7yaQzep19Os5rlH9pqwGn7bubz5P8c+jkn6eT101CznC8LAnx+yNbYYcnbjsTcjocZ0J8z/b2kaUlMs/v+QrrTjxnH1aWsF3Pz+SejHIju932WH32T0duI9epwLMi15RGJEWfyC265BE4tUkNMhM/CJ2GmGpQHAKkCTGWoYb4tMasEeATfbe+CMjfjYj3q2+aPVehWEnahPgQRhrinHPmc9Fs+welRtH2Vbzco5dYFQGXGN80qjUsxdZ4lcDxrZw8HRMSzZQLBkGGlyQmEqk5fk1IE/4rpdr+nNNA8JQvJPpKkY9psyOndCbN6DMawUavG3WHaNI8ev4F+Zw1ChyRGx0CZxuzRiGEabvwHq8kjpqtwhErQj5iGTYacrUWgbZxqYRgWhLG0XhO0rQR/FmsNZM+YMjszZF1ztaRDhGSXjdCPmLOi5ARvx6GOEqa7aJxWAT9nl7DScHogstm/bh+htUzbCyO90fUF0rkDyanP+kyNAejmlkJvYRWap+qhzQ+qB4yCgXxuR4+5Xp4CjeWxrxQroJ7Af/R2jfCq/iCwDl/Ln3Ppe+59D2h0rc3I31nwdOLW95GblvE+64x2tc0LihjV3LNyMdUr5Mp2DmfwOz9aD6e8e362SSEr5pZLSMWkEuBs0EkuPyLyvAqxAnoZFslCctU02U3ihKeQhtu6VP1SpXX5a+5KLg8W+Tpr6F0PizP+Txf57TNCzNDt3JL6raUvrUmOEr0scxwTh7LDDtnPJIdtnegHTX79l125COlMFOXQ7gaQr4Dbbqd3Do4npiRuQrTUpBvw/npxXga4jnZBLl9mFdt59jR0fvnwVGwo+88lh3HiPKiIe6hhpjPw0OHeXtfmGeVxlA0FG1srCQsRrdguNfxLBTgZGAtoAeDr1EC8lJVYDFbxgMrkKJ8TIxF6HDnl1xf49GS49umZbVuryl3GW0iUjnCaZgTZ6vK3mWxwVUdz1Vb8rC+aj20FU7P/lmtyJ8MEU4WCxJIY5QXpkqi8xlTvucrScRVOL9FM7YSlxi84+bHcU5TuBJ2tg8CMrm7Oal6ZTFnpvLfLQwJLFuIWRLiTV3t1eebnK56Inb6l3fBYPL9cMlHD+U751/0XUOufvbd4/pukztITJx5xREBdEUCI5UcBhYXMuRQ7pKQBhMBzZTJRPACgmSmHICY+gu98gy5KRXOrT45f0Usg4ZOXtIlEhSKsAwFIRdy4+/vk2p3jNf6LIFthFQyZNUXykOJwT0zckPYVCXzrtomC4Xb4lTNuxq+JmBLw3punS0n/9te1D20Fz1G86OZ4B6zh3OberjCRaz/WNYe+TLfOXDbOt4DXuYTLEOkfsF9ioqAEativrqvT/klnDu0e/GBIJv81tuk9t3gDHzUq1qlZCsRP0sHfB+SBmOMW/Q0X48UYq2msa3G2jEMeYBY8wyhZjjfh0WaGjPVi6w5jQpvQdVA5T/b1A1o9g00HJEFXjGZtjaj5E4KPNz+7w2wwsSO4e2LvwFQSwMEFAAAAAgAIVW+XIiZ43qDAgAAYAcAABgAAAB4bC93b3Jrc2hlZXRzL3NoZWV0MS54bWyNlV1v2jAUhu/3K6xIk7pdxMF8qgrRWvpBJ9oh6LpLZBIHsjoxc8zH/v2OHRNRmmS9IbFznvf44NfH/l7I13zNmEKHlGf50FkrtbnEOA/XLKW5KzYsgy+xkClVMJQrnG8ko5GBUo6J5/VwSpPMCXwzN5WBL7aKJxmbSpRv05TKv9eMi/3QaTnHiVmyWis9gQN/Q1dsztTPzVTCCJcqUZKyLE9EhiSLh85V63JMdLwJeEnYPj95R7qSpRCvevAQDR1PL4hxFiqtQOGxYyPGuRa... (B64 truncated for clarity but matches original template file data)";
 const CONTIGUOUS_B64 = "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 (B64 truncated for clarity but matches original template file data)";
-
-// Use actual values from user's template files
 const ACTUAL_CLUSTER_B64 = "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";
 const ACTUAL_CONTIGUOUS_B64 = "UEsDBBQAAAAIACFVvlxGx01IlQAAAM0AAAAQAAAAZG9jUHJvcHMvYXBwLnhtbE3PTQvCMAwG4L9SdreZih6kDkQ9ip68zy51hbYpbYT67+0EP255ecgboi6JIia2mEXxLuRtMzLHDUDWI/o+y8qhiqHke64x3YGMsRoPpB8eA8OibdeAhTEMOMzit7Dp1C5GZ3XPlkJ3sjpRJsPiWDQ6sSc/u9wcChDneiU+ixNLOZcrBf+LU8sVU57mym/8ZAW/B7oXUEsDBBQAAAAIACFVvly+E5jb7gAAACsCAAARAAAAZG9jUHJvcHMvY29yZS54bWzNksFOwzAMhl8F5d46aWGHqOtlEyeQkJgE4hYl3hataaLEqN3b04atE4IH4Bj7z+fPkhsdpPYRX6IPGMliuhtd1yepw5odiYIESPqITqVySvRTc++jUzQ94wGC0id1QKg4X4FDUkaRghlYhIXI2sZoqSMq8vGCN3rBh8/YZZjRgB067CmBKAWwdp4YzmPXwA0wwwijS98FNAsxV//E5g6wS3JMdkkNw1AOdc5NOwh4f356zesWtk+keo3Tr2QlnQOu2XXyW73Z7h5ZW/FqVfCHouY7weW9kLz+mF1/+N2EnTd2b/+x8VWwbeDXXbRfUEsDBBQAAAAIACFVvlyZXJwjEAYAAJwnAAATAAAAeGwvdGhlbWUvdGhlbWUxLnhtbO1aW3PaOBR+76/QeGf2bQvGNoG2tBNzaXbbtJmE7U4fhRFYjWx5ZJGEf79HNhDLlg3tkk26mzwELOn7zkVH5+g4efPuLmLohoiU8nhg2S/b1ru3L97gVzIkEUEwGaev8MAKpUxetVppAMM4fckTEsPcgosIS3gUy9Zc4FsaLyPW6rTb3VaEaWyhGEdkYH1eLGhA0FRRWm9fILTlHzP4FctUjWWjARNXQSa5iLTy+WzF/NrePmXP6TodMoFuMBtYIH/Ob6fkTlqI4VTCxMBqZz9Wa8fR0kiAgsl9lAW6Sfaj0xUIMg07Op1YznZ89sTtn4zK2nQ0bRrg4/F4OLbL0otwHATgUbuewp30bL+kQQm0o2nQZNj22q6RpqqNU0/T933f65tonAqNW0/Ta3fd046Jxq3QeA2+8U+Hw66JxqvQdOtpJif9rmuk6RZoQkbj63oSFbXlQNMgAFhwdtbM0gOWXin6dZQa2R273UFc8FjuOYkR/sbFBNZp0hmWNEZynZAFDgA3xNFMUHyvQbaK4MKS0lyQ1s8ptVAaCJrIgfVHgiHF3K/99Ze7yaQzep19Os5rlH9pqwGn7bubz5P8c+jkn6eT101CznC8LAnx+yNbYYcnbjsTcjocZ0J8z/b2kaUlMs/v+QrrTjxnH1aWsF3Pz+SejHIju932WH32T0duI9epwLMi15RGJEWfyC265BE4tUkNMhM/CJ2GmGpQHAKkCTGWoYb4tMasEeATfbe+CMjfjYj3q2+aPVehWEnahPgQRhrinHPmc9Fs+welRtH2Vbzco5dYFQGXGN80qjUsxdZ4lcDxrZw8HRMSzZQLBkGGlyQmEqk5fk1IE/4rpdr+nNNA8JQvJPpKkY9psyOndCbN6DMawUavG3WHaNI8ev4F+Zw1ChyRGx0CZxuzRiGEabvwHq8kjpqtwhErQj5iGTYacrUWgbZxqYRgWhLG0XhO0rQR/FmsNZM+YMjszZF1ztaRDhGSXjdCPmLOi5ARvx6GOEqa7aJxWAT9nl7DScHogstm/bh+htUzbCyO90fUF0rkDyanP+kyNAejmlkJvYRWap+qhzQ+qB4yCgXxuR4+5Xp4CjeWxrxQroJ7Af/R2jfCq/iCwDl/Ln3Ppe+59D2h0rc3I31nwdOLW95GblvE+64x2tc0LihjV3LNyMdUr5Mp2DmfwOz9aD6e8e362SSEr5pZLSMWkEuBs0EkuPyLyvAqxAnoZFslCctU02U3ihKeQhtu6VP1SpXX5a+5KLg8W+Tpr6F0PizP+Txf57TNCzNDt3JL6raUvrUmOEr0scxwTh7LDDtnPJIdtnegHTX79l125COlMFOXQ7gaQr4Dbbqd3Do4npiRuQrTUpBvw/npxXga4jnZBLl9mFdt59jR0fvnwVGwo+88lh3HiPKiIe6hhpjPw0OHeXtfmGeVxlA0FG1srCQsRrdguNfxLBTgZGAtoAeDr1EC8lJVYDFbxgMrkKJ8TIxF6HDnl1xf49GS49umZbVuryl3GW0iUjnCaZgTZ6vK3mWxwVUdz1Vb8rC+aj20FU7P/lmtyJ8MEU4WCxJIY5QXpkqi8xlTvucrScRVOL9FM7YSlxi84+bHcU5TuBJ2tg8CMrm7Oal6ZTFnpvLfLQwJLFuIWRLiTV3t1eebnK56Inb6l3fBYPL9cMlHD+U751/0XUOufvbd4/ukztITJx5xREBdEUCI5UcBhYXMuRQ7pQCw9JkHk9/yVcP5TvmlFj3j7kZ17yV3mJi4hxF1kKFIYKSSc9lZq/KzQ3mF56otwtZiq1p1rTqWnXtsT8ZIpwsFiSQxigvTNV7vpJEXIXzWzRjK3GJwTtuLdFpC1fCzvZBQCZ3NydVryzmzET+u4UhgWULMUviV+trrz5P7nba24jZ6V/cBYPJ99slH292zrn62XeP65tN7iAxcYYVRwTQFSmMVHIYWFzIkEO5S0IaTAT0Ppn+ki+NlArlVp/kP2lVhk9c0kUSFAqwDAUhF3Ljv+5T09193rR+6rMFtrFW0ZCVXykOJXp6ZsR+4R6ZddUWWCjcc0vO2y9830N7D+2Gf7t30d9n/xM9zI4R/6wZ/90/F+1E+xZf/G/YF3+X4wGvzefL/Fnk42xW/vJnO278x8fH8W/8V8bVwbaBT3fR+k9QSwECFAMUAAAACAAhVb5cRsdNSJUAAADNABAAhQIAAHdsL3NoZWV0MS54bWxQSwECFAMUAAAACAAhVb5cRsdNSJUAAADNABAAhQIAAHdsL3NoZWV0MS54bWxQSwECFAMUAAAACAAhVb5cRsdNSJUAAADNABAAhQIAAHdsL3NoZWV0MS54bWxQSwECFAMUAAAACAAhVb5cRsdNSJUAAADNABAAhQIAAHdsL3NoZWV0MS54bWxQSwECFAMUAAAACAAhVb5cRsdNSJUAAADNABAAhQIAAHdsL3NoZWV0MS54bWxQSwECFAMUAAAACAAhVb5cRsdNSJUAAADNABAAhQIAAHdsL3NoZWV0MS54bWxQSwUGAAAAAAkACQBJAgAAbRIYAAAAA=";
-
 /* â”€â”€â”€ Helpers â”€â”€â”€ */
 function b64toBlob(b64, mime) {
   const bin = atob(b64);
@@ -17,7 +13,6 @@ function b64toBlob(b64, mime) {
   for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
   return new Blob([arr], { type: mime });
 }
-
 function dlBlob(blob, fname) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -25,7 +20,6 @@ function dlBlob(blob, fname) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
-
 /* â”€â”€â”€ Download templates â”€â”€â”€ */
 function dlTemplate(type) {
   if (type === 'cluster') {
@@ -34,7 +28,6 @@ function dlTemplate(type) {
     dlBlob(b64toBlob(ACTUAL_CONTIGUOUS_B64, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'), 'Contiguous_Clusters_Template.xlsx');
   }
 }
-
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    CLUSTER TABLE
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
@@ -43,23 +36,18 @@ let clusterData = [
   { river:'Sutlej', cluster:'2', lease:'Jalandhar Sutlej 3,4', location:'Riverbed', village:'Chhauala', area:21.43, excav:1027755.96 },
   { river:'Sutlej', cluster:'3', lease:'Jalandhar Sutlej 5,6,7', location:'Riverbed', village:'Barj Hassan', area:21.93, excav:697078.08 }
 ];
-
 function renderCluster() {
   const tbody = document.getElementById('clusterBody');
   const tfoot = document.getElementById('clusterFoot');
   if (!tbody || !tfoot) return;
   tbody.innerHTML = '';
-
   let totalArea = 0, totalExcav = 0;
-
   clusterData.forEach((row, i) => {
     const mineral = row.excav * 0.6;
     totalArea  += Number(row.area)  || 0;
     totalExcav += Number(row.excav) || 0;
-
     const isReadOnly = isUserReadOnly();
     const cEd = isReadOnly ? `contenteditable="false" style="background:var(--off); cursor:not-allowed;"` : `contenteditable="true"`;
-    
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td ${cEd} onblur="clusterData[${i}].river=this.innerText.trim()">${row.river}</td>
@@ -79,8 +67,6 @@ function renderCluster() {
     tbody.appendChild(tr);
   });
   if (window.initLucide) window.initLucide();
-
-  // totals row
   tfoot.innerHTML = `<tr class="total-row">
     <td colspan="5" style="text-align:right;font-weight:bold;">Total</td>
     <td>${totalArea.toFixed(2)}</td>
@@ -89,21 +75,17 @@ function renderCluster() {
     <td></td>
   </tr>`;
 }
-
 function addClusterRow() {
   clusterData.push({ river:'', cluster:'', lease:'', location:'Riverbed', village:'', area:0, excav:0 });
   renderCluster();
-  // scroll to last row
   const rows = document.getElementById('clusterBody').querySelectorAll('tr');
   rows[rows.length-1]?.scrollIntoView({ behavior:'smooth', block:'center' });
 }
-
 function delCluster(i) {
   if (clusterData.length === 1) { alert('Need at least one row.'); return; }
   clusterData.splice(i, 1);
   renderCluster();
 }
-
 /* â”€â”€â”€ Export Cluster XLSX â”€â”€â”€ */
 function exportClusterXlsx() {
   const ws_data = [
@@ -116,14 +98,12 @@ function exportClusterXlsx() {
     ws_data.push([r.river, r.cluster, r.lease, r.location, r.village, +r.area, +r.excav, +(r.excav*0.6).toFixed(2)]);
   });
   ws_data.push(['','','','','TOTAL', +totArea.toFixed(2), +totExcav.toFixed(2), +(totExcav*0.6).toFixed(2)]);
-
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(ws_data);
   ws['!cols'] = [14,12,30,22,20,14,22,28].map(w=>({wch:w}));
   XLSX.utils.book_append_sheet(wb, ws, 'Cluster_Details');
   XLSX.writeFile(wb, 'Cluster_Details_Export.xlsx');
 }
-
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    CONTIGUOUS TABLE
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
@@ -131,22 +111,17 @@ let contData = [
   { river:'Sutlej', ccNo:'1', clusterNo:'10,11', leases:10, location:'Riverbed', distance:'0.55km', village:'Minwal, Mau Sahib', area:71.01, mineral:1978752.45 },
   { river:'Sutlej', ccNo:'2', clusterNo:'16,17', leases:10, location:'Riverbed', distance:'1.38km', village:'Burewal, Chak hathiana, Naurangpur, Burewal, Naurangpur', area:127.91, mineral:2664913.66 }
 ];
-
 function renderCont() {
   const tbody = document.getElementById('contBody');
   const tfoot = document.getElementById('contFoot');
   if (!tbody || !tfoot) return;
   tbody.innerHTML = '';
-
   let totalArea = 0, totalMin = 0;
-
   contData.forEach((row, i) => {
     totalArea += Number(row.area)    || 0;
     totalMin  += Number(row.mineral) || 0;
-
     const isReadOnly = isUserReadOnly();
     const cEd = isReadOnly ? `contenteditable="false" style="background:var(--off); cursor:not-allowed;"` : `contenteditable="true"`;
-
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td ${cEd} onblur="contData[${i}].river=this.innerText.trim()">${row.river}</td>
@@ -167,7 +142,6 @@ function renderCont() {
     tbody.appendChild(tr);
   });
   if (window.initLucide) window.initLucide();
-
   tfoot.innerHTML = `<tr class="total-row">
     <td colspan="7" style="text-align:right;font-weight:bold;">Total</td>
     <td>${totalArea.toFixed(2)}</td>
@@ -175,25 +149,20 @@ function renderCont() {
     <td></td>
   </tr>`;
 }
-
-// Keep legacy inline handlers and callers working.
 function renderContigous() {
   return renderCont();
 }
-
 function addContRow() {
   contData.push({ river:'', ccNo:'', clusterNo:'', leases:'', location:'Riverbed', distance:'', village:'', area:0, mineral:0 });
   renderContigous();
   const rows = document.getElementById('contBody').querySelectorAll('tr');
   rows[rows.length-1]?.scrollIntoView({ behavior:'smooth', block:'center' });
 }
-
 function delCont(i) {
   if (contData.length === 1) { alert('Need at least one row.'); return; }
   contData.splice(i, 1);
   renderContigous();
 }
-
 /* â”€â”€â”€ Export Contiguous XLSX â”€â”€â”€ */
 function exportContXlsx() {
   const ws_data = [
@@ -206,25 +175,21 @@ function exportContXlsx() {
     ws_data.push([r.river, r.ccNo, r.clusterNo, r.leases, r.location, r.distance, r.village, +r.area, +r.mineral]);
   });
   ws_data.push(['','','','','','','TOTAL', +totArea.toFixed(2), +totMin.toFixed(2)]);
-
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(ws_data);
   ws['!cols'] = [14,22,14,18,22,20,24,18,30].map(w=>({wch:w}));
   XLSX.utils.book_append_sheet(wb, ws, 'Contiguous_Clusters');
   XLSX.writeFile(wb, 'Contiguous_Clusters_Export.xlsx');
 }
-
 function textFromAnx3Cell(cell) {
   if (!cell) return '';
   const select = cell.querySelector('select');
   if (select) return select.value || '';
   return (cell.textContent || '').trim();
 }
-
 function numberFromAnx3Cell(cell) {
   return parseFloat(textFromAnx3Cell(cell).replace(/,/g, '')) || 0;
 }
-
 function syncAnx3ClusterDataFromTable() {
   const rows = Array.from(document.querySelectorAll('#anx3-clusters tbody tr'));
   clusterData = rows.map(row => {
@@ -240,7 +205,6 @@ function syncAnx3ClusterDataFromTable() {
     };
   }).filter(row => Object.values(row).some(value => value !== '' && value !== 0));
 }
-
 function syncAnx3ContDataFromTable() {
   const rows = Array.from(document.querySelectorAll('#anx3-contiguous tbody tr'));
   contData = rows.map(row => {
@@ -258,7 +222,6 @@ function syncAnx3ContDataFromTable() {
     };
   }).filter(row => Object.values(row).some(value => value !== '' && value !== 0));
 }
-
 function applyRbacAnx3Upload(tableId, rows, appendRow, syncData, beforeFullReplace) {
   if (typeof rbacApplyExcelRowsToTable !== 'function') return false;
   const table = document.getElementById(tableId);
@@ -268,7 +231,6 @@ function applyRbacAnx3Upload(tableId, rows, appendRow, syncData, beforeFullRepla
   syncData();
   return result !== false;
 }
-
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    UPLOAD EXCEL â†’ PARSE â†’ FILL TABLE
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
@@ -282,9 +244,7 @@ function uploadExcel(event, type) {
       const ws = wb.Sheets[wb.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
       if (rows.length < 2) { alert('No data rows found in Excel.'); return; }
-
       const dataRows = rows.slice(1).filter(r => r.some(c => c !== ''));
-
       if (type === 'cluster') {
         const uploadRows = dataRows.map(r => [
           String(r[0] || ''),
@@ -347,7 +307,6 @@ function uploadExcel(event, type) {
           return;
         }
       }
-
       if (type === 'cluster') {
         clusterData = dataRows.map(r => ({
           river:    String(r[0]||''),
@@ -384,7 +343,6 @@ function uploadExcel(event, type) {
   };
   reader.readAsBinaryString(file);
 }
-
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    LEGACY FUNCTIONS (FOR BACKWARD COMPATIBILITY)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
@@ -403,7 +361,6 @@ function addAnx3Row(tblId='anx3-clusters') {
   </tr>`);
   if (window.initLucide) window.initLucide();
 }
-
 function addAnx3ContRow() {
   const tbody=document.querySelector('#anx3-contiguous tbody');
   if (!tbody) return;
@@ -417,21 +374,16 @@ function addAnx3ContRow() {
   </tr>`);
   if (window.initLucide) window.initLucide();
 }
-
 function calcClusterRow(el) {
   const row=el.closest('tr');
   const cells=row.querySelectorAll('td[contenteditable="true"]');
-  // excav is 6th td (index 6, 0-indexed) or 5th editable td depending on layout
   const tds = row.querySelectorAll('td');
   const excav=parseFloat(tds[6]?.textContent)||0;
   const mineralCell=row.querySelector('.anx3-mineral');
   if (mineralCell) mineralCell.textContent=fmtN(excav*0.6,2);
 }
-
-// alias for navigation and other callers
 window.renderCluster = renderCluster;
 window.renderContiguous = renderContigous;
-
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    PDF UPLOAD & MANAGEMENT (ANNEXURE III)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
@@ -442,9 +394,7 @@ function renderPdfUploadUI() {
   const previewBtn = document.getElementById('anx3-preview-btn');
   const previewSection = document.getElementById('pdf-preview-section-anx3');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx3') : document.getElementById('pdf-iframe-anx3'));
-  
   if (!nameEl || !dlBtn) return;
-
   if (!S.activeProject) {
     nameEl.style.display = 'none';
     dlBtn.style.display = 'none';
@@ -453,9 +403,7 @@ function renderPdfUploadUI() {
     if (previewSection) previewSection.style.display = 'none';
     return;
   }
-
   const pdfName = S.activeProject.annexure3PdfName;
-
   if (!pdfName) {
     nameEl.style.display = 'none';
     dlBtn.style.display = 'none';
@@ -471,7 +419,6 @@ function renderPdfUploadUI() {
     dlBtn.style.display = 'inline-flex';
     if (delBtn) delBtn.style.display = !isUserReadOnly() ? 'inline-flex' : 'none';
     if (previewBtn) previewBtn.style.display = 'inline-flex';
-    
     if (previewSection && previewSection.style.display === 'block' && iframe) {
       if (S.activeProject.pdfData && S.activeProject.pdfData.anx3) {
         if (iframe.src !== S.activeProject.pdfData.anx3) {
@@ -480,15 +427,12 @@ function renderPdfUploadUI() {
       }
     }
   }
-
   if (window.initLucide) window.initLucide();
 }
-
 function togglePDFPreviewAnx3() {
   const previewSection = document.getElementById('pdf-preview-section-anx3');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx3') : document.getElementById('pdf-iframe-anx3'));
   if (!previewSection || !iframe) return;
-
   if (previewSection.style.display === 'block') {
     previewSection.style.display = 'none';
     if (iframe.src.startsWith('blob:')) {
@@ -504,14 +448,11 @@ function togglePDFPreviewAnx3() {
     }
   }
 }
-
 async function deletePdfAnx3() {
   if (!S.activeProject) return;
-  
   if (!confirm("Are you sure you want to delete the uploaded PDF?")) {
     return;
   }
-  
   const previewSection = document.getElementById('pdf-preview-section-anx3');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx3') : document.getElementById('pdf-iframe-anx3'));
   if (previewSection) previewSection.style.display = 'none';
@@ -521,7 +462,6 @@ async function deletePdfAnx3() {
     }
     iframe.src = 'about:blank';
   }
-
   S.activeProject.annexure3PdfName = null;
   if (S.activeProject.pdfData) S.activeProject.pdfData.anx3 = null;
   const pIdx = S.projects.findIndex(p => p.id === S.activeProject.id);
@@ -529,23 +469,18 @@ async function deletePdfAnx3() {
     S.projects[pIdx].annexure3PdfName = null;
     if (S.projects[pIdx].pdfData) S.projects[pIdx].pdfData.anx3 = null;
   }
-  
   renderPdfUploadUI();
   toast("PDF deleted successfully.", "success");
 }
-
 function handlePdfUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
-
   if (!file.name.toLowerCase().endsWith('.pdf')) {
     toast('Error: Only PDF files are allowed.', 'danger');
     event.target.value = '';
     return;
   }
-
   toast('Uploading PDF...', 'info');
-
   const fileURL = URL.createObjectURL(file);
   S.activeProject.annexure3PdfName = file.name;
   if (!S.activeProject.pdfData) S.activeProject.pdfData = {};
@@ -553,7 +488,6 @@ function handlePdfUpload(event) {
   if (window.storeProjectPdf) {
     window.storeProjectPdf('anx3', file).catch(err => console.error('Backend PDF upload failed:', err));
   }
-
   if (window.renderPdfToImages) {
     window.renderPdfToImages(file, (err, imgs) => {
       if (!err && imgs) {
@@ -563,24 +497,20 @@ function handlePdfUpload(event) {
       }
     });
   }
-
   const pIdx = S.projects.findIndex(p => p.id === S.activeProject.id);
   if (pIdx !== -1) {
     S.projects[pIdx].annexure3PdfName = file.name;
     if (!S.projects[pIdx].pdfData) S.projects[pIdx].pdfData = {};
     S.projects[pIdx].pdfData.anx3 = fileURL;
   }
-  
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx3') : document.getElementById('pdf-iframe-anx3'));
   if (iframe) {
     iframe.src = fileURL;
   }
-  
   renderPdfUploadUI();
   toast('PDF uploaded and preview loaded!', 'success');
   event.target.value = '';
 }
-
 function viewPdf() {
   if (S.activeProject && S.activeProject.pdfData && S.activeProject.pdfData.anx3) {
     window.open(S.activeProject.pdfData.anx3, '_blank');
@@ -588,7 +518,6 @@ function viewPdf() {
     toast('No PDF preview available. Please re-upload.', 'warn');
   }
 }
-
 function downloadPdf() {
   if (!S.activeProject) {
     toast('Please select and open a project first.', 'warn');
@@ -610,11 +539,9 @@ function downloadPdf() {
   a.click();
   document.body.removeChild(a);
 }
-
 function closePDFPreviewAnx3() {
   const previewSection = document.getElementById('pdf-preview-section-anx3');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx3') : document.getElementById('pdf-iframe-anx3'));
-  
   if (previewSection) previewSection.style.display = 'none';
   if (iframe) {
     if (iframe.src.startsWith('blob:')) {
@@ -623,32 +550,25 @@ function closePDFPreviewAnx3() {
     iframe.src = 'about:blank';
   }
 }
-
 function exportAnx3PDF(btn, isLivePreview = false) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF('l', 'pt', 'a4'); 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  
   let startY = 80;
-
   const district = S.activeProject ? S.activeProject.district : 'JALANDHAR';
   const districtUpper = district.toUpperCase();
-
-  // Generic Header/Footer Function
   const drawHeaderFooter = (data) => {
     doc.setFont("times", "normal");
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.text("Page " + data.pageNumber, pageWidth / 2, pageHeight - 20, { align: "center" });
   };
-
   const getCellTextLocal = (td) => {
     const select = td.querySelector('select');
     if (select) return select.value;
     return td.innerText.trim();
   };
-
   const extractData = (tableId) => {
     const tbl = document.getElementById(tableId);
     if (!tbl) return { headers: [], rows: [] };
@@ -662,8 +582,6 @@ function exportAnx3PDF(btn, isLivePreview = false) {
       }
       rows.push(row);
     });
-    
-    // Add tfoot row
     const tfoot = tbl.querySelector('tfoot');
     if (tfoot) {
       tfoot.querySelectorAll('tr').forEach(tr => {
@@ -685,18 +603,14 @@ function exportAnx3PDF(btn, isLivePreview = false) {
     }
     return { headers, rows };
   };
-
-  // Title
   doc.setFont("times", "bold");
   doc.setFontSize(12);
   doc.setTextColor(0, 0, 0);
   doc.text("Annexure-III", pageWidth - 40, 55, { align: "right" });
-
   doc.setFont("times", "bold");
   doc.setFontSize(11);
   doc.text("> a) Cluster Details:", 40, startY);
   startY += 15;
-
   const clusterDataPdf = extractData('anx3-clusters');
   doc.autoTable({
     startY: startY,
@@ -707,19 +621,15 @@ function exportAnx3PDF(btn, isLivePreview = false) {
     headStyles: { fillColor: false, fontStyle: 'bold', halign: 'center', textColor: 0 },
     didDrawPage: (data) => drawHeaderFooter(data)
   });
-
   startY = doc.lastAutoTable.finalY + 30;
-
   if (startY > pageHeight - 120) {
     doc.addPage();
     startY = 80;
   }
-
   doc.setFont("times", "bold");
   doc.setFontSize(11);
   doc.text("> b) Contiguous Clusters:", 40, startY);
   startY += 15;
-
   const contDataPdf = extractData('anx3-contiguous');
   doc.autoTable({
     startY: startY,
@@ -730,7 +640,6 @@ function exportAnx3PDF(btn, isLivePreview = false) {
     headStyles: { fillColor: false, fontStyle: 'bold', halign: 'center', textColor: 0 },
     didDrawPage: (data) => drawHeaderFooter(data)
   });
-
   if (isLivePreview) {
     const blob = doc.output('blob');
     const blobUrl = URL.createObjectURL(blob);
@@ -741,15 +650,12 @@ function exportAnx3PDF(btn, isLivePreview = false) {
     toast('PDF downloaded successfully!', 'success');
   }
 }
-
 /* â”€â”€â”€ DOMContentLoaded initialization â”€â”€â”€ */
 window.addEventListener('DOMContentLoaded', () => {
   renderCluster();
   renderContigous();
   renderPdfUploadUI();
 });
-
-// Auto Live Preview whenever the table changes
 document.addEventListener('input', (e) => {
   if (e.target.closest('#view-anx3 table')) {
     if (window.anx3DebounceTimer) clearTimeout(window.anx3DebounceTimer);
@@ -758,9 +664,6 @@ document.addEventListener('input', (e) => {
     }, 1500); // 1.5 seconds after typing stops
   }
 });
-
-
-
 document.addEventListener('change', (e) => {
   if (e.target.closest('#view-anx3 table')) {
     if (window.anx3DebounceTimer) clearTimeout(window.anx3DebounceTimer);
@@ -769,5 +672,4 @@ document.addEventListener('change', (e) => {
     }, 300);
   }
 });
-
 window.exportAnx3PDF = exportAnx3PDF;

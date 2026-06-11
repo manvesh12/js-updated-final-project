@@ -1,16 +1,13 @@
 /* User management */
-
 const USER_ROLE_OPTIONS = [
   'IIT_ROPAR', 'SDLC', 'SDO', 'JE', 'AXEN', 'GIS',
   'REVIEWER_1', 'REVIEWER_2', 'ADMIN', 'OFFICER', 'DATA_ENTRY', 'REVIEWER'
 ];
-
 function usersBadge(ok) {
   return ok
     ? '<span class="badge badge-green">Yes</span>'
     : '<span class="badge badge-red">No</span>';
 }
-
 function formatUserScope(user) {
   const parts = [];
   if (user.district) parts.push(user.district);
@@ -18,7 +15,6 @@ function formatUserScope(user) {
   if (user.section) parts.push(user.section);
   return parts.length ? parts.join(' / ') : 'All';
 }
-
 async function renderUsers() {
   const tbody = document.getElementById('users-table-body');
   if (!tbody) return;
@@ -26,7 +22,6 @@ async function renderUsers() {
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Only Admin can manage users.</td></tr>';
     return;
   }
-
   tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Loading users...</td></tr>';
   try {
     const users = await apiFetch('/users');
@@ -56,12 +51,10 @@ async function renderUsers() {
     tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--red);">${e.message || 'Failed to load users'}</td></tr>`;
   }
 }
-
 function renderRoleSelect(user) {
   const options = USER_ROLE_OPTIONS.map(role => `<option value="${role}" ${role === user.role ? 'selected' : ''}>${role.replace(/_/g, ' ')}</option>`).join('');
   return `<select style="min-width:150px;" onchange="updateUserRole(${user.id}, this.value)">${options}</select>`;
 }
-
 async function updateUserRole(userId, role) {
   try {
     await apiFetch(`/users/${userId}`, {
@@ -74,7 +67,6 @@ async function updateUserRole(userId, role) {
     toast(e.message || 'Failed to update role', 'error');
   }
 }
-
 async function toggleUserActive(userId, active) {
   try {
     await apiFetch(`/users/${userId}/active`, {
@@ -87,7 +79,6 @@ async function toggleUserActive(userId, active) {
     toast(e.message || 'Failed to update user', 'error');
   }
 }
-
 async function editUserScope(userId) {
   const district = prompt('Assigned district (blank = all):', 'Jalandhar');
   if (district === null) return;
@@ -106,7 +97,6 @@ async function editUserScope(userId) {
     toast(e.message || 'Failed to update scope', 'error');
   }
 }
-
 async function openAddUserPrompt() {
   const username = prompt('Email / username for new user:', '');
   if (!username) return;
@@ -132,7 +122,6 @@ async function openAddUserPrompt() {
     toast(e.message || 'Failed to create user', 'error');
   }
 }
-
 window.renderUsers = renderUsers;
 window.updateUserRole = updateUserRole;
 window.toggleUserActive = toggleUserActive;

@@ -2,7 +2,6 @@
 window.S = window.S || { activeProject: { id: 'demo_proj', anx6PdfName: null }, projects: [] };
 window.toast = window.toast || function (msg, type) { alert('[' + (type || 'INFO').toUpperCase() + '] ' + msg); };
 window.initLucide = window.initLucide || function () { if (window.lucide) lucide.createIcons(); };
-
 const ANX6_CLUSTER_HEADERS = [
   'River Name',
   'Cluster No.',
@@ -13,7 +12,6 @@ const ANX6_CLUSTER_HEADERS = [
   'Total Excavation (MT)',
   'Total Mineral Excavation (MT)'
 ];
-
 const ANX6_CONTIGUOUS_HEADERS = [
   'River Name',
   'Contiguous Cluster No.',
@@ -25,23 +23,19 @@ const ANX6_CONTIGUOUS_HEADERS = [
   'Area Of Cluster (Ha)',
   'Total Mineral Excavation (MT)'
 ];
-
 let anx6ClusterData = [
   { river: 'Sutlej', cluster: '1', lease: 'Jalandhar Sutlej 1,2', location: 'Riverbed', village: 'Kadiana', area: 25.27, excavation: 1074334.80, mineral: 644600.88 },
   { river: 'Sutlej', cluster: '2', lease: 'Jalandhar Sutlej 3,4,5,6', location: 'Riverbed', village: 'Chhuala', area: 23.43, excavation: 1027755.96, mineral: 616653.576 },
   { river: 'Sutlej', cluster: '3', lease: 'Jalandhar Sutlej 14,15,16,17,18', location: 'Riverbed', village: 'Burj Hassan', area: 21.93, excavation: 697078.08, mineral: 418246.848 }
 ];
-
 let anx6ContiguousData = [
   { river: 'Sutlej', contiguous: '1', cluster: '10,11', leases: '10', location: 'Riverbed', distance: '0.55km', village: 'Minwal, Mau Sahib', area: 71.01, mineral: 1978752.45 },
   { river: 'Sutlej', contiguous: '2', cluster: '16,17', leases: '10', location: 'Riverbed', distance: '1.38km', village: 'Burewal, Chak hathiana\nNaurangpur\nBurewal,\nNaurangpur', area: 127.91, mineral: 2664913.66 }
 ];
-
 function anx6ActionButton(kind, index) {
   const fn = kind === 'cluster' ? `deleteClusterRowAnx6(${index})` : `deleteContiguousRowAnx6(${index})`;
   return `<button class="btn btn-xs btn-danger" onclick="${fn}" style="display:inline-flex;align-items:center;justify-content:center;padding:4px;"><i data-lucide="trash-2" style="width:12px;height:12px;"></i></button>`;
 }
-
 function escapeHtmlAnx6(value) {
   return String(value === undefined || value === null ? '' : value)
     .replace(/&/g, '&amp;')
@@ -49,47 +43,38 @@ function escapeHtmlAnx6(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
-
 function toNumberAnx6(value) {
   const num = parseFloat(String(value ?? '').replace(/,/g, '').trim());
   return Number.isFinite(num) ? num : 0;
 }
-
 function defaultNAAnx6(value) {
   const text = String(value === undefined || value === null ? '' : value).trim();
   return text || 'NA';
 }
-
 function fillNAAnx6(el) {
   if (el && String(el.innerText || '').trim() === '') el.innerText = 'NA';
 }
 window.fillNAAnx6 = fillNAAnx6;
-
 function formatNumberAnx6(value, decimals = 2) {
   if (String(value === undefined || value === null ? '' : value).trim() === '' || String(value).trim().toUpperCase() === 'NA') return 'NA';
   const num = toNumberAnx6(value);
   return num ? num.toFixed(decimals) : '0.00';
 }
-
 function getCellTextAnx6(td) {
   const select = td.querySelector('select');
   return defaultNAAnx6(select ? select.value : td.innerText);
 }
-
 function renderAnx6() {
   renderAnx6Clusters();
   renderAnx6Contiguous();
 }
 window.renderAnx6 = renderAnx6;
-
 function renderAnx6Clusters() {
   const tbody = document.getElementById('anx6-cluster-body');
   const tfoot = document.getElementById('anx6-cluster-foot');
   if (!tbody || !tfoot) return;
-
   let totalArea = 0, totalExcavation = 0, totalMineral = 0;
   tbody.innerHTML = '';
-
   anx6ClusterData.forEach((row, index) => {
     const mineral = String(row.mineral ?? '').trim().toUpperCase() === 'NA'
       ? 'NA'
@@ -99,7 +84,6 @@ function renderAnx6Clusters() {
     totalArea += toNumberAnx6(row.area);
     totalExcavation += toNumberAnx6(row.excavation);
     totalMineral += toNumberAnx6(mineral);
-
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td contenteditable="true" onblur="fillNAAnx6(this)" oninput="updateAnx6Cluster(${index}, 'river', this.innerText)">${escapeHtmlAnx6(defaultNAAnx6(row.river))}</td>
@@ -118,7 +102,6 @@ function renderAnx6Clusters() {
       <td class="no-print">${anx6ActionButton('cluster', index)}</td>`;
     tbody.appendChild(tr);
   });
-
   tfoot.innerHTML = `<tr class="total-row" style="font-weight:bold; background-color:#e5e7eb; text-align:center;">
     <td colspan="5">Total</td>
     <td id="anx6-cluster-total-area">${totalArea.toFixed(2)}</td>
@@ -126,10 +109,8 @@ function renderAnx6Clusters() {
     <td id="anx6-cluster-total-mineral">${totalMineral.toFixed(2)}</td>
     <td class="no-print"></td>
   </tr>`;
-
   if (window.initLucide) window.initLucide();
 }
-
 function renderAnx6ClusterTotals() {
   const rows = document.querySelectorAll('#anx6-final-clusters tbody tr');
   let area = 0, excavation = 0, mineral = 0;
@@ -146,13 +127,11 @@ function renderAnx6ClusterTotals() {
   if (mineralEl) mineralEl.textContent = mineral.toFixed(2);
 }
 window.renderAnx6ClusterTotals = renderAnx6ClusterTotals;
-
 function updateAnx6Cluster(index, key, value) {
   if (!anx6ClusterData[index]) return;
   anx6ClusterData[index][key] = ['area', 'excavation', 'mineral'].includes(key) ? defaultNAAnx6(value) : defaultNAAnx6(value);
 }
 window.updateAnx6Cluster = updateAnx6Cluster;
-
 function updateAnx6ClusterMineral(index) {
   const row = anx6ClusterData[index];
   if (!row) return;
@@ -161,19 +140,15 @@ function updateAnx6ClusterMineral(index) {
   if (tr?.cells[7]) tr.cells[7].innerText = row.mineral === 'NA' ? 'NA' : toNumberAnx6(row.mineral).toFixed(2);
 }
 window.updateAnx6ClusterMineral = updateAnx6ClusterMineral;
-
 function renderAnx6Contiguous() {
   const tbody = document.getElementById('anx6-contiguous-body');
   const tfoot = document.getElementById('anx6-contiguous-foot');
   if (!tbody || !tfoot) return;
-
   let totalArea = 0, totalMineral = 0;
   tbody.innerHTML = '';
-
   anx6ContiguousData.forEach((row, index) => {
     totalArea += toNumberAnx6(row.area);
     totalMineral += toNumberAnx6(row.mineral);
-
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td contenteditable="true" onblur="fillNAAnx6(this)" oninput="updateAnx6Contiguous(${index}, 'river', this.innerText)">${escapeHtmlAnx6(defaultNAAnx6(row.river))}</td>
@@ -193,17 +168,14 @@ function renderAnx6Contiguous() {
       <td class="no-print">${anx6ActionButton('contiguous', index)}</td>`;
     tbody.appendChild(tr);
   });
-
   tfoot.innerHTML = `<tr class="total-row" style="font-weight:bold; background-color:#e5e7eb; text-align:center;">
     <td colspan="7">Total</td>
     <td id="anx6-contiguous-total-area">${totalArea.toFixed(2)}</td>
     <td id="anx6-contiguous-total-mineral">${totalMineral.toFixed(2)}</td>
     <td class="no-print"></td>
   </tr>`;
-
   if (window.initLucide) window.initLucide();
 }
-
 function renderAnx6ContiguousTotals() {
   const rows = document.querySelectorAll('#anx6-contiguous-clusters tbody tr');
   let area = 0, mineral = 0;
@@ -217,39 +189,33 @@ function renderAnx6ContiguousTotals() {
   if (mineralEl) mineralEl.textContent = mineral.toFixed(2);
 }
 window.renderAnx6ContiguousTotals = renderAnx6ContiguousTotals;
-
 function updateAnx6Contiguous(index, key, value) {
   if (!anx6ContiguousData[index]) return;
   anx6ContiguousData[index][key] = defaultNAAnx6(value);
 }
 window.updateAnx6Contiguous = updateAnx6Contiguous;
-
 function addClusterRowAnx6() {
   anx6ClusterData.push({ river: 'NA', cluster: 'NA', lease: 'NA', location: 'Riverbed', village: 'NA', area: 'NA', excavation: 'NA', mineral: 'NA' });
   renderAnx6Clusters();
 }
 window.addClusterRowAnx6 = addClusterRowAnx6;
-
 function addContiguousRowAnx6() {
   anx6ContiguousData.push({ river: 'NA', contiguous: 'NA', cluster: 'NA', leases: 'NA', location: 'Riverbed', distance: 'NA', village: 'NA', area: 'NA', mineral: 'NA' });
   renderAnx6Contiguous();
 }
 window.addContiguousRowAnx6 = addContiguousRowAnx6;
-
 function deleteClusterRowAnx6(index) {
   if (anx6ClusterData.length <= 1) { toast('At least one cluster row is required.', 'warn'); return; }
   anx6ClusterData.splice(index, 1);
   renderAnx6Clusters();
 }
 window.deleteClusterRowAnx6 = deleteClusterRowAnx6;
-
 function deleteContiguousRowAnx6(index) {
   if (anx6ContiguousData.length <= 1) { toast('At least one contiguous row is required.', 'warn'); return; }
   anx6ContiguousData.splice(index, 1);
   renderAnx6Contiguous();
 }
 window.deleteContiguousRowAnx6 = deleteContiguousRowAnx6;
-
 function downloadSectionTemplateAnx6(sectionType) {
   const headers = sectionType === 'cluster' ? ANX6_CLUSTER_HEADERS : ANX6_CONTIGUOUS_HEADERS;
   const filename = sectionType === 'cluster' ? 'Cluster_Details_Template.csv' : 'Contiguous_Clusters_Template.csv';
@@ -265,39 +231,32 @@ function downloadSectionTemplateAnx6(sectionType) {
   setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 window.downloadSectionTemplateAnx6 = downloadSectionTemplateAnx6;
-
 function normalizeHeaderAnx6(value) {
   return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
-
 function findHeaderIndexAnx6(rows, requiredHeaders) {
   return rows.findIndex(row => {
     const normalized = row.map(normalizeHeaderAnx6);
     return requiredHeaders.every(header => normalized.some(cell => cell.includes(normalizeHeaderAnx6(header)) || normalizeHeaderAnx6(header).includes(cell)));
   });
 }
-
 function validateFileAnx6(file) {
   if (!file) return 'Missing file.';
   if (!/\.(xlsx|xls|csv)$/i.test(file.name)) return 'Wrong file type. Please upload .xlsx, .xls, or .csv.';
   return '';
 }
-
 function handleSectionUploadAnx6(event, sectionType) {
   const file = event.target.files[0];
   const fileError = validateFileAnx6(file);
   if (fileError) { toast(fileError, 'error'); event.target.value = ''; return; }
-
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: 'array' });
       if (!workbook.SheetNames || workbook.SheetNames.length === 0) throw new Error('Missing worksheet.');
-
       const sheetName = pickWorksheetAnx6(workbook, sectionType);
       if (!sheetName) throw new Error('Missing worksheet for ' + (sectionType === 'cluster' ? 'Final Cluster Details.' : 'Final Contiguous Clusters.'));
-
       const worksheet = workbook.Sheets[sheetName];
       const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
       processExcelDataAnx6(rows, sectionType);
@@ -310,7 +269,6 @@ function handleSectionUploadAnx6(event, sectionType) {
   reader.readAsArrayBuffer(file);
 }
 window.handleSectionUploadAnx6 = handleSectionUploadAnx6;
-
 function pickWorksheetAnx6(workbook, sectionType) {
   const keywords = sectionType === 'cluster'
     ? ['cluster_details', 'cluster details', 'cluster']
@@ -320,25 +278,19 @@ function pickWorksheetAnx6(workbook, sectionType) {
     return keywords.some(k => key.includes(k));
   }) || workbook.SheetNames[0];
 }
-
 function processExcelDataAnx6(rows, sectionType) {
   const cleanRows = rows.filter(row => Array.isArray(row) && row.some(cell => String(cell ?? '').trim() !== ''));
   if (!cleanRows.length) throw new Error('Empty rows. No data found in worksheet.');
-
   const required = sectionType === 'cluster'
     ? ['River Name', 'Cluster No', 'Lease No', 'Location', 'Village', 'Area', 'Total Excavation']
     : ['River Name', 'Contiguous Cluster No', 'Cluster No', 'Number of leases', 'Location', 'Distance', 'Village', 'Area', 'Total Mineral Excavation'];
-
   const headerIndex = findHeaderIndexAnx6(cleanRows, required);
   if (headerIndex < 0) throw new Error('Missing columns. Please use the Annexure-6 template columns.');
-
   const header = cleanRows[headerIndex];
   const dataRows = cleanRows.slice(headerIndex + 1).filter(row => row.some(cell => String(cell ?? '').trim() !== ''));
   if (!dataRows.length) throw new Error('Empty rows. No data found after the header.');
-
   const mapped = dataRows.map((row, index) => mapAnx6Row(row, header, sectionType, index + 2)).filter(Boolean);
   if (!mapped.length) throw new Error('No valid rows found.');
-
   if (sectionType === 'cluster') {
     anx6ClusterData = mergeAnx6UploadByRole(anx6ClusterData, mapped, 'anx6-final-clusters', ['river', 'cluster', 'lease', 'location', 'village', 'area', 'excavation', 'mineral']);
     renderAnx6Clusters();
@@ -346,18 +298,15 @@ function processExcelDataAnx6(rows, sectionType) {
     anx6ContiguousData = mergeAnx6UploadByRole(anx6ContiguousData, mapped, 'anx6-contiguous-clusters', ['river', 'contiguous', 'cluster', 'leases', 'location', 'distance', 'village', 'area', 'mineral']);
     renderAnx6Contiguous();
   }
-
   toast(`Uploaded ${mapped.length} Annexure VI ${sectionType === 'cluster' ? 'cluster' : 'contiguous cluster'} row(s).`, 'success');
 }
 window.processExcelDataAnx6 = processExcelDataAnx6;
-
 function mergeAnx6UploadByRole(existingRows, uploadedRows, tableId, columnKeys) {
   const table = document.getElementById(tableId);
   const editableColumns = typeof getEditableColumnsForTable === 'function' ? getEditableColumnsForTable(table) : null;
   if (editableColumns === null) return uploadedRows;
   const allowed = Array.isArray(editableColumns) ? editableColumns : [];
   let protectedCells = 0;
-
   const merged = uploadedRows.map((incoming, rowIndex) => {
     const current = existingRows[rowIndex] || {};
     const out = { ...current };
@@ -370,17 +319,14 @@ function mergeAnx6UploadByRole(existingRows, uploadedRows, tableId, columnKeys) 
     });
     return out;
   });
-
   if (existingRows.length > uploadedRows.length) {
     merged.push(...existingRows.slice(uploadedRows.length));
   }
-
   if (protectedCells && typeof toast === 'function') {
     toast(`${protectedCells} locked cell(s) were protected during Excel sync.`, 'info');
   }
   return merged;
 }
-
 function columnValueAnx6(row, header, aliases) {
   const normalizedHeaders = header.map(normalizeHeaderAnx6);
   for (const alias of aliases) {
@@ -390,7 +336,6 @@ function columnValueAnx6(row, header, aliases) {
   }
   return '';
 }
-
 function mapAnx6Row(row, header, sectionType, rowNumber) {
   if (sectionType === 'cluster') {
     const mapped = {
@@ -407,7 +352,6 @@ function mapAnx6Row(row, header, sectionType, rowNumber) {
     if (mapped.mineral === 'NA' && mapped.excavation !== 'NA') mapped.mineral = toNumberAnx6(mapped.excavation) * 0.6;
     return mapped;
   }
-
   const mapped = {
     river: defaultNAAnx6(columnValueAnx6(row, header, ['River Name'])),
     contiguous: defaultNAAnx6(columnValueAnx6(row, header, ['Contiguous Cluster No.', 'Contiguous Cluster No'])),
@@ -423,20 +367,16 @@ function mapAnx6Row(row, header, sectionType, rowNumber) {
   return mapped;
 }
 window.mapAnx6Row = mapAnx6Row;
-
 function validateMappedAnx6Row(row, sectionType, rowNumber) {
   const required = sectionType === 'cluster'
     ? ['river', 'cluster', 'lease', 'location', 'village']
     : ['river', 'contiguous', 'cluster', 'leases', 'location', 'distance', 'village'];
-
   const missing = required.filter(key => !String(row[key] ?? '').trim());
   if (missing.length) throw new Error(`Required field missing in row ${rowNumber}: ${missing.join(', ')}.`);
-
   const numeric = sectionType === 'cluster' ? ['area', 'excavation'] : ['area', 'mineral'];
   const invalid = numeric.filter(key => String(row[key]).trim().toUpperCase() !== 'NA' && (!Number.isFinite(toNumberAnx6(row[key])) || toNumberAnx6(row[key]) < 0));
   if (invalid.length) throw new Error(`Invalid values in row ${rowNumber}: ${invalid.join(', ')} must be valid numbers.`);
 }
-
 function extractTableDataAnx6(tableId) {
   const table = document.getElementById(tableId);
   if (!table) return { headers: [], rows: [], foot: [] };
@@ -460,7 +400,6 @@ function extractTableDataAnx6(tableId) {
   });
   return { headers, rows, foot };
 }
-
 function exportAnx6PDF(btn, isLivePreview = false) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF('p', 'pt', 'a4');
@@ -469,25 +408,21 @@ function exportAnx6PDF(btn, isLivePreview = false) {
   const district = S.activeProject ? S.activeProject.district || 'Jalandhar' : 'Jalandhar';
   const districtUpper = district.toUpperCase();
   let startY = 80;
-
   const drawHeaderFooter = (data) => {
     doc.setFont('times', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.text("Page " + data.pageNumber, pageWidth / 2, pageHeight - 20, { align: 'center' });
   };
-
   doc.setFont('times', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
   doc.text('Annexure-VI', pageWidth - 55, 60, { align: 'right' });
-
   const clusterTitle = document.querySelector('#view-anx6 .anx-section:nth-of-type(1) .editable-title')?.innerText.trim() || 'Final Cluster & Contiguous Cluster details Clusters:';
   doc.setFont('times', 'bold');
   doc.setFontSize(8.5);
   doc.text('> ' + clusterTitle, 60, startY);
   startY += 35;
-
   const cluster = extractTableDataAnx6('anx6-final-clusters');
   doc.autoTable({
     startY,
@@ -502,19 +437,16 @@ function exportAnx6PDF(btn, isLivePreview = false) {
     columnStyles: { 2: { cellWidth: 92 }, 4: { cellWidth: 68 }, 7: { cellWidth: 86 } },
     didDrawPage: drawHeaderFooter
   });
-
   startY = doc.lastAutoTable.finalY + 28;
   if (startY > pageHeight - 170) {
     doc.addPage();
     startY = 80;
   }
-
   const contiguousTitle = document.querySelector('#view-anx6 .anx-section:nth-of-type(2) .editable-title')?.innerText.trim() || 'Final Contiguous Clusters:';
   doc.setFont('times', 'bold');
   doc.setFontSize(8.5);
   doc.text(contiguousTitle, 60, startY);
   startY += 18;
-
   const contiguous = extractTableDataAnx6('anx6-contiguous-clusters');
   doc.autoTable({
     startY,
@@ -529,7 +461,6 @@ function exportAnx6PDF(btn, isLivePreview = false) {
     columnStyles: { 1: { cellWidth: 58 }, 3: { cellWidth: 62 }, 6: { cellWidth: 76 }, 8: { cellWidth: 88 } },
     didDrawPage: drawHeaderFooter
   });
-
   if (isLivePreview) {
     const blob = doc.output('blob');
     const blobUrl = URL.createObjectURL(blob);
@@ -541,7 +472,6 @@ function exportAnx6PDF(btn, isLivePreview = false) {
   }
 }
 window.exportAnx6PDF = exportAnx6PDF;
-
 function renderPdfUploadUIAnx6() {
   const els = {
     name: document.getElementById('anx6-uploaded-filename'),
@@ -560,7 +490,6 @@ function renderPdfUploadUIAnx6() {
     if (els.sec) { els.sec.style.display = 'none'; if (els.iframe) els.iframe.src = 'about:blank'; }
     return;
   }
-
   els.name.textContent = S.activeProject.anx6PdfName;
   els.name.style.display = 'inline-block';
   els.dl.style.display = 'inline-flex';
@@ -572,7 +501,6 @@ function renderPdfUploadUIAnx6() {
   if (window.initLucide) window.initLucide();
 }
 window.renderPdfUploadUIAnx6 = renderPdfUploadUIAnx6;
-
 function togglePDFPreviewAnx6() {
   const sec = document.getElementById('pdf-preview-section-anx6');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx6') : document.getElementById('pdf-iframe-anx6'));
@@ -589,7 +517,6 @@ function togglePDFPreviewAnx6() {
   }
 }
 window.togglePDFPreviewAnx6 = togglePDFPreviewAnx6;
-
 function closePDFPreviewAnx6() {
   const sec = document.getElementById('pdf-preview-section-anx6');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx6') : document.getElementById('pdf-iframe-anx6'));
@@ -597,7 +524,6 @@ function closePDFPreviewAnx6() {
   if (iframe) { if (iframe.src.startsWith('blob:')) URL.revokeObjectURL(iframe.src); iframe.src = 'about:blank'; }
 }
 window.closePDFPreviewAnx6 = closePDFPreviewAnx6;
-
 function downloadPdfAnx6() {
   if (!S.activeProject?.anx6PdfName) { toast('No PDF uploaded yet.', 'warn'); return; }
   if (window.downloadStoredPdf) {
@@ -611,7 +537,6 @@ function downloadPdfAnx6() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 window.downloadPdfAnx6 = downloadPdfAnx6;
-
 function deletePdfAnx6() {
   if (!S.activeProject || !confirm('Delete the uploaded PDF?')) return;
   closePDFPreviewAnx6();
@@ -624,7 +549,6 @@ function deletePdfAnx6() {
   toast('PDF deleted.', 'success');
 }
 window.deletePdfAnx6 = deletePdfAnx6;
-
 function handlePDFUploadAnx6(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -648,17 +572,13 @@ function handlePDFUploadAnx6(event) {
   event.target.value = '';
 }
 window.handlePDFUploadAnx6 = handlePDFUploadAnx6;
-
-// â”€â”€ HEADING PERSISTENCE â”€â”€
 var ANX6_STORAGE_PREFIX = 'anx6_heading_';
-
 function saveAnx6Heading(el) {
   var key = el.getAttribute('data-key');
   if (!key) return;
   try { localStorage.setItem(ANX6_STORAGE_PREFIX + key, el.innerText.trim()); } catch (e) {}
 }
 window.saveAnx6Heading = saveAnx6Heading;
-
 function loadAnx6Headings() {
   document.querySelectorAll('#view-anx6 .editable-title[data-key]').forEach(function (el) {
     var key = el.getAttribute('data-key');
@@ -668,14 +588,11 @@ function loadAnx6Headings() {
   });
 }
 window.loadAnx6Headings = loadAnx6Headings;
-
 window.addEventListener('DOMContentLoaded', () => {
   renderAnx6();
   loadAnx6Headings();
   setTimeout(initLucide, 50);
 });
-
-// Auto Live Preview whenever the table changes
 document.addEventListener('input', (e) => {
   if (e.target.closest('#view-anx6 table')) {
     if (window.anx6DebounceTimer) clearTimeout(window.anx6DebounceTimer);
@@ -684,9 +601,6 @@ document.addEventListener('input', (e) => {
     }, 1500); // 1.5 seconds after typing stops
   }
 });
-
-
-
 document.addEventListener('change', (e) => {
   if (e.target.closest('#view-anx6 table')) {
     if (window.anx6DebounceTimer) clearTimeout(window.anx6DebounceTimer);

@@ -2,8 +2,6 @@
    SDLC PORTAL LOGIC & RECONCILIATION
    ══════════════════════════════════════ */
 let sdlcActiveTab = 'anx4';
-
-// Hook showView to run SDLC init when opened
 const sdlcShowView = window.showView;
 window.showView = function(id, btn, push) {
   if (id === 'sdlc-portal') {
@@ -13,19 +11,14 @@ window.showView = function(id, btn, push) {
     sdlcShowView(id, btn, push);
   }
 };
-
 function initSdlcPortal() {
   populateSdlcProjects();
   resetSdlcPortalUI();
 }
-
 function populateSdlcProjects() {
   const select = document.getElementById('sdlc-project-select');
   if (!select) return;
-
-  // Clear previous options except first
   select.innerHTML = '<option value="">-- Select Project --</option>';
-
   if (S.projects && S.projects.length > 0) {
     S.projects.forEach(p => {
       const opt = document.createElement('option');
@@ -35,33 +28,26 @@ function populateSdlcProjects() {
     });
   }
 }
-
 function resetSdlcPortalUI() {
   const container = document.getElementById('sdlc-comparison-container');
   if (container) container.style.display = 'none';
-  
   const status = document.getElementById('sdlc-portal-status');
   if (status) {
     status.textContent = 'Awaiting Upload';
     status.className = 'badge badge-amber';
   }
-  
   const fnText = document.getElementById('sdlc-upload-filename');
   if (fnText) fnText.textContent = 'Supports official SDLC joint physical verification templates.';
-
   document.getElementById('sdlc-chk-verify').checked = false;
   document.getElementById('sdlc-chk-replace').checked = false;
-
   S.sdlcData = null;
 }
-
 function onSdlcProjectChanged() {
   const select = document.getElementById('sdlc-project-select');
   if (!select || !select.value) {
     resetSdlcPortalUI();
     return;
   }
-  // Keep previous state but load comparison if already uploaded
   const projId = parseInt(select.value);
   const proj = S.projects.find(p => p.id === projId);
   if (proj && S.sdlcData && S.sdlcData.projectId === projId) {
@@ -70,35 +56,26 @@ function onSdlcProjectChanged() {
     resetSdlcPortalUI();
   }
 }
-
 function switchSdlcTab(tab) {
   sdlcActiveTab = tab;
-  
-  // Toggle tab buttons
   ['anx4', 'anx5', 'anx6', 'anx7'].forEach(t => {
     const el = document.getElementById('tab-sdlc-' + t);
     if (el) el.classList.toggle('active', t === tab);
   });
-
-  // Toggle tab tables
   ['anx4', 'anx5', 'anx6', 'anx7'].forEach(t => {
     const el = document.getElementById('sdlc-tab-content-' + t);
     if (el) el.style.display = t === tab ? 'block' : 'none';
   });
 }
-
 function loadDemoSdlcReport() {
   const select = document.getElementById('sdlc-project-select');
   if (!select || !select.value) {
     alert("Please select a target DSR project first.");
     return;
   }
-
   const projId = parseInt(select.value);
   const proj = S.projects.find(p => p.id === projId);
   const distName = proj ? proj.district : 'Jalandhar';
-
-  // Populate mock SDLC survey data for comparison
   S.sdlcData = {
     projectId: projId,
     district: distName,
@@ -123,14 +100,11 @@ function loadDemoSdlcReport() {
       { name: `Tehsil Link Road — ${distName}`, dsrVal: '180 PCU/hr', sdlcVal: '180 PCU/hr', variance: '0%', matched: true }
     ]
   };
-
   const fnText = document.getElementById('sdlc-upload-filename');
   if (fnText) fnText.innerHTML = `<strong>Demo_SDLC_Survey_${distName}.xlsx</strong> loaded and compared.`;
-
   renderSdlcComparison();
   toast("Demo SDLC verification data loaded successfully!", "success");
 }
-
 function handleSdlcFileUpload(event) {
   const select = document.getElementById('sdlc-project-select');
   if (!select || !select.value) {
@@ -140,16 +114,12 @@ function handleSdlcFileUpload(event) {
   }
   const file = event.target.files[0];
   if (!file) return;
-
   loadDemoSdlcReport(); // Standard fallback simulation
   const fnText = document.getElementById('sdlc-upload-filename');
   if (fnText) fnText.innerHTML = `<strong>${file.name}</strong> loaded and compared.`;
 }
-
 function renderSdlcComparison() {
   if (!S.sdlcData) return;
-
-  // Render Table 4
   const tbodyAnx4 = document.getElementById('sdlc-tbody-anx4');
   if (tbodyAnx4) {
     tbodyAnx4.innerHTML = S.sdlcData.anx4.map(row => `
@@ -164,8 +134,6 @@ function renderSdlcComparison() {
       </tr>
     `).join('');
   }
-
-  // Render Table 5
   const tbodyAnx5 = document.getElementById('sdlc-tbody-anx5');
   if (tbodyAnx5) {
     tbodyAnx5.innerHTML = S.sdlcData.anx5.map(row => `
@@ -183,8 +151,6 @@ function renderSdlcComparison() {
       </tr>
     `).join('');
   }
-
-  // Render Table 6
   const tbodyAnx6 = document.getElementById('sdlc-tbody-anx6');
   if (tbodyAnx6) {
     tbodyAnx6.innerHTML = S.sdlcData.anx6.map(row => `
@@ -199,8 +165,6 @@ function renderSdlcComparison() {
       </tr>
     `).join('');
   }
-
-  // Render Table 7
   const tbodyAnx7 = document.getElementById('sdlc-tbody-anx7');
   if (tbodyAnx7) {
     tbodyAnx7.innerHTML = S.sdlcData.anx7.map(row => `
@@ -215,13 +179,10 @@ function renderSdlcComparison() {
       </tr>
     `).join('');
   }
-
-  // Calculate totals and set badges
   let totalDiscrepancies = 0;
   ['anx4', 'anx5', 'anx6', 'anx7'].forEach(key => {
     totalDiscrepancies += S.sdlcData[key].filter(r => !r.matched).length;
   });
-
   const badgeContainer = document.getElementById('sdlc-discrepancy-summary-badges');
   if (badgeContainer) {
     badgeContainer.innerHTML = `
@@ -231,7 +192,6 @@ function renderSdlcComparison() {
       </span>
     `;
   }
-
   const status = document.getElementById('sdlc-portal-status');
   if (status) {
     if (totalDiscrepancies > 0) {
@@ -242,55 +202,36 @@ function renderSdlcComparison() {
       status.className = 'badge badge-green';
     }
   }
-
   const container = document.getElementById('sdlc-comparison-container');
   if (container) container.style.display = 'block';
-
   switchSdlcTab(sdlcActiveTab);
   if (window.initLucide) initLucide();
 }
-
 async function submitSdlcReconciliation() {
   const select = document.getElementById('sdlc-project-select');
   if (!select || !select.value) return;
-
   const projId = parseInt(select.value);
-
   if (!document.getElementById('sdlc-chk-verify').checked) {
     alert("Please check the declaration box certifying SDLC survey verification approval.");
     return;
   }
-
   try {
     toast("Saving SDLC reconciliation data...", "info");
-    
-    // Set S.activeProject temporarily to the selected project so persistProjectState runs on it
     const originalActive = S.activeProject;
     S.activeProject = S.projects.find(p => p.id === projId);
-    
     S.sdlcData.verified = true;
     S.sdlcData.annotated = document.getElementById('sdlc-chk-replace').checked;
-    
-    // Format audit message
     const remarks = `SDLC Reconciliation committed for Project ID ${projId}. Reconciled 4 discrepancies in Annexures IV, V, VI, VII.`;
-    
-    // Persist this project state
     if (typeof persistProjectState === 'function') {
       await persistProjectState();
     }
-    
-    // Post workflow action to backend
     await apiFetch(`/reports/${projId}/workflow`, {
       method: 'POST',
       body: JSON.stringify({ action: 'SDLC_RECONCILE', remarks: remarks })
     });
-
-    // Restore original active project
     S.activeProject = originalActive;
-
     toast("Reconciliation completed successfully and logged!", "success");
     alert("Success: SDLC Survey Data reconciled. The comparison tables will be appended at the end of the final generated DSR report.");
-    
     resetSdlcPortalUI();
     select.value = "";
   } catch (err) {

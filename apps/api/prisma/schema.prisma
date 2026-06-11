@@ -67,12 +67,21 @@ model Project {
   progress          Int           @default(0)
   status            ProjectStatus @default(IN_PROGRESS)
   signatures        Int           @default(0)
+  phaseNo           Int           @default(1)
+  parentPhaseId     BigInt?
+  phaseLocked       Boolean       @default(false)
+  phaseOrigin       String?       @db.Text
   createdBy         BigInt?
   projectState      String?       @db.Text
   lastReviewedState String?       @db.Text
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   files             DsrFile[]
+  parentPhase       Project?      @relation("ProjectPhaseChain", fields: [parentPhaseId], references: [id])
+  childPhases       Project[]     @relation("ProjectPhaseChain")
+
+  @@index([parentPhaseId])
+  @@index([district, phaseNo])
 }
 
 model Report {

@@ -8,6 +8,7 @@ const DIST_FILE = path.join(SRC_DIR, 'login.html');
 const JS_FILES = [
   'js/api.js',
   'js/state.js',
+  'js/phase.js',
   'js/hierarchy.js',
   'js/performance.js',
   'js/navigation.js',
@@ -26,6 +27,7 @@ const JS_FILES = [
   'js/anx5.js',
   'js/anx6.js',
   'js/anx7.js',
+  'js/more-annexures.js',
   'js/annexure-b.js',
   'js/annexure-c.js',
   'js/annexure-d.js',
@@ -44,13 +46,14 @@ const JS_FILES = [
   'js/main.js'
 ];
 
-const ASSET_VERSION = 'live-fixes-20260610-accessibility-language';
+const ASSET_VERSION = 'grid-live-lines-cleanup-20260611';
+const applyAssetVersion = (html) => html.replace(/\{\{ASSET_VERSION\}\}/g, ASSET_VERSION);
 
 function compile() {
   console.log('Compiling DSR Portal...');
   try {
     // 1. Start with head
-    let html = fs.readFileSync(path.join(SRC_DIR, 'templates', 'head.html'), 'utf8');
+    let html = applyAssetVersion(fs.readFileSync(path.join(SRC_DIR, 'templates', 'head.html'), 'utf8'));
 
     // 2. Append auth screen
     html += fs.readFileSync(path.join(SRC_DIR, 'templates', 'auth.html'), 'utf8');
@@ -74,17 +77,20 @@ function compile() {
       }
     }
 
-    html += shell;
+    html += applyAssetVersion(shell);
 
-    // 4. Append modals & toast overlay
-    html += fs.readFileSync(path.join(SRC_DIR, 'templates', 'modals.html'), 'utf8');
+    // 4. Append standalone authority dashboard screen
+    html += applyAssetVersion(fs.readFileSync(path.join(SRC_DIR, 'templates', 'screen-authority.html'), 'utf8'));
 
-    // 5. Append JS Script tag references
+    // 5. Append modals & toast overlay
+    html += applyAssetVersion(fs.readFileSync(path.join(SRC_DIR, 'templates', 'modals.html'), 'utf8'));
+
+    // 6. Append JS Script tag references
     JS_FILES.forEach(file => {
       html += `\n<script defer src="${file}?v=${ASSET_VERSION}"></script>`;
     });
 
-    // 6. Close body and html
+    // 7. Close body and html
     html += '\n</body>\n</html>';
 
     // Write built file (App / Login portal)
@@ -92,7 +98,7 @@ function compile() {
     console.log(`Successfully compiled DSR Portal into ${DIST_FILE}`);
 
     // Copy home.html to index.html and home.html (Landing page)
-    let homeHtml = fs.readFileSync(path.join(SRC_DIR, 'templates', 'home.html'), 'utf8');
+    let homeHtml = applyAssetVersion(fs.readFileSync(path.join(SRC_DIR, 'templates', 'home.html'), 'utf8'));
     fs.writeFileSync(path.join(SRC_DIR, 'home.html'), homeHtml, 'utf8');
     fs.writeFileSync(path.join(SRC_DIR, 'index.html'), homeHtml, 'utf8');
     console.log(`Successfully generated home.html and index.html (Landing Page) from templates/home.html`);

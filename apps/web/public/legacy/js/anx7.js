@@ -2,7 +2,6 @@
 window.S = window.S || { activeProject: { id: 'demo_proj', anx7PdfName: null }, projects: [] };
 window.toast = window.toast || function (msg, type) { alert('[' + (type || 'INFO').toUpperCase() + '] ' + msg); };
 window.initLucide = window.initLucide || function () { if (window.lucide) lucide.createIcons(); };
-
 const ANX7_ROUTE_HEADERS = [
   'Sl.No',
   'Lease No.',
@@ -15,7 +14,6 @@ const ANX7_ROUTE_HEADERS = [
   'The road will be constructed by Govt./Lease Owner',
   'Route Map & Location'
 ];
-
 const ANX7_CLUSTER_HEADERS = [
   'Cluster No',
   'Transportation Route No',
@@ -27,21 +25,17 @@ const ANX7_CLUSTER_HEADERS = [
   'The road will be constructed by Govt/Lease Owner',
   'Route Map & Location'
 ];
-
 const ANX7_ROAD_OPTIONS = ['NA', 'Unpaved', 'Black Topped', 'Metalled', 'WBM', 'Other'];
 const ANX7_CONSTRUCTOR_OPTIONS = ['NA', 'Lease Owner', 'Govt', 'Govt./Lease Owner'];
-
 const ANX7_DEFAULT_ROUTES = [
   ['NPRO_JL_PL_ST_43', "EE - EE' &\nFF - FF'", 192, 192, '1.27 &\n1.2', 'Unpaved', 'Unpaved', 'Lease Owner', 'Route Map\nattached'],
   ['NPRO_JL_PL_ST_44', 'GG - GG', 15, 15, '', 'Unpaved', 'Unpaved', 'Lease Owner', 'Route Map\nattached'],
   ['NPRO_JL_PL_ST_45', '', 14, 14, '1.21', 'Unpaved', 'Unpaved', 'Lease Owner', 'Route Map\nattached']
 ];
-
 const ANX7_DEFAULT_CLUSTERS = [
   ['Jalandhar Sutlej 1,2', "A-A', B-B'", 358, 'NA', 0.73, 'Unpaved', 'Unpaved', 'Lease Owner', 'Route Map\nattached'],
   ['Jalandhar Sutlej 3,4,5,6', "C-C' TO F-\nF'", 343, 'NA', 2.1, 'Unpaved', 'Unpaved', 'Lease Owner', 'Route Map\nattached']
 ];
-
 function escapeHtmlAnx7(value) {
   return String(value === undefined || value === null ? '' : value)
     .replace(/&/g, '&amp;')
@@ -49,26 +43,21 @@ function escapeHtmlAnx7(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
-
 function makeSelectAnx7(options, selected) {
   return `<select>${options.map(option => `<option${option === selected ? ' selected' : ''}>${escapeHtmlAnx7(option)}</option>`).join('')}</select>`;
 }
-
 function cleanTextAnx7(value, fallback = 'NA') {
   const text = String(value === undefined || value === null ? '' : value).trim();
   return text || fallback;
 }
-
 function fillNAAnx7(el) {
   if (el && String(el.innerText || '').trim() === '') el.innerText = 'NA';
 }
 window.fillNAAnx7 = fillNAAnx7;
-
 function getCellTextAnx7(td) {
   const select = td.querySelector('select');
   return cleanTextAnx7(select ? select.value : td.innerText);
 }
-
 function renderRouteRowAnx7(data) {
   const row = data.length === 10 ? data : ['', ...data];
   const [sl, lease, route, tipLease, tipAll, length, roadType, recommendation, constructedBy, map] = row;
@@ -90,7 +79,6 @@ function renderRouteRowAnx7(data) {
     </td>
   </tr>`;
 }
-
 function renderClusterRowAnx7(data) {
   const [cluster, route, tipCluster, tipAll, length, roadType, recommendation, constructedBy, map] = data;
   return `<tr>
@@ -110,7 +98,6 @@ function renderClusterRowAnx7(data) {
     </td>
   </tr>`;
 }
-
 function deleteRowAnx7(btn) {
   const tbody = btn.closest('tbody');
   if (tbody && tbody.rows.length <= 1) {
@@ -121,14 +108,12 @@ function deleteRowAnx7(btn) {
   renumberRouteRowsAnx7(tbody);
 }
 window.deleteRowAnx7 = deleteRowAnx7;
-
 function renumberRouteRowsAnx7(tbody) {
   if (!tbody || !tbody.classList.contains('anx7-route-table-body')) return;
   Array.from(tbody.rows).forEach((tr, index) => {
     if (tr.cells[0]) tr.cells[0].innerText = String(index + 1);
   });
 }
-
 function addRouteRowAnx7(btn) {
   const card = btn ? btn.closest('.card') : document.querySelector('#anx7-individual-routes-container .table-block-card');
   const tbody = card?.querySelector('.anx7-route-table-body');
@@ -139,7 +124,6 @@ function addRouteRowAnx7(btn) {
   if (window.initLucide) window.initLucide();
 }
 window.addRouteRowAnx7 = addRouteRowAnx7;
-
 function addClusterRowAnx7(btn) {
   const card = btn ? btn.closest('.card') : document.querySelector('#anx7-cluster-routes-container .table-block-card');
   const tbody = card?.querySelector('.anx7-cluster-table-body');
@@ -149,13 +133,11 @@ function addClusterRowAnx7(btn) {
   if (window.initLucide) window.initLucide();
 }
 window.addClusterRowAnx7 = addClusterRowAnx7;
-
 function markCardStateAnx7(card, state) {
   if (!card) return;
   card.dataset.validationState = state || 'edited';
   card.dataset.exportState = 'dirty';
 }
-
 function addRouteTableBlockAnx7(prefill = false, rows = null, title = '') {
   const container = document.getElementById('anx7-individual-routes-container');
   if (!container) return null;
@@ -222,7 +204,6 @@ function addRouteTableBlockAnx7(prefill = false, rows = null, title = '') {
   return card;
 }
 window.addRouteTableBlockAnx7 = addRouteTableBlockAnx7;
-
 function addClusterTableBlockAnx7(prefill = false, rows = null, title = '') {
   const container = document.getElementById('anx7-cluster-routes-container');
   if (!container) return null;
@@ -288,11 +269,9 @@ function addClusterTableBlockAnx7(prefill = false, rows = null, title = '') {
   return card;
 }
 window.addClusterTableBlockAnx7 = addClusterTableBlockAnx7;
-
 function containerForAnx7(type) {
   return document.getElementById(type === 'individual' ? 'anx7-individual-routes-container' : 'anx7-cluster-routes-container');
 }
-
 function renumberTableBlocksAnx7(type) {
   const container = containerForAnx7(type);
   if (!container) return;
@@ -304,7 +283,6 @@ function renumberTableBlocksAnx7(type) {
     }
   });
 }
-
 function updateDeleteButtonsVisibilityAnx7(type) {
   const container = containerForAnx7(type);
   if (!container) return;
@@ -314,7 +292,6 @@ function updateDeleteButtonsVisibilityAnx7(type) {
     if (btn) btn.style.display = cards.length <= 1 ? 'none' : 'inline-flex';
   });
 }
-
 function deleteTableBlockAnx7(btn) {
   const card = btn.closest('.card');
   const type = card.getAttribute('data-type');
@@ -331,21 +308,18 @@ function deleteTableBlockAnx7(btn) {
   }
 }
 window.deleteTableBlockAnx7 = deleteTableBlockAnx7;
-
 function rowsFromRouteCardAnx7(card) {
   return Array.from(card.querySelectorAll('.anx7-route-table-body tr')).map(tr => {
     const cells = tr.querySelectorAll('td');
     return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(index => index >= 6 && index <= 8 ? cells[index].querySelector('select').value : cells[index].innerText.trim());
   });
 }
-
 function rowsFromClusterCardAnx7(card) {
   return Array.from(card.querySelectorAll('.anx7-cluster-table-body tr')).map(tr => {
     const cells = tr.querySelectorAll('td');
     return [0, 1, 2, 3, 4, 5, 6, 7, 8].map(index => index >= 5 && index <= 7 ? cells[index].querySelector('select').value : cells[index].innerText.trim());
   });
 }
-
 function downloadTemplateAnx7(headers, rows, sheetName, filename) {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
@@ -353,7 +327,6 @@ function downloadTemplateAnx7(headers, rows, sheetName, filename) {
   XLSX.utils.book_append_sheet(wb, ws, sheetName);
   XLSX.writeFile(wb, filename);
 }
-
 function downloadRouteTemplateAnx7(btn) {
   const card = btn.closest('.card');
   const title = card.querySelector('.card-title').innerText.trim().replace(/[^a-z0-9]+/gi, '_');
@@ -361,7 +334,6 @@ function downloadRouteTemplateAnx7(btn) {
   toast('Routes Excel downloaded', 'success');
 }
 window.downloadRouteTemplateAnx7 = downloadRouteTemplateAnx7;
-
 function downloadClusterTemplateAnx7(btn) {
   const card = btn.closest('.card');
   const title = card.querySelector('.card-title').innerText.trim().replace(/[^a-z0-9]+/gi, '_');
@@ -369,13 +341,11 @@ function downloadClusterTemplateAnx7(btn) {
   toast('Cluster Excel downloaded', 'success');
 }
 window.downloadClusterTemplateAnx7 = downloadClusterTemplateAnx7;
-
 function validateFileAnx7(file) {
   if (!file) return 'Missing file.';
   if (!/\.(xlsx|xls|csv)$/i.test(file.name)) return 'Wrong file type. Please upload .xlsx, .xls, or .csv.';
   return '';
 }
-
 function parseWorkbookRowsAnx7(file, callback) {
   const fileError = validateFileAnx7(file);
   if (fileError) throw new Error(fileError);
@@ -396,13 +366,11 @@ function parseWorkbookRowsAnx7(file, callback) {
   };
   reader.readAsArrayBuffer(file);
 }
-
 function parseRowsAnx7(rows) {
   const cleanRows = rows.filter(row => Array.isArray(row) && row.some(cell => String(cell ?? '').trim() !== ''));
   if (cleanRows.length < 2) throw new Error('No data rows found.');
   return cleanRows.slice(1);
 }
-
 function mapRouteRowAnx7(row, index) {
   return [
     row[0] || index + 1,
@@ -417,7 +385,6 @@ function mapRouteRowAnx7(row, index) {
     cleanTextAnx7(row[9])
   ];
 }
-
 function mapClusterRowAnx7(row) {
   return [
     cleanTextAnx7(row[0]),
@@ -431,7 +398,6 @@ function mapClusterRowAnx7(row) {
     cleanTextAnx7(row[8])
   ];
 }
-
 function fillRouteCardAnx7(card, dataRows, fileName) {
   const tbody = card.querySelector('.anx7-route-table-body');
   const uploadRows = dataRows.map((row, index) => mapRouteRowAnx7(row, index));
@@ -446,7 +412,6 @@ function fillRouteCardAnx7(card, dataRows, fileName) {
   card.dataset.validationState = 'valid';
   card.dataset.exportState = 'dirty';
 }
-
 function fillClusterCardAnx7(card, dataRows, fileName) {
   const tbody = card.querySelector('.anx7-cluster-table-body');
   const uploadRows = dataRows.map(row => mapClusterRowAnx7(row));
@@ -460,7 +425,6 @@ function fillClusterCardAnx7(card, dataRows, fileName) {
   card.dataset.validationState = 'valid';
   card.dataset.exportState = 'dirty';
 }
-
 function uploadRoutesAnx7(event, input) {
   const file = event.target.files[0];
   if (!file) return;
@@ -487,7 +451,6 @@ function uploadRoutesAnx7(event, input) {
   event.target.value = '';
 }
 window.uploadRoutesAnx7 = uploadRoutesAnx7;
-
 function uploadClustersAnx7(event, input) {
   const file = event.target.files[0];
   if (!file) return;
@@ -514,7 +477,6 @@ function uploadClustersAnx7(event, input) {
   event.target.value = '';
 }
 window.uploadClustersAnx7 = uploadClustersAnx7;
-
 function handleTableUploadAnx7(file, type) {
   const card = type === 'cluster'
     ? document.querySelector('#anx7-cluster-routes-container .table-block-card')
@@ -524,7 +486,6 @@ function handleTableUploadAnx7(file, type) {
   else uploadRoutesAnx7(fakeEvent, card?.querySelector('input[type="file"]') || card);
 }
 window.handleTableUploadAnx7 = handleTableUploadAnx7;
-
 function getTableDataAnx7(card, type) {
   const selector = type === 'individual' ? '.anx7-route-table-body tr' : '.anx7-cluster-table-body tr';
   return Array.from(card.querySelectorAll(selector)).map(tr => {
@@ -533,7 +494,6 @@ function getTableDataAnx7(card, type) {
       .map(getCellTextAnx7);
   });
 }
-
 function drawAnx7Furniture(doc, pageNum) {
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -542,7 +502,6 @@ function drawAnx7Furniture(doc, pageNum) {
   doc.setTextColor(0, 0, 0);
   doc.text("Page " + pageNum, pageW / 2, pageH - 20, { align: 'center' });
 }
-
 function exportAnx7PDF(btn, isLivePreview = false) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -557,7 +516,6 @@ function exportAnx7PDF(btn, isLivePreview = false) {
     drawAnx7Furniture(doc, realPage);
   };
   let currentY = margin + 20;
-
   doc.setFont('times', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(0, 0, 0);
@@ -566,7 +524,6 @@ function exportAnx7PDF(btn, isLivePreview = false) {
   doc.setFontSize(10);
   doc.text('>  Transportation Routes for individual leases and leases in Cluster:', margin + 8, currentY);
   currentY += 8;
-
   document.querySelectorAll('#anx7-individual-routes-container .table-block-card').forEach((card, index) => {
     if (currentY + 50 > pageH - 25) { doc.addPage(); currentY = margin + 20; }
     doc.setFont('times', 'bold');
@@ -599,7 +556,6 @@ function exportAnx7PDF(btn, isLivePreview = false) {
     card.dataset.exportState = 'exported';
     currentY = doc.lastAutoTable.finalY + 12;
   });
-
   const clusterCards = document.querySelectorAll('#anx7-cluster-routes-container .table-block-card');
   if (clusterCards.length) {
     if (currentY + 20 > pageH - 25) { doc.addPage(); currentY = margin + 20; }
@@ -608,7 +564,6 @@ function exportAnx7PDF(btn, isLivePreview = false) {
     doc.text('Cluster:', margin + 18, currentY);
     currentY += 6;
   }
-
   clusterCards.forEach((card, index) => {
     if (currentY + 50 > pageH - 25) { doc.addPage(); currentY = margin + 20; }
     doc.setFont('times', 'bold');
@@ -641,7 +596,6 @@ function exportAnx7PDF(btn, isLivePreview = false) {
     card.dataset.exportState = 'exported';
     currentY = doc.lastAutoTable.finalY + 12;
   });
-
   if (isLivePreview) {
     const blob = doc.output('blob');
     const blobUrl = URL.createObjectURL(blob);
@@ -653,7 +607,6 @@ function exportAnx7PDF(btn, isLivePreview = false) {
   }
 }
 window.exportAnx7PDF = exportAnx7PDF;
-
 function renderPdfUploadUIAnx7() {
   const els = {
     name: document.getElementById('anx7-uploaded-filename'),
@@ -683,7 +636,6 @@ function renderPdfUploadUIAnx7() {
   if (window.initLucide) window.initLucide();
 }
 window.renderPdfUploadUIAnx7 = renderPdfUploadUIAnx7;
-
 function togglePDFPreviewAnx7() {
   const sec = document.getElementById('pdf-preview-section-anx7');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx7') : document.getElementById('pdf-iframe-anx7'));
@@ -698,7 +650,6 @@ function togglePDFPreviewAnx7() {
   }
 }
 window.togglePDFPreviewAnx7 = togglePDFPreviewAnx7;
-
 function closePDFPreviewAnx7() {
   const sec = document.getElementById('pdf-preview-section-anx7');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx7') : document.getElementById('pdf-iframe-anx7'));
@@ -709,7 +660,6 @@ function closePDFPreviewAnx7() {
   }
 }
 window.closePDFPreviewAnx7 = closePDFPreviewAnx7;
-
 function downloadPdfAnx7() {
   if (!S.activeProject?.anx7PdfName) { toast('No PDF uploaded yet.', 'warn'); return; }
   if (window.downloadStoredPdf) {
@@ -723,7 +673,6 @@ function downloadPdfAnx7() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 window.downloadPdfAnx7 = downloadPdfAnx7;
-
 function deletePdfAnx7() {
   if (!S.activeProject || !confirm('Delete the uploaded PDF?')) return;
   closePDFPreviewAnx7();
@@ -736,7 +685,6 @@ function deletePdfAnx7() {
   toast('PDF deleted.', 'success');
 }
 window.deletePdfAnx7 = deletePdfAnx7;
-
 function handlePDFUploadAnx7(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -760,7 +708,6 @@ function handlePDFUploadAnx7(event) {
   event.target.value = '';
 }
 window.handlePDFUploadAnx7 = handlePDFUploadAnx7;
-
 function initAnx7() {
   if (!document.getElementById('anx7-individual-routes-container')) return;
   const individual = document.getElementById('anx7-individual-routes-container');
@@ -770,10 +717,7 @@ function initAnx7() {
   renderPdfUploadUIAnx7();
 }
 window.initAnx7 = initAnx7;
-
 window.addEventListener('DOMContentLoaded', initAnx7);
-
-// Auto Live Preview whenever the table changes
 document.addEventListener('input', (e) => {
   if (e.target.closest('#view-anx7 table')) {
     if (window.anx7DebounceTimer) clearTimeout(window.anx7DebounceTimer);
@@ -782,9 +726,6 @@ document.addEventListener('input', (e) => {
     }, 1500); // 1.5 seconds after typing stops
   }
 });
-
-
-
 document.addEventListener('change', (e) => {
   if (e.target.closest('#view-anx7 table')) {
     if (window.anx7DebounceTimer) clearTimeout(window.anx7DebounceTimer);

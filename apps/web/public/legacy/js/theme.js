@@ -4,7 +4,6 @@
 const THEME_STORAGE_KEY = 'theme';
 const THEME_LIGHT = 'light';
 const THEME_DARK = 'dark';
-
 function getThemePreference() {
   try {
     const saved = localStorage.getItem(THEME_STORAGE_KEY);
@@ -13,7 +12,6 @@ function getThemePreference() {
     return THEME_LIGHT;
   }
 }
-
 function applyTheme(theme, saveToStorage = true) {
   const isDark = theme === THEME_DARK;
   document.documentElement.classList.toggle('dark', isDark);
@@ -27,21 +25,17 @@ function applyTheme(theme, saveToStorage = true) {
   }
   return isDark;
 }
-
 function initThemeFromStorage() {
   return applyTheme(getThemePreference(), true);
 }
-
 function toggleDarkMode() {
   const isDark = !document.documentElement.classList.contains('dark');
   applyTheme(isDark ? THEME_DARK : THEME_LIGHT);
   updateDarkModeIcon();
-
   if (typeof refreshThemeDependentUI === 'function') {
     refreshThemeDependentUI();
   }
 }
-
 function updateDarkModeIcon() {
   const isDark = document.documentElement.classList.contains('dark');
   const iconName = isDark ? 'sun' : 'moon';
@@ -55,10 +49,8 @@ function updateDarkModeIcon() {
   });
   if (window.lucide) window.lucide.createIcons();
 }
-
 /* Apply before first paint when loaded from <head> */
 initThemeFromStorage();
-
 document.addEventListener('DOMContentLoaded', () => {
   initThemeFromStorage();
   updateDarkModeIcon();

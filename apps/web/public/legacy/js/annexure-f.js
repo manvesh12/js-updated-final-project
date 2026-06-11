@@ -1,5 +1,4 @@
 /* ANNEXURE F - BENCH MARK, CORS & SAND GHAT COORDINATES */
-
 const ANNEXURE_F_TABLES = {
   CORS: {
     tableId: 'annexure-f-cors',
@@ -38,27 +37,22 @@ const ANNEXURE_F_TABLES = {
     fontSize: 7.5
   }
 };
-
 function annexureFDeleteButtonHTML() {
   const isReadOnly = typeof isUserReadOnly === 'function' ? isUserReadOnly() : !(window.S && (S.role === 'user' || S.role === 'admin'));
   return `<button class='btn btn-xs btn-danger' onclick='delRowAnnexureF(this)' style='display:${isReadOnly ? 'none' : 'inline-flex'};align-items:center;justify-content:center;padding:4px;'><i data-lucide='trash-2' style='width:12px;height:12px;'></i></button>`;
 }
-
 function annexureFCellValue(td) {
   const select = td.querySelector('select');
   if (select) return select.value;
   return td.innerText.trim();
 }
-
 function annexureFToCSVValue(value) {
   const text = String(value === undefined || value === null ? '' : value);
   return `"${text.replace(/"/g, '""')}"`;
 }
-
 function downloadSectionTemplateAnnexureF(sectionType) {
   const cfg = ANNEXURE_F_TABLES[sectionType];
   if (!cfg) return;
-
   const csvContent = cfg.headers.map(annexureFToCSVValue).join(',') + '\n';
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
@@ -71,7 +65,6 @@ function downloadSectionTemplateAnnexureF(sectionType) {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
-
 function resolveAnnexureFTable(target, sectionType) {
   if (target && typeof target === 'string') return document.getElementById(target);
   if (target && target.nodeType === 1) {
@@ -79,25 +72,20 @@ function resolveAnnexureFTable(target, sectionType) {
     const blockTable = target.closest('.annexure-f-table-block')?.querySelector('table');
     if (blockTable) return blockTable;
   }
-
   const cfg = ANNEXURE_F_TABLES[sectionType];
   return cfg ? document.getElementById(cfg.tableId) : null;
 }
-
 function getAnnexureFTables(sectionType) {
   const cfg = ANNEXURE_F_TABLES[sectionType];
   if (!cfg) return [];
-
   const container = document.getElementById(cfg.containerId);
   if (container) {
     const tables = Array.from(container.querySelectorAll(`table.annexure-f-table[data-section-type="${sectionType}"]`));
     if (tables.length) return tables;
   }
-
   const table = document.getElementById(cfg.tableId);
   return table ? [table] : [];
 }
-
 function getAnnexureFEmptyRow(sectionType) {
   const cfg = ANNEXURE_F_TABLES[sectionType];
   if (!cfg) return [];
@@ -105,12 +93,10 @@ function getAnnexureFEmptyRow(sectionType) {
   row[row.length - 1] = annexureFDeleteButtonHTML();
   return row;
 }
-
 function handleSectionUploadAnnexureF(event, sectionType) {
   const file = event.target.files[0];
   if (!file) return;
   const table = resolveAnnexureFTable(event.target, sectionType);
-
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
@@ -118,12 +104,10 @@ function handleSectionUploadAnnexureF(event, sectionType) {
       const workbook = XLSX.read(data, { type: 'array' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
-
       if (!rows.length) {
         toast('The uploaded file is empty.', 'warn');
         return;
       }
-
       processExcelDataAnnexureF(rows, sectionType, table);
     } catch (error) {
       toast('Error parsing file. Please ensure it is a valid Excel or CSV file.', 'error');
@@ -133,21 +117,17 @@ function handleSectionUploadAnnexureF(event, sectionType) {
   };
   reader.readAsArrayBuffer(file);
 }
-
 function processExcelDataAnnexureF(rows, sectionType, targetTable) {
   const cfg = ANNEXURE_F_TABLES[sectionType];
   if (!cfg) return;
-
   const validRows = rows.filter(row => row.some(cell => String(cell === undefined || cell === null ? '' : cell).trim() !== ''));
   const headerIdx = validRows.findIndex(row => annexureFLooksLikeHeader(row, sectionType));
   const startIndex = headerIdx >= 0 ? headerIdx + 1 : 0;
   const dataRows = validRows.slice(startIndex);
-
   if (!dataRows.length) {
     toast('No data found after the header in the uploaded file.', 'warn');
     return;
   }
-
   const table = targetTable || document.getElementById(cfg.tableId);
   const tbody = table ? table.querySelector('tbody') : null;
   if (!tbody) return;
@@ -158,14 +138,12 @@ function processExcelDataAnnexureF(rows, sectionType, targetTable) {
     tbody.innerHTML = '';
     uploadRows.forEach(row => addRowAnnexureF(table, row));
   }
-
   toast(`Uploaded Annexure F ${sectionType.toLowerCase()} data successfully`, 'success');
   if (window.debouncedSaveState) window.debouncedSaveState();
   if (window.pdfPreview && window.pdfPreview.currentView === 'annexure-f') {
     exportAnnexureFPDF(null, true);
   }
 }
-
 function annexureFLooksLikeHeader(row, sectionType) {
   const rowStr = row.map(c => String(c || '')).join(' ').toLowerCase();
   if (sectionType === 'CORS') return rowStr.includes('cors') || rowStr.includes('station code');
@@ -173,11 +151,9 @@ function annexureFLooksLikeHeader(row, sectionType) {
   if (sectionType === 'SAND') return rowStr.includes('sand') || rowStr.includes('lease') || rowStr.includes('river');
   return false;
 }
-
 function normalizeAnnexureFRow(rowData, sectionType, index) {
   const row = Array.from(rowData);
   const del = annexureFDeleteButtonHTML();
-
   if (sectionType === 'CORS') {
     while (row.length < 5) row.push('');
     return [
@@ -190,7 +166,6 @@ function normalizeAnnexureFRow(rowData, sectionType, index) {
       del
     ];
   }
-
   if (sectionType === 'BENCHMARK') {
     while (row.length < 4) row.push('');
     return [
@@ -202,7 +177,6 @@ function normalizeAnnexureFRow(rowData, sectionType, index) {
       del
     ];
   }
-
   while (row.length < 7) row.push('');
   return [
     row[0] || String(index + 1),
@@ -215,22 +189,18 @@ function normalizeAnnexureFRow(rowData, sectionType, index) {
     del
   ];
 }
-
 function addRowAnnexureF(tableId, cellDataArray) {
   const table = resolveAnnexureFTable(tableId);
   const tbody = table ? table.querySelector('tbody') : null;
   if (!tbody) return;
   const tableDomId = table.id || '';
-
   const tr = document.createElement('tr');
   cellDataArray.forEach((data, index) => {
     const td = document.createElement('td');
     let dataStr = String(data === undefined || data === null ? '' : data).trim();
-
     if (dataStr === '' && !dataStr.includes('<button') && !dataStr.includes('<select')) {
       dataStr = 'NUL';
     }
-
     if (dataStr.includes('<button') || dataStr.includes('<select')) {
       td.innerHTML = dataStr;
     } else {
@@ -249,19 +219,15 @@ function addRowAnnexureF(tableId, cellDataArray) {
         td.classList.add('coord-input');
       }
     }
-
     tr.appendChild(td);
   });
-
   tbody.appendChild(tr);
   if (window.initLucide) window.initLucide();
 }
-
 function renumberAnnexureFTableBlocks(sectionType) {
   const cfg = ANNEXURE_F_TABLES[sectionType];
   const container = cfg ? document.getElementById(cfg.containerId) : null;
   if (!container) return;
-
   const blocks = container.querySelectorAll('.annexure-f-table-block');
   blocks.forEach((block, index) => {
     const title = block.querySelector('.annexure-f-block-title');
@@ -270,7 +236,6 @@ function renumberAnnexureFTableBlocks(sectionType) {
     if (delBtn) delBtn.style.display = blocks.length <= 1 ? 'none' : 'inline-flex';
   });
 }
-
 function deleteAnnexureFTableBlock(btn) {
   const block = btn.closest('.annexure-f-table-block');
   if (!block) return;
@@ -278,12 +243,10 @@ function deleteAnnexureFTableBlock(btn) {
   const cfg = ANNEXURE_F_TABLES[sectionType];
   const container = cfg ? document.getElementById(cfg.containerId) : null;
   if (!container) return;
-
   if (container.querySelectorAll('.annexure-f-table-block').length <= 1) {
     toast('You cannot delete the last remaining table.', 'warn');
     return;
   }
-
   if (confirm('Are you sure you want to delete this entire table block?')) {
     block.remove();
     renumberAnnexureFTableBlocks(sectionType);
@@ -294,17 +257,14 @@ function deleteAnnexureFTableBlock(btn) {
     }
   }
 }
-
 function addAnnexureFTableBlock(sectionType) {
   const cfg = ANNEXURE_F_TABLES[sectionType];
   const container = cfg ? document.getElementById(cfg.containerId) : null;
   const firstTable = document.getElementById(cfg?.tableId);
   if (!cfg || !container || !firstTable) return;
-
   const tableIdx = container.querySelectorAll('.annexure-f-table-block').length + 1;
   const newTableId = `${cfg.tableId}-${tableIdx}`;
   const headerHtml = Array.from(firstTable.querySelectorAll('thead th')).map(th => th.outerHTML).join('');
-
   const blockHtml = `
     <div class="annexure-f-table-block" data-section-type="${sectionType}" style="margin-top:18px; padding-top:18px; border-top:1px dashed var(--border);">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
@@ -332,7 +292,6 @@ function addAnnexureFTableBlock(sectionType) {
         </label>
       </div>
     </div>`;
-
   container.insertAdjacentHTML('beforeend', blockHtml);
   addRowAnnexureF(document.getElementById(newTableId), getAnnexureFEmptyRow(sectionType));
   renumberAnnexureFTableBlocks(sectionType);
@@ -343,7 +302,6 @@ function addAnnexureFTableBlock(sectionType) {
     exportAnnexureFPDF(null, true);
   }
 }
-
 function delRowAnnexureF(btn) {
   const row = btn.closest('tr');
   if (!row) return;
@@ -353,24 +311,19 @@ function delRowAnnexureF(btn) {
     exportAnnexureFPDF(null, true);
   }
 }
-
 function extractAnnexureFTable(tableId) {
   const table = typeof tableId === 'string' ? document.getElementById(tableId) : tableId;
   if (!table) return { headers: [], rows: [] };
-
   const headers = Array.from(table.querySelectorAll('thead th'))
     .slice(0, -1)
     .map(th => th.innerText.trim().replace(/\n/g, ' '));
-
   const rows = [];
   table.querySelectorAll('tbody tr').forEach(tr => {
     const cells = Array.from(tr.querySelectorAll('td')).slice(0, -1);
     rows.push(cells.map(annexureFCellValue));
   });
-
   return { headers, rows };
 }
-
 async function exportAnnexureFPDF(btn, isLivePreview = false) {
   if (typeof btn === 'boolean') {
     isLivePreview = btn;
@@ -390,26 +343,21 @@ async function exportAnnexureFPDF(btn, isLivePreview = false) {
   const state = (S.activeProject && S.activeProject.state) || 'Punjab';
   const CONTENT_TOP = 72;
   let startY = CONTENT_TOP;
-
   const normalizeSectionTitle = (title) => String(title || '')
     .replace(/^>\s*/, '')
     .replace(/:$/, '');
-
   const drawReportFrame = (data) => {
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(0.6);
     doc.rect(border.x, border.y, border.w, border.h);
-
     doc.setFont('times', 'italic');
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.text('District Survey Report', headerLeft, 27);
     doc.text(`${district} District`, headerLeft, 39);
     doc.text(state, headerLeft, 51);
-
     doc.setLineWidth(0.4);
     doc.line(tableLeft, 62, pageWidth - 32, 62);
-
     doc.setFont('times', 'normal');
     doc.setFontSize(8);
     doc.text('PREPARED BY:', pageWidth / 2 - 130, footerY - 2, { align: 'left' });
@@ -419,12 +367,10 @@ async function exportAnnexureFPDF(btn, isLivePreview = false) {
     doc.text('ASSISTED BY:', pageWidth / 2 - 130, footerY + 10, { align: 'left' });
     doc.setFont('times', 'bold');
     doc.text(' RSP GREEN DEVELOPMENT AND LABORATORIES PVT. LTD', pageWidth / 2 - 78, footerY + 10, { align: 'left' });
-
     doc.setFont('times', 'bold');
     doc.setFontSize(10);
     doc.text(String(pageNumberOffset + data.pageNumber), pageWidth - 26, pageHeight - 18, { align: 'right' });
   };
-
   const sections = ['SAND', 'BENCHMARK', 'CORS'].flatMap(sectionType => {
     const cfg = ANNEXURE_F_TABLES[sectionType];
     return getAnnexureFTables(sectionType).map((table, tableIndex) => ({
@@ -435,23 +381,19 @@ async function exportAnnexureFPDF(btn, isLivePreview = false) {
       fontSize: cfg.fontSize
     }));
   });
-
   sections.forEach((section, index) => {
     const titleHeight = 14;
     const tableStartEstimate = startY + titleHeight + 6;
-
     if (index > 0 && tableStartEstimate + 40 > pageHeight - 40) {
       doc.addPage();
       drawReportFrame({ pageNumber: doc.getCurrentPageInfo().pageNumber });
       startY = CONTENT_TOP;
     }
-
     doc.setFont('times', 'bold');
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
     doc.text(normalizeSectionTitle(section.title), pageWidth / 2, startY, { align: 'center' });
     startY += titleHeight;
-
     const tableData = extractAnnexureFTable(section.table);
     const columnStyles = section.tableId && section.tableId.startsWith('annexure-f-sand') ? {
       0: { cellWidth: 40 },
@@ -462,7 +404,6 @@ async function exportAnnexureFPDF(btn, isLivePreview = false) {
       5: { cellWidth: 88 },
       6: { cellWidth: 88 }
     } : {};
-
     doc.autoTable({
       startY,
       head: [tableData.headers],
@@ -494,10 +435,8 @@ async function exportAnnexureFPDF(btn, isLivePreview = false) {
       tableWidth,
       didDrawPage: drawReportFrame
     });
-
     startY = doc.lastAutoTable.finalY + 18;
   });
-
   await appendAnnexureFAttachmentPages(doc);
   if (isLivePreview) {
     const blob = doc.output('blob');
@@ -509,14 +448,12 @@ async function exportAnnexureFPDF(btn, isLivePreview = false) {
     toast('PDF downloaded successfully!', 'success');
   }
 }
-
 function getAnnexureFAttachment() {
   if (window.S && S.activeProject && S.activeProject.annexureFAttachment) {
     return S.activeProject.annexureFAttachment;
   }
   return window.annexureFAttachment || null;
 }
-
 function setAnnexureFAttachment(attachment) {
   window.annexureFAttachment = attachment;
   if (window.S && S.activeProject) {
@@ -525,11 +462,9 @@ function setAnnexureFAttachment(attachment) {
     if (pIdx !== -1) S.projects[pIdx].annexureFAttachment = attachment;
   }
 }
-
 function renderAttachmentUploadUIAnnexureF() {
   const el = document.getElementById('annexure-f-attachment-info');
   if (!el) return;
-
   const attachment = getAnnexureFAttachment();
   if (!attachment || !attachment.pages || !attachment.pages.length) {
     el.innerHTML = `
@@ -538,7 +473,6 @@ function renderAttachmentUploadUIAnnexureF() {
       </div>`;
     return;
   }
-
   el.innerHTML = `
     <div class="file-item" style="margin-top:10px; background:var(--off); border:1px solid var(--border); max-width:560px; display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:var(--r-sm);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -554,13 +488,10 @@ function renderAttachmentUploadUIAnnexureF() {
     </div>`;
   if (window.initLucide) window.initLucide();
 }
-
 function handleAttachmentUploadAnnexureF(event) {
   const file = event.target.files[0];
   if (!file) return;
-
   const sizeStr = (file.size / 1024).toFixed(1) + ' KB';
-
   if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
     toast('Processing supporting PDF...', 'info');
     if (typeof renderPdfToImages !== 'function') {
@@ -568,7 +499,6 @@ function handleAttachmentUploadAnnexureF(event) {
       event.target.value = '';
       return;
     }
-
     renderPdfToImages(file, (err, imgs) => {
       if (err || !imgs || !imgs.length) {
         console.error(err);
@@ -592,7 +522,6 @@ function handleAttachmentUploadAnnexureF(event) {
     });
     return;
   }
-
   if (file.type.startsWith('image/')) {
     const reader = new FileReader();
     reader.onload = function(evt) {
@@ -613,11 +542,9 @@ function handleAttachmentUploadAnnexureF(event) {
     reader.readAsDataURL(file);
     return;
   }
-
   toast('Unsupported file format. Please upload a PDF or image.', 'error');
   event.target.value = '';
 }
-
 function deleteAttachmentAnnexureF() {
   setAnnexureFAttachment(null);
   renderAttachmentUploadUIAnnexureF();
@@ -627,7 +554,6 @@ function deleteAttachmentAnnexureF() {
   }
   toast('Supporting file removed.', 'success');
 }
-
 function loadAnnexureFImage(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -636,11 +562,9 @@ function loadAnnexureFImage(src) {
     img.src = src;
   });
 }
-
 async function appendAnnexureFAttachmentPages(doc) {
   const attachment = getAnnexureFAttachment();
   if (!attachment || !attachment.pages || !attachment.pages.length) return;
-
   for (const src of attachment.pages) {
     const img = await loadAnnexureFImage(src);
     doc.addPage('a4', 'p');
@@ -658,15 +582,12 @@ async function appendAnnexureFAttachmentPages(doc) {
     doc.addImage(src, format, x, y, drawW, drawH);
   }
 }
-
 function renderAnnexureF() {
   renderAttachmentUploadUIAnnexureF();
   ['SAND', 'BENCHMARK', 'CORS'].forEach(renumberAnnexureFTableBlocks);
   if (typeof applyMoreAnnexureAccess === 'function') applyMoreAnnexureAccess(document.getElementById('view-annexure-f'));
   if (window.initLucide) window.initLucide();
 }
-
-// Auto Live Preview whenever the table changes
 document.addEventListener('input', (e) => {
   if (e.target.closest('#view-annexure-f table')) {
     if (window.anxNDebounceTimer) clearTimeout(window.anxNDebounceTimer);
@@ -675,7 +596,6 @@ document.addEventListener('input', (e) => {
     }, 1500);
   }
 });
-
 window.annexureFDeleteButtonHTML = annexureFDeleteButtonHTML;
 window.downloadSectionTemplateAnnexureF = downloadSectionTemplateAnnexureF;
 window.handleSectionUploadAnnexureF = handleSectionUploadAnnexureF;
@@ -689,7 +609,6 @@ window.handleAttachmentUploadAnnexureF = handleAttachmentUploadAnnexureF;
 window.deleteAttachmentAnnexureF = deleteAttachmentAnnexureF;
 window.renderAttachmentUploadUIAnnexureF = renderAttachmentUploadUIAnnexureF;
 window.renderAnnexureF = renderAnnexureF;
-
 document.addEventListener('change', (e) => {
   if (e.target.closest('#view-annexure-f table')) {
     if (window.anxNDebounceTimer) clearTimeout(window.anxNDebounceTimer);

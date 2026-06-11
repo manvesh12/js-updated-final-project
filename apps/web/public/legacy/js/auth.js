@@ -8,12 +8,10 @@ function switchAuthMode(mode) {
   const facultyForm = document.getElementById('auth-form-faculty');
   const authorityForm = document.getElementById('auth-form-authority');
   const sdlcForm = document.getElementById('auth-form-sdlc');
-
   if (facultyTab && authorityTab && facultyForm && authorityForm) {
     facultyTab.classList.toggle('active', mode === 'faculty');
     authorityTab.classList.toggle('active', mode === 'authority');
     if (sdlcTab) sdlcTab.classList.toggle('active', mode === 'sdlc');
-    
     facultyForm.classList.toggle('active', mode === 'faculty');
     authorityForm.classList.toggle('active', mode === 'authority');
     if (sdlcForm) {
@@ -21,16 +19,13 @@ function switchAuthMode(mode) {
       sdlcForm.classList.toggle('active', mode === 'sdlc');
     }
   }
-  
   if (window.initLucide) initLucide();
 }
-
 function toggleSignUp(show) {
   const tabs = document.querySelector('.auth-tabs');
   const facultyForm = document.getElementById('auth-form-faculty');
   const authorityForm = document.getElementById('auth-form-authority');
   const signupForm = document.getElementById('auth-form-signup');
-
   if (show) {
     if (tabs) tabs.style.display = 'none';
     if (facultyForm) facultyForm.classList.remove('active');
@@ -48,14 +43,12 @@ function toggleSignUp(show) {
     switchAuthMode('faculty');
   }
 }
-
 function fillDemoLogin(username) {
   const emailEl = document.getElementById('login-email');
   const passEl = document.getElementById('login-pass');
   if (emailEl && username) emailEl.value = username;
   if (passEl) passEl.value = 'password123';
 }
-
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-pass').value;
@@ -64,20 +57,17 @@ async function doLogin() {
   const err = document.getElementById('login-error');
   if (!email || !pass) { err.style.display='block'; err.textContent='Please fill all fields.'; return; }
   err.style.display='none';
-  
   try {
       const data = await apiFetch('/auth/login', {
           method: 'POST',
           body: JSON.stringify({ username: email, password: pass })
       });
       localStorage.removeItem('dsr_token');
-      
       const backendRole = data.role || 'ROLE_OFFICER';
       S.backendRole = backendRole;
       S.permissions = data.permissions || [];
       S.scope = data.scope || {};
       S.accessLabel = data.accessLabel || '';
-      
       let uiRole = 'user';
       if (backendRole.includes('ADMIN')) {
           uiRole = 'admin';
@@ -88,7 +78,6 @@ async function doLogin() {
       } else if (backendRole.includes('REVIEWER') || backendRole.includes('STATE_ADMIN') || backendRole.includes('IIT_ROPAR') || backendRole.includes('GIS')) {
           uiRole = 'reviewer';
       }
-      
       S.user = {
           name: data.fullName || data.username,
           email: data.email || email,
@@ -100,7 +89,6 @@ async function doLogin() {
       };
       S.role = uiRole;
       if (typeof currentDistrictFilter !== 'undefined') currentDistrictFilter = 'ALL';
-      
   await showAppScreen();
       setTimeout(() => {
         try {
@@ -117,9 +105,9 @@ async function doLogin() {
       err.textContent = error.message || 'Login failed. Please check credentials.';
   }
 }
-
 function doAuthorityVerify() {
-  const authorityId = document.getElementById('auth-authority-id').value.trim();
+  const authorityInput = document.getElementById('auth-nic-id') || document.getElementById('auth-authority-id');
+  const authorityId = authorityInput ? authorityInput.value.trim() : '';
   const pin = document.getElementById('auth-security-pin').value;
   const err = document.getElementById('auth-error');
   if (!authorityId || !pin) {
@@ -128,25 +116,21 @@ function doAuthorityVerify() {
     return;
   }
   err.style.display = 'none';
-  // Demo Login verification - sets authority credentials
   S.user = { name: 'Dr. Suresh Verma', email: 'dmo@punjab.gov.in', role: 'authority' };
   S.role = 'authority';
   showAuthorityScreen();
 }
-
 function doAuthorityQuickLogin() {
   S.user = { name:'Dr. Suresh Verma', email:'dmo@punjab.gov.in', role:'authority' };
   S.role = 'authority';
   showAuthorityScreen();
 }
-
 function togglePinReveal() {
   const pinInput = document.getElementById('auth-security-pin');
   if (pinInput) {
     pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
   }
 }
-
 async function doSignup() {
   const name = document.getElementById('signup-name').value.trim();
   const email = document.getElementById('signup-email').value.trim();
@@ -160,7 +144,6 @@ async function doSignup() {
     return;
   }
   err.style.display='none'; 
-
   try {
       await apiFetch('/auth/register', {
           method: 'POST',
@@ -174,7 +157,6 @@ async function doSignup() {
       err.textContent = error.message || 'Signup failed.';
   }
 }
-
 function doLogout() {
   try {
     apiFetch('/auth/logout', { method: 'POST' }).catch(() => {});
@@ -205,14 +187,12 @@ function doLogout() {
     updateDarkModeIcon();
   }
 }
-
 async function doSdlcLogin() {
   const email = document.getElementById('sdlc-email').value.trim();
   const pass = document.getElementById('sdlc-pass').value;
   const err = document.getElementById('sdlc-error');
   if (!email || !pass) { err.style.display='block'; err.textContent='Please fill all fields.'; return; }
   err.style.display='none';
-  
   try {
     const data = await apiFetch('/auth/login', {
       method: 'POST',
@@ -239,7 +219,6 @@ async function doSdlcLogin() {
     err.textContent = error.message || 'Invalid SDLC credentials.';
   }
 }
-
 async function showAppScreen() {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-app').classList.add('active');
@@ -252,13 +231,10 @@ async function showAppScreen() {
   if (sidebarAvatar) sidebarAvatar.textContent = init;
   const sidebarName = document.getElementById('sb-uname');
   if (sidebarName) sidebarName.textContent = S.user.name;
-  
   const isSdlc = S.role === 'sdlc';
   const roleLabel = (typeof getRoleRule === 'function') ? getRoleRule().label : (S.role==='admin'?'System Admin':S.role==='reviewer'?'Section Reviewer':isSdlc?'SDLC Committee':'Report Coordinator');
   const sidebarRole = document.getElementById('sb-urole');
   if (sidebarRole) sidebarRole.textContent = S.accessLabel || roleLabel;
-  
-  // Toggle visibility of admin sections in the sidebar
   const navAuditLogs = document.getElementById('nav-audit-logs');
   if (navAuditLogs) {
     navAuditLogs.style.display = 'block';
@@ -279,43 +255,34 @@ async function showAppScreen() {
   if (navUsers) {
     navUsers.style.display = S.role === 'admin' ? 'block' : 'none';
   }
-
-  // SDLC Sidebar Section Toggles
   const sdlcNav = document.getElementById('sdlc-nav');
   if (sdlcNav) sdlcNav.style.display = isSdlc ? 'block' : 'none';
-  
   ['report-nav', 'annexure-nav', 'tables-nav', 'finalize-nav'].forEach(navId => {
     const el = document.getElementById(navId);
     if (el) {
       if (isSdlc) el.style.display = 'none';
     }
   });
-
   await initApp();
   if (typeof repairMainContentStructure === 'function') repairMainContentStructure();
-
   let targetView = window.location.hash ? window.location.hash.slice(1).trim() : currentViewId;
   if (isSdlc) {
     targetView = 'sdlc-portal';
   } else if (targetView === 'sdlc-portal') {
     targetView = 'dashboard';
   }
-
   if (typeof hasModuleAccess === 'function' && !hasModuleAccess(targetView)) {
     targetView = typeof getFirstAllowedView === 'function' ? getFirstAllowedView() : 'dashboard';
   }
-  
   if (targetView && document.getElementById('view-' + targetView)) {
     showView(targetView, null, false);
   } else {
     showView(currentViewId, null, false);
   }
-
   if (window.initLucide) initLucide();
   if (typeof updateRolePermissionUI === 'function') updateRolePermissionUI();
   if (typeof preloadPortalVendorsAfterLogin === 'function') preloadPortalVendorsAfterLogin();
 }
-
 function showAuthorityScreen() {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-authority').classList.add('active');

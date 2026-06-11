@@ -2,13 +2,11 @@
    PROJECTS & DASHBOARD
 ══════════════════════════════════════ */
 let currentDistrictFilter = 'ALL';
-
 function getPunjabDistricts() {
   return Array.isArray(window.PUNJAB_DISTRICTS) && window.PUNJAB_DISTRICTS.length
     ? window.PUNJAB_DISTRICTS
     : ['Amritsar', 'Barnala', 'Bathinda', 'Faridkot', 'Fatehgarh Sahib', 'Fazilka', 'Ferozepur', 'Gurdaspur', 'Hoshiarpur', 'Jalandhar', 'Kapurthala', 'Ludhiana', 'Malerkotla', 'Mansa', 'Moga', 'Pathankot', 'Patiala', 'Rupnagar', 'Sahibzada Ajit Singh Nagar', 'Sangrur', 'Shaheed Bhagat Singh Nagar', 'Sri Muktsar Sahib', 'Tarn Taran'];
 }
-
 function hydrateDistrictSelect(selectId, includeAll = false) {
   const select = document.getElementById(selectId);
   if (!select) return;
@@ -20,7 +18,6 @@ function hydrateDistrictSelect(selectId, includeAll = false) {
   }).join('');
   select.value = options.includes(current) ? current : (includeAll ? 'ALL' : 'Jalandhar');
 }
-
 function normalizeBackendProjects(data) {
   const rows = Array.isArray(data) ? data : (Array.isArray(data?.value) ? data.value : []);
   return rows.map(p => ({
@@ -33,6 +30,10 @@ function normalizeBackendProjects(data) {
     rivers: p.rivers || 'Not specified',
     progress: Number.isFinite(Number(p.progress)) ? Number(p.progress) : 0,
     status: p.status === 'IN_PROGRESS' || p.status === 'ACTIVE' ? 'In Progress' : (p.status || 'In Progress'),
+    phaseNo: Number.isFinite(Number(p.phaseNo)) ? Number(p.phaseNo) : 1,
+    parentPhaseId: p.parentPhaseId || null,
+    phaseLocked: Boolean(p.phaseLocked),
+    phaseOrigin: p.phaseOrigin || null,
     createdAt: p.createdAt ? new Date(p.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
     signatures: Number.isFinite(Number(p.signatures)) ? Number(p.signatures) : 0,
     projectState: p.projectState || null,
@@ -41,7 +42,6 @@ function normalizeBackendProjects(data) {
     finalPdfPages: p.finalPdfPages || 0
   }));
 }
-
 async function refreshProjectsFromBackend(renderAfter = true) {
   try {
     const data = await apiFetch('/projects');
@@ -61,35 +61,28 @@ async function refreshProjectsFromBackend(renderAfter = true) {
     throw err;
   }
 }
-
 function updateProjectBadgeCount() {
   const badgeEl = document.getElementById('badge-projs');
   if (badgeEl) badgeEl.textContent = S.projects.length;
 }
-
 function updateTopBarProjectsDropdown() {
   const dropdown = document.getElementById('tb-projects-dropdown');
   if (!dropdown) return;
-  
   let html = `<a href="#" onclick="showView('projects',null); return false;">View All Projects</a>`;
   if (typeof hasAdminAccess === 'function' && hasAdminAccess()) {
     html += `<a href="#" onclick="newProjectModal(); return false;">+ Add New Project</a>`;
   }
-  
   if (S.projects && S.projects.length > 0) {
     html += `<div style="height:1px; background:var(--border); margin:4px 0;"></div>`;
     html += `<div style="padding: 4px 20px; font-size:11px; font-weight:700; color:var(--text-soft); text-transform:uppercase; letter-spacing:.05em;">Recent Projects</div>`;
-    // Show up to 5 recent projects
     S.projects.slice(0, 5).forEach(p => {
       html += `<a href="#" onclick="openProject(${p.id}); return false;" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;" title="${p.title}">
         ${p.title} <span style="color:var(--text-soft); font-size:11px;">(${p.district})</span>
       </a>`;
     });
   }
-  
   dropdown.innerHTML = html;
 }
-
 function getProjectLiveProgressStatus(p) {
   if (!p) return '<span style="color:var(--text-soft)">No project selected</span>';
   const progress = Number(p.progress) || 0;
@@ -100,7 +93,6 @@ function getProjectLiveProgressStatus(p) {
   if (progress > 0) return '<span style="color:var(--primary)">Front Matter & Baseline Data</span>';
   return '<span style="color:var(--text-soft)">Initial Project Setup</span>';
 }
-
 function populateWorkflowProjectSelect() {
   const select = document.getElementById('workflow-project-select');
   if (!select) return;
@@ -110,13 +102,11 @@ function populateWorkflowProjectSelect() {
     return `<option value="${p.id}"${selected}>${p.title} (${p.district})</option>`;
   }).join('');
 }
-
 function renderWorkflowProjectLiveCard() {
   populateWorkflowProjectSelect();
   const card = document.getElementById('workflow-project-live-card');
   const badge = document.getElementById('workflow-live-status-badge');
   if (!card) return;
-
   const p = S.activeProject;
   if (!p) {
     card.innerHTML = '<div style="font-size:13px; color:var(--text-soft);">Choose a project to see live completion progress.</div>';
@@ -126,14 +116,12 @@ function renderWorkflowProjectLiveCard() {
     }
     return;
   }
-
   const progress = Math.max(0, Math.min(100, Number(p.progress) || 0));
   const statusClass = progress >= 100 ? 'badge-green' : progress > 40 ? 'badge-amber' : 'badge-blue';
   if (badge) {
     badge.textContent = `${p.status || 'In Progress'} · ${progress}%`;
     badge.className = `badge ${statusClass}`;
   }
-
   card.innerHTML = `
     <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:10px;">
       <div style="min-width:0;">
@@ -155,7 +143,6 @@ function renderWorkflowProjectLiveCard() {
   if (typeof refreshDistrictBadgesInDOM === 'function') refreshDistrictBadgesInDOM();
   if (window.initLucide) initLucide(card);
 }
-
 async function selectWorkflowProject(projectId) {
   if (!projectId) {
     clearActiveProject();
@@ -167,7 +154,6 @@ async function selectWorkflowProject(projectId) {
   showView('workflow', null);
   renderWorkflowProjectLiveCard();
 }
-
 function openWorkflowActiveProject() {
   if (!S.activeProject) {
     toast('Select a project first.', 'info');
@@ -176,34 +162,26 @@ function openWorkflowActiveProject() {
   const target = typeof getFirstAllowedProjectView === 'function' ? getFirstAllowedProjectView() : 'front-matter';
   showView(target === 'workflow' ? 'front-matter' : target, null);
 }
-
 window.selectWorkflowProject = selectWorkflowProject;
 window.openWorkflowActiveProject = openWorkflowActiveProject;
 window.renderWorkflowProjectLiveCard = renderWorkflowProjectLiveCard;
-
 function filterDashboardByDistrict(val) {
   currentDistrictFilter = val;
-  
-  // Update selector UI value if it is changed programmatically
   const selector = document.getElementById('dash-district-filter');
   if (selector && selector.value !== val) selector.value = val;
-  
   renderDashboard();
   renderProjects();
 }
-
 function dashPortalToast(message, type = 'info') {
   if (typeof toast === 'function') toast(message, type);
   else console.log(message);
 }
-
 function dashFocusSearch() {
   const input = document.getElementById('dash-portal-search') || document.getElementById('projects-portal-search') || document.getElementById('tb-portal-search');
   if (!input) return;
   input.focus();
   input.select();
 }
-
 function dashRunSearch(event) {
   if (event && event.key !== 'Enter') return;
   const input = document.getElementById('dash-portal-search') || document.getElementById('projects-portal-search') || document.getElementById('tb-portal-search');
@@ -212,7 +190,6 @@ function dashRunSearch(event) {
     dashPortalToast('Type a keyword, then press Enter.');
     return;
   }
-
   const routes = [
     { words: ['project', 'projects', 'dsr'], view: 'projects', label: 'projects' },
     { words: ['new', 'create', 'add'], action: () => newProjectModal(), label: 'new project' },
@@ -222,18 +199,15 @@ function dashRunSearch(event) {
     { words: ['help', 'faq', 'support', 'contact', 'rti'], view: 'sdlc-portal', label: 'help and support' },
     { words: ['district', 'progress', 'dashboard'], action: () => document.getElementById('dash-main-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), label: 'dashboard district section' }
   ];
-
   const match = routes.find(route => route.words.some(word => query.includes(word)));
   if (!match) {
     dashPortalToast('No dashboard shortcut found. Try project, workflow, sign, PDF, district, or help.', 'error');
     return;
   }
-
   if (match.view) showView(match.view, null);
   if (match.action) match.action();
   dashPortalToast(`Opened ${match.label}.`, 'success');
 }
-
 async function dashSharePortal() {
   const url = window.location.href.split('#')[0] + '#dashboard';
   try {
@@ -247,25 +221,20 @@ async function dashSharePortal() {
     window.prompt('Copy dashboard link:', url);
   }
 }
-
 async function renderDashboard() {
   hydrateDistrictSelect('dash-district-filter', true);
   hydrateDistrictSelect('proj-district', false);
   hydrateDistrictSelect('pdf-district', false);
-
   const filteredProjs = currentDistrictFilter === 'ALL'
     ? S.projects
     : S.projects.filter(p => p.district === currentDistrictFilter);
-
   const done = filteredProjs.filter(p=>p.progress===100).length;
   const pend = filteredProjs.reduce((sum, p) => sum + Math.max(0, 5 - (Number(p.signatures) || 0)), 0);
   const generatedPdfCount = filteredProjs.filter(p => !!p.finalPdfName).length;
-  
   const totalEl = document.getElementById('d-total');
   const doneEl = document.getElementById('d-done');
   const sigsEl = document.getElementById('d-sigs');
   const pdfsEl = document.getElementById('d-pdfs');
-  
   try {
     if (currentDistrictFilter !== 'ALL') throw new Error('Use local filtered dashboard stats');
     const stats = await apiFetch('/dashboard/stats');
@@ -274,45 +243,35 @@ async function renderDashboard() {
     if (sigsEl) sigsEl.textContent = stats.pendingReports || 0;
     if (pdfsEl) pdfsEl.textContent = stats.generatedPdfs || generatedPdfCount || 0;
   } catch (err) {
-    // Fallback to local dummy data if not connected
     if (totalEl) totalEl.textContent = filteredProjs.length;
     if (doneEl) doneEl.textContent = done;
     if (sigsEl) sigsEl.textContent = pend;
     if (pdfsEl) pdfsEl.textContent = generatedPdfCount;
   }
-
-  // Update Overview progress bar fills and percentages dynamically
   const totalVal = parseInt(totalEl ? totalEl.textContent : 0) || 0;
   const doneVal = parseInt(doneEl ? doneEl.textContent : 0) || 0;
   const sigsVal = parseInt(sigsEl ? sigsEl.textContent : 0) || 0;
   const pdfsVal = parseInt(pdfsEl ? pdfsEl.textContent : 0) || 0;
-
   const totalPct = 100;
   const donePct = totalVal > 0 ? Math.round((doneVal / totalVal) * 100) : 0;
   const sigsPct = totalVal > 0 ? Math.min(100, Math.round((sigsVal / totalVal) * 100)) : 0;
   const pdfsPct = totalVal > 0 ? Math.round((pdfsVal / totalVal) * 100) : 0;
-
   const totalFill = document.getElementById('d-total-fill');
   const totalPctEl = document.getElementById('d-total-pct');
   if (totalFill) totalFill.style.width = totalPct + '%';
   if (totalPctEl) totalPctEl.textContent = totalPct + '%';
-
   const doneFill = document.getElementById('d-done-fill');
   const donePctEl = document.getElementById('d-done-pct');
   if (doneFill) doneFill.style.width = donePct + '%';
   if (donePctEl) donePctEl.textContent = donePct + '%';
-
   const sigsFill = document.getElementById('d-sigs-fill');
   const sigsPctEl = document.getElementById('d-sigs-pct');
   if (sigsFill) sigsFill.style.width = sigsPct + '%';
   if (sigsPctEl) sigsPctEl.textContent = sigsPct + '%';
-
   const pdfsFill = document.getElementById('d-pdfs-fill');
   const pdfsPctEl = document.getElementById('d-pdfs-pct');
   if (pdfsFill) pdfsFill.style.width = pdfsPct + '%';
   if (pdfsPctEl) pdfsPctEl.textContent = pdfsPct + '%';
-
-  // Render District Progress Column 2
   const progressEl = document.getElementById('dash-district-progress');
   if (progressEl) {
     const districtsList = getPunjabDistricts();
@@ -338,7 +297,6 @@ async function renderDashboard() {
     });
     progressEl.innerHTML = progressHtml;
   }
-  
   const el = document.getElementById('dash-recent');
   if (el) {
     if (filteredProjs.length === 0) {
@@ -362,28 +320,22 @@ async function renderDashboard() {
         </div>`).join('');
     }
   }
-  
-  // Sync active district highlights on dashboard
   updateActiveDistrictUI(currentDistrictFilter !== 'ALL' ? currentDistrictFilter : (S.activeProject ? S.activeProject.district : 'Punjab'));
   renderDistrictLegends();
   if (typeof refreshDistrictBadgesInDOM === 'function') refreshDistrictBadgesInDOM();
   if (typeof updateRolePermissionUI === 'function') updateRolePermissionUI();
   initLucide();
 }
-
 let projectRenderLimit = 60;
-
 function showMoreProjects() {
   projectRenderLimit += 60;
   renderProjects();
 }
 window.showMoreProjects = showMoreProjects;
-
 function renderProjects() {
   updateTopBarProjectsDropdown();
   const grid = document.getElementById('projects-grid');
   if (!grid) return;
-
   const statusEl = document.getElementById('projects-load-status');
   if (statusEl) {
     if (S.projectLoadError) {
@@ -394,7 +346,6 @@ function renderProjects() {
       statusEl.style.color = 'var(--text-soft)';
     }
   }
-
   if (S.projectLoadError) {
     grid.innerHTML = `
       <div class="projects-empty-state">
@@ -408,11 +359,9 @@ function renderProjects() {
     initLucide();
     return;
   }
-  
   const filteredProjs = currentDistrictFilter === 'ALL'
     ? S.projects
     : S.projects.filter(p => p.district === currentDistrictFilter);
-
   if (filteredProjs.length === 0) {
     const districtHint = currentDistrictFilter === 'ALL' ? '' : ` for ${currentDistrictFilter}`;
     const canCreateProject = typeof hasAdminAccess === 'function' && hasAdminAccess();
@@ -431,14 +380,16 @@ function renderProjects() {
     if (typeof updateRolePermissionUI === 'function') updateRolePermissionUI();
     return;
   }
-
   const visibleProjects = filteredProjs.slice(0, projectRenderLimit);
   grid.innerHTML = visibleProjects.map(p=>`
     <div class="proj-card">
       <div class="proj-card-top" style="cursor:pointer" onclick="openProject(${p.id})">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px;">
           <h3 style="font-size:14px; font-weight:700; color:var(--text);">${p.title}</h3>
-          ${getDistrictBadgeHTML(p.district)}
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+            ${getDistrictBadgeHTML(p.district)}
+            <span class="badge ${p.phaseLocked ? 'badge-red' : normalizePhaseNo(p) > 1 ? 'badge-blue' : 'badge-navy'}">${getProjectPhaseLabel(p)}${p.phaseLocked ? ' Locked' : ''}</span>
+          </div>
         </div>
         <p style="font-size:12px; color:var(--text-soft);">${p.district} District · ${p.year}</p>
       </div>
@@ -453,7 +404,6 @@ function renderProjects() {
           <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${p.progress}%;background:${p.progress===100?'var(--green)':'linear-gradient(90deg,var(--teal),var(--teal-2))'}"></div></div>
           <span style="font-size:12px;font-weight:700;color:var(--text)">${p.progress}%</span>
         </div>
-        
         <div style="background:var(--bg); padding:10px 12px; border-radius:var(--r-md); margin-bottom:16px; font-size:13px; border:1px solid var(--border-2);">
           <div style="font-weight:800; margin-bottom:6px; color:var(--text); display:flex; align-items:center; gap:6px;">
             <i data-lucide="activity" style="width:14px; height:14px; color:var(--primary);"></i> Live Progress Report
@@ -462,9 +412,9 @@ function renderProjects() {
             Current Stage: <strong>${getProjectLiveProgressStatus(p)}</strong>
           </div>
         </div>
-
         <div class="proj-card-actions">
           <button type="button" class="btn btn-outline btn-sm" style="flex:1" onclick="openProject(${p.id})">Open Project</button>
+          ${hasAdminAccess() ? `<button type="button" class="btn btn-green btn-sm" onclick="initiateNextPhase(${p.id}, event)"><i data-lucide="git-branch-plus"></i> Next Phase</button>` : ''}
           ${p.finalPdfName && typeof canAccessFinalDsrPdf === 'function' && canAccessFinalDsrPdf() ? `<button type="button" class="btn btn-navy btn-sm final-pdf-admin-action" onclick="downloadProjectFinalPDF(${p.id}, event)"><i data-lucide="download"></i> PDF</button>` : ''}
           ${hasAdminAccess() ? `<button type="button" class="btn btn-danger btn-sm" onclick="deleteProject(${p.id}, event)"><i data-lucide="trash-2"></i> Delete</button>` : ''}
         </div>
@@ -481,7 +431,6 @@ function renderProjects() {
   if (typeof updateRolePermissionUI === 'function') updateRolePermissionUI();
   initLucide();
 }
-
 async function downloadProjectFinalPDF(projectId, event) {
   if (event) event.stopPropagation();
   if (typeof canAccessFinalDsrPdf === 'function' && !canAccessFinalDsrPdf()) {
@@ -510,15 +459,35 @@ async function downloadProjectFinalPDF(projectId, event) {
   }
 }
 window.downloadProjectFinalPDF = downloadProjectFinalPDF;
-
+window.initiateNextPhase = initiateNextPhase;
+window.createNextPhase = createNextPhase;
 async function openProject(id) {
   S.activeProject = S.projects.find(p=>p.id===id);
   if (!S.activeProject) return;
-  
+  S.phaseMetadata = {
+    phaseNo: normalizePhaseNo(S.activeProject),
+    parentPhaseId: S.activeProject.parentPhaseId || null,
+    locked: Boolean(S.activeProject.phaseLocked),
+    defaultUploadColor: S.activeProject.defaultUploadColor || '#34C759',
+    origin: S.activeProject.phaseOrigin || null
+  };
+  S.phaseChangeLog = [];
   try {
     const projData = await apiFetch(`/projects/${id}`);
+    S.activeProject.phaseNo = projData.phaseNo || S.activeProject.phaseNo || 1;
+    S.activeProject.parentPhaseId = projData.parentPhaseId || null;
+    S.activeProject.phaseLocked = Boolean(projData.phaseLocked);
+    S.activeProject.phaseOrigin = projData.phaseOrigin || null;
     if (projData.projectState) {
       const stateSnapshot = JSON.parse(projData.projectState);
+      S.phaseMetadata = {
+        ...S.phaseMetadata,
+        ...(stateSnapshot.phaseMetadata || {}),
+        phaseNo: stateSnapshot.phaseMetadata?.phaseNo || projData.phaseNo || S.activeProject.phaseNo || 1,
+        parentPhaseId: stateSnapshot.phaseMetadata?.parentPhaseId || projData.parentPhaseId || null,
+        locked: Boolean(stateSnapshot.phaseMetadata?.locked || projData.phaseLocked)
+      };
+      S.phaseChangeLog = Array.isArray(stateSnapshot.phaseChangeLog) ? stateSnapshot.phaseChangeLog : [];
       if (stateSnapshot.frontMatter) S.frontMatter = stateSnapshot.frontMatter;
       if (stateSnapshot.chapters) S.chapters = stateSnapshot.chapters;
       if (stateSnapshot.plates) S.plates = stateSnapshot.plates;
@@ -557,28 +526,18 @@ async function openProject(id) {
   } catch (err) {
     console.error('Could not load project state:', err);
   }
-
   ['report-nav','annexure-nav','tables-nav','finalize-nav'].forEach(n=>{
     const el=document.getElementById(n); if(el) el.style.display='block';
   });
   const dist = S.activeProject.district;
-  
-  // Update active district highlights globally
   updateActiveDistrictUI(dist);
   if (typeof updateActiveProjectCardUI === 'function') updateActiveProjectCardUI();
-  
-  // Filter context to active district
   filterDashboardByDistrict(dist);
-  
   const fmDistEl = document.getElementById('fm-district');
   if (fmDistEl) fmDistEl.value=dist;
-  
-  // Fetch reviewer history and populate floating notes if any
   if (typeof checkReviewStatus === 'function') {
       checkReviewStatus(id);
   }
-  
-  // Open the project navigation automatically after selecting a project.
   if (typeof setSidebarCollapsed === 'function') {
     setSidebarCollapsed(false);
   } else if (typeof isSidebarPinned !== 'undefined') {
@@ -588,14 +547,12 @@ async function openProject(id) {
   if (typeof updateSidebarToggleVisibility === 'function') {
     updateSidebarToggleVisibility();
   }
-
   const firstAllowedView = typeof getFirstAllowedProjectView === 'function'
     ? getFirstAllowedProjectView()
     : (typeof getFirstAllowedView === 'function' ? getFirstAllowedView() : 'projects');
   showView(firstAllowedView, null);
   toast('Opened: '+dist+' DSR Project','info');
 }
-
 function newProjectModal() { 
   if (typeof hasAdminAccess === 'function' && !hasAdminAccess()) {
     toast('Permission Denied: Only Administrators can create new projects.', 'error');
@@ -606,14 +563,73 @@ function newProjectModal() {
   hydrateDistrictSelect('proj-district', false);
   if (el) el.classList.add('open'); 
 }
-
+let pendingPhaseSourceId = null;
+function initiateNextPhase(projectId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  if (typeof hasAdminAccess === 'function' && !hasAdminAccess()) {
+    toast('Only Administrators can initiate the next phase.', 'error');
+    return;
+  }
+  const source = S.projects.find(p => String(p.id) === String(projectId));
+  if (!source) {
+    toast('Source DSR phase not found.', 'error');
+    return;
+  }
+  pendingPhaseSourceId = source.id;
+  const nextNo = normalizePhaseNo(source) + 1;
+  const titleEl = document.getElementById('phase-source-title');
+  const nextEl = document.getElementById('phase-next-no');
+  const nameEl = document.getElementById('phase-title');
+  const colorEl = document.getElementById('phase-upload-color');
+  if (titleEl) titleEl.textContent = `${source.title} (${getProjectPhaseLabel(source)})`;
+  if (nextEl) nextEl.textContent = `Phase ${nextNo}`;
+  if (nameEl) nameEl.value = `${String(source.title || source.projectName || 'District Survey Report').replace(/\s+-\s+Phase\s+\d+$/i, '')} - Phase ${nextNo}`;
+  if (colorEl) colorEl.innerHTML = phaseColorOptionsHtml('#34C759');
+  const modal = document.getElementById('modal-phase');
+  if (modal) modal.classList.add('open');
+}
+async function createNextPhase() {
+  if (!pendingPhaseSourceId) {
+    toast('Select a source phase first.', 'error');
+    return;
+  }
+  const source = S.projects.find(p => String(p.id) === String(pendingPhaseSourceId));
+  if (!source) {
+    toast('Source DSR phase not found.', 'error');
+    return;
+  }
+  const color = document.getElementById('phase-upload-color')?.value || '#34C759';
+  const title = document.getElementById('phase-title')?.value || '';
+  try {
+    const created = await apiFetch(`/projects/${pendingPhaseSourceId}/phases`, {
+      method: 'POST',
+      body: JSON.stringify({
+        title,
+        uploadColor: color,
+        phaseNo: normalizePhaseNo(source) + 1
+      })
+    });
+    const [phaseProject] = normalizeBackendProjects([created]);
+    S.projects = S.projects.map(p => String(p.id) === String(source.id) ? { ...p, phaseLocked: true } : p);
+    S.projects.unshift(phaseProject);
+    closeModal('modal-phase');
+    pendingPhaseSourceId = null;
+    renderProjects();
+    renderDashboard();
+    updateProjectBadgeCount();
+    await openProject(phaseProject.id);
+    toast(`${getProjectPhaseLabel(phaseProject)} initiated from ${getProjectPhaseLabel(source)}. Source phase is locked.`, 'success');
+  } catch (err) {
+    toast('Failed to initiate next phase: ' + (err.message || err), 'error');
+  }
+}
 async function persistProjectState() {
   if (!S.activeProject || !S.activeProject.id) return;
-  
-  // Disable auto-save for users who only have view/comment permissions
+  if (typeof isActivePhaseLocked === 'function' && isActivePhaseLocked()) return;
   if (!hasWriteAccess()) return;
-
-  // Create a snapshot of the current state for this project
   const stateSnapshot = {
     frontMatter: S.frontMatter,
     chapters: S.chapters,
@@ -639,9 +655,10 @@ async function persistProjectState() {
     finalPdfPages: S.activeProject.finalPdfPages || 0,
     anx6PdfName: S.activeProject.anx6PdfName,
     anx7PdfName: S.activeProject.anx7PdfName,
-    sdlcData: S.sdlcData
+    sdlcData: S.sdlcData,
+    phaseMetadata: S.phaseMetadata || null,
+    phaseChangeLog: S.phaseChangeLog || []
   };
-  
   try {
     await apiFetch(`/projects/${S.activeProject.id}/state`, {
       method: 'PUT',
@@ -651,24 +668,18 @@ async function persistProjectState() {
     console.error('Failed to persist project state:', err);
   }
 }
-
 async function createProject() {
   const title = document.getElementById('proj-title').value || `District Survey Report — ${document.getElementById('proj-district').value}`;
-  
   const payload = {
     projectName: title,
     district: document.getElementById('proj-district').value,
     status: 'ACTIVE'
   };
-
   try {
-    // 1. Create project in backend
     const createdProject = await apiFetch('/projects', {
       method: 'POST',
       body: JSON.stringify(payload)
     });
-    
-    // 2. Format it for the frontend
     const proj = {
       id: createdProject.id, 
       title: createdProject.projectName,
@@ -678,30 +689,26 @@ async function createProject() {
       rivers: document.getElementById('proj-rivers').value || 'Not specified',
       progress: 0, 
       status: 'In Progress', 
+      phaseNo: 1,
+      parentPhaseId: null,
+      phaseLocked: false,
       createdAt: new Date().toLocaleString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}), 
       signatures: 0
     };
-    
     S.projects.unshift(proj);
     closeModal('modal-project');
-    
     document.getElementById('proj-title').value = '';
     document.getElementById('proj-rivers').value = '';
-    
     renderProjects();
     renderDashboard();
     updateProjectBadgeCount();
     openProject(proj.id);
     toast('DSR Project created successfully!','success');
-    
-    // 3. Persist its initial state
     await persistProjectState();
-
   } catch (err) {
     toast('Failed to create project: ' + err.message, 'error');
   }
 }
-
 let saveStateTimeout = null;
 function debouncedSaveState() {
   if (!S.activeProject || !S.activeProject.id) return;
@@ -710,8 +717,6 @@ function debouncedSaveState() {
     persistProjectState();
   }, 1000);
 }
-
-// Global auto-save listener for any input changes on the form fields
 document.addEventListener('input', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
     debouncedSaveState();
@@ -720,7 +725,6 @@ document.addEventListener('input', (e) => {
 document.addEventListener('change', (e) => {
   debouncedSaveState();
 });
-
 function deleteProject(id, event) {
   if (event) {
     event.preventDefault();
@@ -732,7 +736,6 @@ function deleteProject(id, event) {
   }
   const proj = S.projects.find(p => p.id === id);
   if (!proj) return;
-
   customConfirm(
     `Permanently delete "${proj.title}" (${proj.district} District)? This action cannot be undone.`,
     async () => {
@@ -741,14 +744,11 @@ function deleteProject(id, event) {
         await apiFetch(`/projects/${id}`, {
           method: 'DELETE'
         });
-
         const wasActive = S.activeProject && S.activeProject.id === id;
         S.projects = S.projects.filter(p => p.id !== id);
-
         if (wasActive) {
           clearActiveProject();
         }
-
         renderProjects();
         renderDashboard();
         updateProjectBadgeCount();

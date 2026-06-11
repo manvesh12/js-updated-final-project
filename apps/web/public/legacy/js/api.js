@@ -1,39 +1,31 @@
-// api.js - Centralized Backend Communication
-
 var API_BASE_URL = (() => {
     if (!window.location || window.location.protocol === 'file:') return 'http://localhost:8081/api';
     return `${window.location.origin}/api`;
 })();
-
 async function apiFetch(endpoint, options = {}) {
     const token = localStorage.getItem('dsr_token');
     const headers = {
         'Content-Type': 'application/json',
         ...options.headers
     };
-
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
-
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
             credentials: 'same-origin',
             headers
         });
-
         var bodyText = '';
         try { bodyText = await response.text(); } catch (e) {}
         var data = {};
         try { data = JSON.parse(bodyText); } catch (e) {}
-
         if (!response.ok) {
             var msg = data.message || data.error || '';
             if (!msg && bodyText && !bodyText.startsWith('{')) msg = bodyText.slice(0, 200);
             if (!msg) msg = 'HTTP ' + response.status + ' ' + response.statusText;
             var prefix = !localStorage.getItem('dsr_token') ? 'Not logged in — ' : '';
-            
             var err = new Error(prefix + msg);
             if (response.status === 409 && data.warning) {
                 err.isWarning = true;
@@ -47,18 +39,14 @@ async function apiFetch(endpoint, options = {}) {
         throw error;
     }
 }
-
 async function apiUploadFile(file) {
     const token = localStorage.getItem('dsr_token');
     const headers = {};
-
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
-
     const formData = new FormData();
     formData.append('file', file);
-
     try {
         const response = await fetch(`${API_BASE_URL}/files/upload`, {
             method: 'POST',
@@ -66,9 +54,7 @@ async function apiUploadFile(file) {
             credentials: 'same-origin',
             headers
         });
-
         const data = await response.json().catch(() => ({}));
-
         if (!response.ok) {
             var bodyText = '';
             try { bodyText = await response.text(); } catch (e) {}
@@ -86,38 +72,31 @@ async function apiUploadFile(file) {
         throw error;
     }
 }
-
 async function apiSubmitWorkflowAction(reportId, action, remarks) {
     return apiFetch(`/reports/${reportId}/workflow`, {
         method: 'POST',
         body: JSON.stringify({ action, remarks })
     });
 }
-
 async function apiFetchReportHistory(reportId) {
     return apiFetch(`/reports/${reportId}/history`, {
         method: 'GET'
     });
 }
-
 function getDownloadTokenQuery() {
     return '';
 }
-
 function projectPdfUrl(annexureId, inline = false) {
     if (!window.S || !S.activeProject || !S.activeProject.id) return '';
     return `/api/download-pdf?projectId=${encodeURIComponent(S.activeProject.id)}&annexureId=${encodeURIComponent(annexureId)}${inline ? '&inline=true' : ''}${getDownloadTokenQuery()}`;
 }
-
 function setStoredProjectPdfUrl(annexureId, fileName) {
     if (!window.S || !S.activeProject || !S.activeProject.id) return '';
     const url = projectPdfUrl(annexureId, true);
     const nameField = annexureId === 'anx3' ? 'annexure3PdfName' : `${annexureId}PdfName`;
-
     if (!S.activeProject.pdfData) S.activeProject.pdfData = {};
     S.activeProject.pdfData[annexureId] = url;
     if (fileName) S.activeProject[nameField] = fileName;
-
     const idx = Array.isArray(S.projects) ? S.projects.findIndex(p => String(p.id) === String(S.activeProject.id)) : -1;
     if (idx >= 0) {
         if (!S.projects[idx].pdfData) S.projects[idx].pdfData = {};
@@ -127,7 +106,6 @@ function setStoredProjectPdfUrl(annexureId, fileName) {
     if (window.debouncedSaveState) window.debouncedSaveState();
     return url;
 }
-
 async function storeProjectPdf(annexureId, file) {
     if (!window.S || !S.activeProject || !S.activeProject.id || !file) return;
     const base64 = await new Promise((resolve, reject) => {
@@ -147,7 +125,6 @@ async function storeProjectPdf(annexureId, file) {
     });
     return setStoredProjectPdfUrl(annexureId, file.name);
 }
-
 async function downloadStoredPdf(annexureId, fileName, fallbackUrl) {
     if (!window.S || !S.activeProject || !S.activeProject.id) {
         toast('Please select and open a project first.', 'warn');
@@ -176,7 +153,6 @@ async function downloadStoredPdf(annexureId, fileName, fallbackUrl) {
             return;
         }
     }
-
     const a = document.createElement('a');
     a.href = fallbackUrl;
     a.download = fileName || `${annexureId}.pdf`;

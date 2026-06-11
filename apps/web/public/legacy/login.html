@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -15,32 +14,20 @@
     href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/premium-theme.css?v=2.52-force-live-lines">
+  <link rel="stylesheet" href="css/premium-theme.css?v=grid-live-lines-cleanup-20260611">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.363.0/dist/umd/lucide.min.js"></script>
 </head>
 <body class="auth-page sidebar-hidden premium-body">
-
-  <!-- Interactive Live Grid Background -->
-  <div class="interactive-grid-bg"></div>
-  <div class="live-lines-overlay" aria-hidden="true"></div>
-
-  <!-- Ambient Gradient Glow Orbs -->
   <div class="ambient-glow">
     <div class="glow-orb glow-orb-1"></div>
     <div class="glow-orb glow-orb-2"></div>
     <div class="glow-orb glow-orb-3"></div>
   </div>
-  
-  <!-- UNIVERSAL TRANSLUCENT BACKGROUND WATERMARK -->
   <img class="global-watermark" src="logo/CoE-SEnSRS.jpeg" alt="Watermark" loading="lazy" decoding="async">
-
   <!-- ═══════════════════════════════════════════════════════════════
      SCREEN 1 — AUTH
  ═══════════════════════════════════════════════════════════════ -->
-
   <div id="screen-auth" class="screen active" style="position:relative;">
-
-    <!-- Fixed Top Switcher Bar -->
     <div class="top-switcher-bar" style="display: flex; justify-content: space-between; align-items: center; background: #0F1C2A; padding: 6px 24px; height: 38px; font-size: 12px; z-index: 10000; position: fixed; top: 0; left: 0; width: 100%; border-bottom: 1px solid #1a2a3a; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box;">
       <div class="switcher-tabs" style="display: flex; gap: 8px;">
         <a href="home.html" class="switcher-tab inactive" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 4px; text-decoration: none; font-weight: 700; font-size: 11px; transition: all 0.2s; background: #233549; color: #ffffff;">
@@ -54,10 +41,6 @@
         Indian Institute of Technology Ropar | COE-SENSRS Secure Systems
       </div>
     </div>
-
-    <!-- Theme Toggle Switch (Moved inside header nav) -->
-
-    <!-- Top Branding -->
     <header
       style="display:flex; justify-content:space-between; align-items:center; padding:25px 60px; background:var(--card); position:absolute; top:38px; left:0; width:100%; z-index:100; border-bottom:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.05); box-sizing:border-box;">
       <div class="logo"
@@ -78,17 +61,10 @@
         </button>
       </nav>
     </header>
-
-    <!-- Background (Moved to body level) -->
-
-    <!-- Main Container -->
     <div class="auth-wrap"
       style="position:relative; z-index:10; justify-content: center; align-items: center; background: transparent; box-shadow: none; padding-top: 126px !important;">
-
-      <!-- CENTERED LOGIN CARD -->
       <div class="auth-right"
         style="width: 100%; max-width: 400px; margin: 0 auto; animation: fadeInUp 0.6s ease-out forwards; opacity: 0;">
-
         <div class="auth-tabs">
           <div id="tab-btn-faculty" class="auth-tab active" onclick="switchAuthMode('faculty')">
             Faculty / Staff
@@ -100,25 +76,19 @@
             SDLC Portal
           </div>
         </div>
-
-        <!-- Staff Login -->
         <div id="auth-form-faculty" class="auth-form active">
-
           <div class="auth-form-title">
             Staff Portal
           </div>
-
           <div class="auth-form-sub">
             Sign in to your DSR Coordinator / Reviewer account
           </div>
-
           <div class="f-field">
             <label>Email Address</label>
             <div class="input-wrap">
               <input type="email" id="login-email" value="iit@demo.com">
             </div>
           </div>
-
           <div class="f-field">
             <label style="display:flex; justify-content:space-between; width:100%;">
               <span>Password</span>
@@ -129,10 +99,8 @@
               <input type="password" id="login-pass" value="password123">
             </div>
           </div>
-
           <div class="f-field">
             <label>Demo Account</label>
-
             <select id="login-role" onchange="fillDemoLogin(this.value)">
               <option value="iit@demo.com">IIT Ropar - Front Matter + Chapter 1-4 + Review</option>
               <option value="sdo@demo.com">SDO - Chapter 5-10</option>
@@ -147,29 +115,23 @@
           </div>
           <div class="form-err" id="login-error" style="display:none; color:red; font-size:12px; margin-bottom:10px;">
           </div>
-
           <button class="btn-primary" onclick="doLogin()">
             Login to Portal →
           </button>
-
           <div style="text-align:center; margin-top: 24px; font-size: 14px; color: var(--text-soft);">
             Don't have an account? <a href="#" onclick="toggleSignUp(true); return false;"
               style="color: #2563eb; font-weight: 700; text-decoration: none;">Sign Up</a>
           </div>
         </div>
-
-        <!-- Authority Login -->
         <div id="auth-form-authority" class="auth-form">
           <div class="auth-form-title">Govt. Portal</div>
           <div class="auth-form-sub">Sign in with your NIC credentials</div>
-
           <div class="f-field">
             <label>NIC ID</label>
             <div class="input-wrap">
               <input type="text" id="auth-nic-id" value="NIC-8821">
             </div>
           </div>
-
           <div class="f-field">
             <label style="display:flex; justify-content:space-between; width:100%;">
               <span>Security PIN</span>
@@ -184,114 +146,86 @@
               </button>
             </div>
           </div>
-
           <div class="form-err" id="auth-error" style="display:none;"></div>
-
           <button class="btn-primary" onclick="doAuthorityVerify()" style="margin-top: 10px;">
             Verify & Login →
           </button>
         </div>
-
-        <!-- SDLC Login -->
         <div id="auth-form-sdlc" class="auth-form">
           <div class="auth-form-title">SDLC Portal</div>
           <div class="auth-form-sub">Sign in to Sub-Divisional Committee account</div>
-
           <div class="f-field">
             <label>SDLC ID / Email</label>
             <div class="input-wrap">
               <input type="text" id="sdlc-email" value="sdlc@demo.com">
             </div>
           </div>
-
           <div class="f-field">
             <label>Password</label>
             <div class="input-wrap">
               <input type="password" id="sdlc-pass" value="password123">
             </div>
           </div>
-
           <div class="form-err" id="sdlc-error" style="display:none; color:red; font-size:12px; margin-bottom:10px;"></div>
-
           <button class="btn-primary" onclick="doSdlcLogin()">
             Verify & Access Portal →
           </button>
         </div>
-
-        <!-- Sign Up Form -->
         <div id="auth-form-signup" class="auth-form" style="display:none;">
           <div class="auth-form-title">Create Account</div>
           <div class="auth-form-sub">Register as a new Coordinator / Staff</div>
-
           <div class="f-field">
             <label>Full Name</label>
             <div class="input-wrap">
               <input type="text" id="signup-name" placeholder="Enter your full name">
             </div>
           </div>
-
           <div class="f-field">
             <label>Email Address</label>
             <div class="input-wrap">
               <input type="email" id="signup-email" placeholder="name@domain.gov.in">
             </div>
           </div>
-
           <div class="f-field">
             <label>Create Password</label>
             <div class="input-wrap">
               <input type="password" id="signup-pass" placeholder="••••••••">
             </div>
           </div>
-
           <div class="form-err" id="signup-error" style="display:none; color:red; font-size:12px; margin-bottom:10px;"></div>
           <div class="form-err" id="signup-success" style="display:none; color:green; font-size:12px; margin-bottom:10px;"></div>
-
           <button class="btn-primary"
             onclick="doSignup()"
             style="margin-top: 10px;">
             Register →
           </button>
-
           <div style="text-align:center; margin-top: 24px; font-size: 14px; color: var(--text-soft);">
             Already have an account? <a href="#" onclick="toggleSignUp(false); return false;"
               style="color: #2563eb; font-weight: 700; text-decoration: none;">Login</a>
           </div>
         </div>
-
       </div>
-
     </div>
-
   </div>
 <!-- ═══════════════════════════════════════════════════════════════
      SCREEN 2 — MAIN APP
 ═══════════════════════════════════════════════════════════════ -->
 <div id="screen-app" class="screen">
-      <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar" style="width: var(--sidebar-w); background: var(--sidebar-shell-bg, #f7f4ee); border-right: 1.5px solid var(--sidebar-shell-border, var(--p-accent-gold)); height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 300; transition: transform .3s cubic-bezier(.4,0,.2,1); box-shadow: 4px 0 24px rgba(0,0,0,0.03);">
-      
-      <!-- Project navigation header -->
+      <aside class="sidebar" id="sidebar" style="width: var(--sidebar-w); background: var(--sidebar-shell-bg, #f7f4ee); border-right: 1.5px solid var(--sidebar-shell-border, var(--p-accent-gold)); height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 300; transition: transform .3s cubic-bezier(.4,0,.2,1); box-shadow: 4px 0 24px rgba(0,0,0,0.03);">
       <div class="sb-head" style="padding: 16px; background: #17324D; border-bottom: 2px solid var(--p-accent-gold);">
         <div style="display: flex; align-items: center; justify-content: space-between;">
           <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 800; color: #ffffff; letter-spacing: 1px; text-transform: uppercase;">Project Menu</span>
           <i data-lucide="menu" style="width: 14px; height: 14px; color: var(--p-accent-gold);"></i>
         </div>
       </div>
-
-      <!-- Scrollable Navigation Area -->
       <nav class="sb-nav" style="padding: 16px; flex: 1; overflow-y: auto; background: var(--sidebar-shell-bg, transparent);">
-        <!-- + New Project Button in Sidebar -->
         <div class="sb-section" id="sidebar-new-project-section" style="margin-bottom: 16px;">
           <button class="sb-item" style="background: var(--p-accent-gold) !important; color: #17324D !important; font-weight: 700; border: 1.5px solid var(--p-accent-gold) !important; border-radius: 6px; display: flex; align-items: center; justify-content: center; width: 100%; height: 36px; gap: 6px; cursor: pointer;" onclick="newProjectModal()">
             <span class="sb-ico" style="display: flex; align-items: center; justify-content: center; width: auto; height: auto;"><i data-lucide="plus" style="width: 14px; height: 14px; color: #17324D !important;"></i></span>
             <span>New Project</span>
           </button>
         </div>
-
-        <!-- Dynamic DSR Project Nav Sections (Hidden when no active project) -->
         <div class="sb-section" id="overview-nav" style="display:none;"></div>
-        
         <div class="sb-section" id="report-nav" style="display:none">
           <div class="sb-section-lbl" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; color: var(--p-accent); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding: 0 4px;">DSR Sections</div>
           <button class="sb-item" onclick="showView('front-matter',this)"><span class="sb-ico"><i data-lucide="file-text"></i></span>Front Matter</button>
@@ -299,7 +233,6 @@
           <button class="sb-item" onclick="showView('plates',this)"><span class="sb-ico"><i data-lucide="map"></i></span>Plate Section</button>
           <button class="sb-item" onclick="showView('graphs',this)" style="padding-left: 24px; font-size: 11px;"><span class="sb-ico" style="width: 24px; height: 24px; font-size: 11px;"><i data-lucide="line-chart"></i></span>Cross Section Graphs</button>
         </div>
-
         <div class="sb-section" id="annexure-nav" style="display:none">
           <div class="sb-section-lbl" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; color: var(--p-accent); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding: 0 4px;">Annexures</div>
           <div style="position: relative;">
@@ -353,7 +286,6 @@
             </div>
           </div>
         </div>
-
         <div class="sb-section" id="tables-nav" style="display:none">
           <div class="sb-section-lbl" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; color: var(--p-accent); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding: 0 4px;">Data Tables</div>
           <button class="sb-item" onclick="showView('demand-table',this)"><span class="sb-ico"><i data-lucide="bar-chart-3"></i></span>Demand Table</button>
@@ -361,7 +293,6 @@
           <button class="sb-item" onclick="showView('summary-table',this)"><span class="sb-ico"><i data-lucide="pie-chart"></i></span>Source Summary</button>
           <button class="sb-item" onclick="showView('benchmark-table',this)"><span class="sb-ico"><i data-lucide="map-pin"></i></span>Bench Mark & CORS</button>
         </div>
-
         <div class="sb-section" id="finalize-nav" style="display:none">
           <div class="sb-section-lbl" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; color: var(--p-accent); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding: 0 4px;">Finalize</div>
           <button class="sb-item" onclick="showView('esign',this)"><span class="sb-ico"><i data-lucide="pen-tool"></i></span>E-Signatures<span class="sb-badge sb-badge-red" id="sb-pending-sigs">5</span></button>
@@ -370,24 +301,18 @@
           <button class="sb-item" id="nav-users" onclick="showView('users',this)" style="display:none"><span class="sb-ico"><i data-lucide="users"></i></span>User Management</button>
           <button class="sb-item" id="nav-audit-logs" onclick="showView('audit-logs',this)"><span class="sb-ico"><i data-lucide="clipboard-list"></i></span>Audit Logs</button>
         </div>
-
         <div class="sb-section" id="sdlc-nav" style="display:none">
           <div class="sb-section-lbl" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; color: var(--p-accent); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding: 0 4px;">SDLC Functions</div>
           <button class="sb-item" onclick="showView('sdlc-portal',this)"><span class="sb-ico"><i data-lucide="shield-check"></i></span>SDLC Portal</button>
         </div>
       </nav>
-
-      <!-- Sidebar Bottom Area: Compliance & User Info -->
       <div class="sb-bottom-container" style="border-top: 1px solid var(--border); padding: 16px; background: var(--sidebar-shell-bg, #f7f4ee);">
-        <!-- EMGSM Badge -->
         <div id="sidebar-compliance-badge" style="margin-bottom: 12px;">
           <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); color: #059669; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11.5px; font-weight: 700; width: 100%;">
             <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10B981;"></span>
             EMGSM 2020 Compliant
           </div>
         </div>
-
-        <!-- User Profile Card -->
         <div class="sb-user-card" style="display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; background: var(--off); border: 1px solid var(--border-2); margin-bottom: 12px;">
           <div class="sb-avatar-circle" style="width: 34px; height: 34px; border-radius: 50%; background: #17324D; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 800; font-family: 'Outfit', sans-serif; border: 1.5px solid var(--p-accent-gold);">
             A
@@ -397,8 +322,6 @@
             <span class="sb-role-text" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 600; color: var(--text-soft);">System Admin</span>
           </div>
         </div>
-
-        <!-- Logout Trigger -->
         <div style="display: flex; justify-content: flex-start; padding-left: 4px;">
           <button class="sb-logout-btn" onclick="doLogout()" style="background: none; border: none; cursor: pointer; color: var(--text-soft); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;">
             <i data-lucide="log-out" style="width: 13px; height: 13px; color: var(--text-faint);"></i>Logout
@@ -407,8 +330,7 @@
       </div>
     </aside>
 
-  <!-- TOPBAR -->
-<div class="topbar dash-global-topbar">
+  <div class="topbar dash-global-topbar">
   <div class="dash-switcher-bar">
     <div class="dash-switcher-tabs">
       <a href="home.html" class="dash-switcher-tab inactive">
@@ -422,7 +344,6 @@
       <i data-lucide="info" style="width: 12px; height: 12px;"></i> Click tabs to switch...
     </div>
   </div>
-
   <div class="dash-gov-utility-strip">
     <div class="dash-gov-left">
       <span class="dash-badge-in">IN</span>
@@ -448,7 +369,6 @@
       <button onclick="document.querySelector('.view.active')?.scrollIntoView({behavior:'smooth', block:'start'})" data-i18n="skipContent">Skip to Content</button>
     </div>
   </div>
-
   <div class="dash-gov-brand-row">
     <div class="dash-brand-left">
       <button id="tb-sidebar-toggle" type="button" class="dash-action-icon-btn" onclick="return toggleSidebar(event)" title="Toggle sidebar" aria-label="Toggle sidebar" aria-expanded="false">
@@ -468,7 +388,6 @@
         <span class="dash-brand-subtitle" data-i18n="brandSubtitle">DSR Automation for Sand Mining</span>
       </div>
     </div>
-
     <div class="dash-brand-right">
       <button class="dash-gov-badge dash-badge-emgsm" onclick="showView('workflow', null)">
         <i data-lucide="leaf" style="width:13px; height:13px;"></i> EMGSM 2020
@@ -503,7 +422,6 @@
       </button>
     </div>
   </div>
-
   <div class="dash-gov-menu-bar">
     <ul class="dash-menu-links">
       <li class="dash-menu-link-item">
@@ -556,7 +474,6 @@
       <input id="tb-portal-search" type="text" placeholder="Search portal..." data-i18n-placeholder="searchPlaceholder" onkeydown="dashRunSearch(event)" aria-label="Search portal">
     </div>
   </div>
-
   <div class="dash-gov-notice-ticker">
     <div class="dash-notice-label">
       <i data-lucide="megaphone" style="width:12px; height:12px; stroke-width: 2.5;"></i> <span data-i18n="noticeLabel">Notice</span>
@@ -570,18 +487,14 @@
   </div>
 </div>
 
-  <!-- Mobile tab switcher (Editor / Preview) — visible on small screens when preview is active -->
   <div id="pdf-preview-mobile-tabs" class="pdf-preview-mobile-tabs" aria-hidden="true">
     <button type="button" class="pdf-preview-mobile-tab active" data-tab="editor">Editor</button>
     <button type="button" class="pdf-preview-mobile-tab" data-tab="preview">PDF Preview</button>
   </div>
   <div class="app-workspace">
-    <!-- MAIN CONTENT (60% when preview open) -->
     <div class="main-content">
       <div class="page-body">
-      <!-- ═══ DASHBOARD ═══ -->
-<div id="view-dashboard" class="view active" style="position: relative; z-index: 1; padding: 0 !important; margin: 0 !important; background: var(--dash-page-bg, #ffffff);">
-
+      <div id="view-dashboard" class="view active" style="position: relative; z-index: 1; padding: 0 !important; margin: 0 !important; background: var(--dash-page-bg, #ffffff);">
   <style>
     /* Scoped Dashboard styles mimicking the mockup exactly */
     .dash-portal-wrapper {
@@ -592,7 +505,6 @@
       line-height: 1.5;
       font-size: 15px;
     }
-
     /* Switcher bar inside app header */
     .dash-switcher-bar {
       display: flex;
@@ -605,16 +517,13 @@
       color: #ffffff;
       box-sizing: border-box;
     }
-
     .dash-portal-wrapper > .dash-switcher-bar {
       display: none;
     }
-
     .dash-switcher-tabs {
       display: flex;
       gap: 8px;
     }
-
     .dash-switcher-tab {
       display: inline-flex;
       align-items: center;
@@ -626,23 +535,19 @@
       font-size: 11px;
       transition: all 0.2s;
     }
-
     .dash-switcher-tab.active {
       background: #F2A123;
       color: #17324D;
       cursor: default;
     }
-
     .dash-switcher-tab.inactive {
       background: #233549;
       color: #ffffff;
       cursor: pointer;
     }
-
     .dash-switcher-tab.inactive:hover {
       background: #2d425b;
     }
-
     .dash-switcher-info {
       color: #a0aec0;
       font-size: 11px;
@@ -650,7 +555,6 @@
       align-items: center;
       gap: 4px;
     }
-
     /* Row 1: Official Gov Bar */
     .dash-gov-utility-strip {
       background: linear-gradient(90deg, #0B2B52 0%, #071B33 100%);
@@ -662,13 +566,11 @@
       font-size: 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     .dash-gov-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-
     .dash-badge-in {
       background: #F2A123;
       color: #0F1C2A;
@@ -677,13 +579,11 @@
       border-radius: 3px;
       font-size: 10px;
     }
-
     .dash-gov-right {
       display: flex;
       align-items: center;
       gap: 14px;
     }
-
     .dash-gov-right button, .dash-gov-right a {
       color: #CBD5E1;
       text-decoration: none;
@@ -694,16 +594,13 @@
       font-weight: 600;
       transition: color 0.2s;
     }
-
     .dash-gov-right button:hover, .dash-gov-right a:hover {
       color: #ffffff;
     }
-
     .dash-font-btns {
       display: flex;
       gap: 6px;
     }
-
     .dash-font-btn {
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -714,11 +611,9 @@
       font-size: 11px;
       font-weight: 600;
     }
-
     .dash-font-btn:hover {
       background: rgba(255, 255, 255, 0.1);
     }
-
     /* Row 2: Brand Header Row */
     .dash-gov-brand-row {
       background: #ffffff;
@@ -728,18 +623,15 @@
       align-items: center;
       border-bottom: 1px solid #E2E8F0;
     }
-
     .dash-brand-left {
       display: flex;
       align-items: center;
       gap: 16px;
     }
-
     .dash-brand-texts {
       display: flex;
       flex-direction: column;
     }
-
     .dash-brand-bilingual {
       color: #F2A123;
       font-size: 10px;
@@ -748,7 +640,6 @@
       text-transform: uppercase;
       margin-bottom: 2px;
     }
-
     .dash-brand-title {
       font-family: 'Outfit', sans-serif;
       font-size: 32px;
@@ -756,19 +647,16 @@
       color: #17324D;
       line-height: 1.15;
     }
-
     .dash-brand-subtitle {
       font-size: 15px;
       color: #0f172a;
       font-weight: 500;
     }
-
     .dash-brand-right {
       display: flex;
       align-items: center;
       gap: 16px;
     }
-
     .dash-gov-badge {
       display: inline-flex;
       align-items: center;
@@ -779,19 +667,16 @@
       font-weight: 700;
       text-decoration: none;
     }
-
     .dash-badge-emgsm {
       background: #EBFDF5;
       color: #047857;
       border: 1px solid #A7F3D0;
     }
-
     .dash-badge-support {
       background: #EFF6FF;
       color: #1D4ED8;
       border: 1px solid #BFDBFE;
     }
-
     .dash-action-icon-btn {
       width: 36px;
       height: 36px;
@@ -805,34 +690,28 @@
       background: #ffffff;
       transition: all 0.2s;
     }
-
     .dash-action-icon-btn:hover {
       background: #F8FAFC;
       color: #17324D;
     }
-
     .dash-theme-toggle {
       color: #17324D;
       border-color: #C49A58;
       background: #fffaf0;
     }
-
     .dash-theme-toggle:hover {
       background: #C49A58;
       color: #17324D;
     }
-
     html.dark .dash-theme-toggle {
       background: #0B1E33;
       color: #F8FAFC;
       border-color: #C49A58;
     }
-
     html.dark .dash-theme-toggle:hover {
       background: #17324D;
       color: #F2A123;
     }
-
     .dash-btn-logout {
       display: inline-flex;
       align-items: center;
@@ -847,13 +726,11 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .dash-btn-logout:hover {
       border-color: #ef4444;
       color: #ef4444;
       background: #FEF2F2;
     }
-
     /* Row 3: Menu Bar */
     .dash-gov-menu-bar {
       background: #05264a;
@@ -863,12 +740,10 @@
       padding: 0 24px;
       border-bottom: 3px solid #C49A58;
     }
-
     .dash-menu-links {
       display: flex;
       list-style: none;
     }
-
     .dash-menu-link-item button {
       display: flex;
       align-items: center;
@@ -882,25 +757,21 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .dash-menu-link-item.active button {
       background: rgba(255, 255, 255, 0.1);
       color: #ffffff;
       border-bottom: 3px solid #C49A58;
       margin-bottom: -3px;
     }
-
     .dash-menu-link-item button:hover {
       background: rgba(255, 255, 255, 0.06);
       color: #ffffff;
     }
-
     .dash-menu-search {
       position: relative;
       display: flex;
       align-items: center;
     }
-
     .dash-menu-search input {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -912,23 +783,19 @@
       transition: all 0.2s;
       width: 180px;
     }
-
     .dash-menu-search input::placeholder {
       color: rgba(255, 255, 255, 0.6);
     }
-
     .dash-menu-search input:focus {
       background: rgba(255, 255, 255, 0.15);
       border-color: #C49A58;
       width: 220px;
     }
-
     .dash-menu-search i {
       position: absolute;
       left: 10px;
       color: rgba(255, 255, 255, 0.6);
     }
-
     /* Row 4: Notice Ticker */
     .dash-gov-notice-ticker {
       background: #fff8ec;
@@ -939,7 +806,6 @@
       overflow: hidden;
       height: 34px;
     }
-
     .dash-notice-label {
       background: #F2A123;
       color: #0F1C2A;
@@ -958,14 +824,12 @@
       position: relative;
       box-shadow: 2px 0 5px rgba(0,0,0,0.05);
     }
-
     .dash-notice-marquee-container {
       overflow: hidden;
       white-space: nowrap;
       flex: 1;
       position: relative;
     }
-
     .dash-notice-marquee-text {
       display: inline-block;
       padding-left: 100%;
@@ -975,16 +839,13 @@
       font-weight: 600;
       color: #111827;
     }
-
     .dash-notice-marquee-text:hover {
       animation-play-state: paused;
     }
-
     @keyframes dashMarquee {
       0% { transform: translate3d(0, 0, 0); }
       100% { transform: translate3d(-100%, 0, 0); }
     }
-
     /* District context and map-backed hero */
     .dash-district-context-card {
       margin: 16px 30px 14px;
@@ -999,7 +860,6 @@
       border-radius: 8px;
       box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
     }
-
     .dash-district-context-left,
     .dash-district-highlight {
       display: flex;
@@ -1007,7 +867,6 @@
       gap: 12px;
       min-width: 0;
     }
-
     .dash-context-label {
       font-size: 12.5px;
       font-weight: 800;
@@ -1016,7 +875,6 @@
       letter-spacing: 0.05em;
       white-space: nowrap;
     }
-
     .dash-district-select {
       min-width: 210px;
       padding: 8px 34px 8px 14px;
@@ -1030,13 +888,11 @@
       cursor: pointer;
       box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
     }
-
     .dash-district-highlight {
       color: #64748b;
       font-size: 13px;
       font-weight: 700;
     }
-
     .dash-gov-hero-section {
       position: relative;
       isolation: isolate;
@@ -1047,7 +903,6 @@
       padding: 0 30px;
       border-bottom: 1px solid #e2e8f0;
     }
-
     .dash-gov-hero-section::before {
       content: "";
       position: absolute;
@@ -1060,7 +915,6 @@
       -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.02) 22%, rgba(0, 0, 0, 0.18) 34%, rgba(0, 0, 0, 0.58) 47%, #000000 64%, #000000 100%);
       mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.02) 22%, rgba(0, 0, 0, 0.18) 34%, rgba(0, 0, 0, 0.58) 47%, #000000 64%, #000000 100%);
     }
-
     .dash-gov-hero-section::after {
       content: "";
       position: absolute;
@@ -1071,7 +925,6 @@
         linear-gradient(180deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.0) 22%, rgba(15, 23, 42, 0.0) 76%, rgba(15, 23, 42, 0.07) 100%);
       pointer-events: none;
     }
-
     .dash-hero-container {
       max-width: none;
       min-height: 450px;
@@ -1081,7 +934,6 @@
       gap: 18px;
       align-items: center;
     }
-
     .dash-hero-content {
       display: flex;
       flex-direction: column;
@@ -1089,7 +941,6 @@
       max-width: 700px;
       padding-left: clamp(24px, 4.8vw, 88px);
     }
-
     .dash-hero-eyebrow {
       color: #f6df45;
       font-weight: 800;
@@ -1098,7 +949,6 @@
       margin-bottom: 18px;
       text-transform: uppercase;
     }
-
     .dash-hero-heading {
       font-family: 'Outfit', sans-serif;
       font-size: clamp(42px, 3.6vw, 56px);
@@ -1109,7 +959,6 @@
       letter-spacing: 0;
       text-shadow: 0 3px 14px rgba(2, 8, 23, 0.18);
     }
-
     .dash-hero-desc {
       color: rgba(255, 255, 255, 0.92);
       font-size: 17px;
@@ -1117,18 +966,15 @@
       margin-bottom: 24px;
       max-width: 620px;
     }
-
     .dash-hero-desc span {
       display: block;
       margin-top: 3px;
     }
-
     .dash-hero-btn-row {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
     }
-
     .dash-btn-hero-outline {
       display: inline-flex;
       align-items: center;
@@ -1146,14 +992,12 @@
       transition: all 0.2s;
       backdrop-filter: blur(8px);
     }
-
     .dash-btn-hero-outline:hover {
       background: #ffffff;
       color: #17324D;
       border-color: #ffffff;
       transform: translateY(-2px);
     }
-
     .dash-hero-stats-stack {
       display: none;
       align-self: stretch;
@@ -1163,7 +1007,6 @@
       position: relative;
       pointer-events: none;
     }
-
     .dash-hero-stat-card {
       position: absolute;
       min-width: 142px;
@@ -1181,33 +1024,27 @@
       pointer-events: auto;
       backdrop-filter: blur(10px);
     }
-
     .dash-hero-stat-card:hover {
       background: #ffffff;
       border-color: #C49A58;
       transform: translateY(-2px);
     }
-
     .dash-hero-stat-card:nth-child(1) {
       right: 13%;
       top: 20%;
     }
-
     .dash-hero-stat-card:nth-child(2) {
       right: 34%;
       top: 48%;
     }
-
     .dash-hero-stat-card:nth-child(3) {
       right: 8%;
       bottom: 18%;
     }
-
     .dash-stat-card-left {
       display: flex;
       flex-direction: column;
     }
-
     .dash-stat-val {
       font-family: 'Outfit', sans-serif;
       font-size: 26px;
@@ -1216,7 +1053,6 @@
       line-height: 1;
       margin-bottom: 2px;
     }
-
     .dash-stat-lbl {
       font-size: 11px;
       color: #475569;
@@ -1224,14 +1060,12 @@
       font-weight: 700;
       letter-spacing: 0.5px;
     }
-
     /* Info Bar */
     .dash-gov-info-bar {
       background: #ffffff;
       border-bottom: 1px solid #E2E8F0;
       padding: 12px 24px;
     }
-
     .dash-info-bar-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -1243,7 +1077,6 @@
       gap: 20px;
       flex-wrap: wrap;
     }
-
     .dash-info-bar-left {
       display: flex;
       align-items: center;
@@ -1251,18 +1084,15 @@
       line-height: 1.4;
       max-width: 80%;
     }
-
     .dash-info-bar-left strong {
       color: #17324D;
     }
-
     .dash-info-bar-right {
       display: flex;
       align-items: center;
       gap: 6px;
       font-weight: 600;
     }
-
     /* Bottom Grid (Updates & Quick Access) */
     .dash-bottom-layout-grid {
       width: min(98%, 1560px);
@@ -1273,7 +1103,6 @@
       grid-template-columns: minmax(0, 1.35fr) minmax(390px, 1fr);
       gap: 16px;
     }
-
     .dash-panel-card {
       background: #ffffff;
       border: 1.5px solid #E2E8F0;
@@ -1282,7 +1111,6 @@
       display: flex;
       flex-direction: column;
     }
-
     .dash-panel-header {
       display: flex;
       justify-content: space-between;
@@ -1291,7 +1119,6 @@
       padding-bottom: 15px;
       margin-bottom: 20px;
     }
-
     .dash-panel-title {
       font-size: clamp(20px, 1.25vw, 22px);
       font-weight: 600;
@@ -1301,31 +1128,26 @@
       gap: 10px;
       line-height: 1.2;
     }
-
     .dash-panel-link-all {
       font-size: 13px;
       font-weight: 700;
       color: #17324D;
       cursor: pointer;
     }
-
     .dash-panel-link-all:hover {
       text-decoration: underline;
     }
-
     .dash-updates-list {
       display: flex;
       flex-direction: column;
       gap: 16px;
       list-style: none;
     }
-
     .dash-update-item {
       display: flex;
       gap: 12px;
       align-items: flex-start;
     }
-
     .dash-update-dot {
       width: 8px;
       height: 8px;
@@ -1334,20 +1156,17 @@
       margin-top: 9px;
       flex-shrink: 0;
     }
-
     .dash-update-content {
       display: flex;
       flex-direction: column;
       gap: 5px;
     }
-
     .dash-update-text {
       font-size: clamp(15px, 0.98vw, 17px);
       font-weight: 600;
       line-height: 1.55;
       color: #1E293B;
     }
-
     .dash-update-meta {
       display: flex;
       align-items: center;
@@ -1356,7 +1175,6 @@
       color: #64748B;
       font-weight: 600;
     }
-
     .dash-badge-new {
       background: #EBFDF5;
       color: #10B981;
@@ -1366,14 +1184,12 @@
       font-weight: 800;
       text-transform: uppercase;
     }
-
     /* Quick Access Grid */
     .dash-quick-access-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
     }
-
     .dash-quick-access-btn {
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
@@ -1385,14 +1201,12 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .dash-quick-access-btn:hover {
       background: #ffffff;
       border-color: #17324D;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(23, 50, 77, 0.05);
     }
-
     .dash-quick-icon-box {
       width: 42px;
       height: 42px;
@@ -1403,26 +1217,22 @@
       justify-content: center;
       border: 1px solid #E2E8F0;
     }
-
     .dash-quick-text-box {
       display: flex;
       flex-direction: column;
       gap: 3px;
       line-height: 1.28;
     }
-
     .dash-quick-title {
       font-size: clamp(16px, 1vw, 17px);
       font-weight: 600;
       color: #17324D;
     }
-
     .dash-quick-subtitle {
       font-size: clamp(12px, 0.8vw, 13px);
       color: #64748B;
       font-weight: 600;
     }
-
     /* Reliable dashboard layout fixes */
     .dash-switcher-tabs,
     .dash-gov-utility-strip,
@@ -1433,110 +1243,89 @@
     .dash-menu-links {
       flex-wrap: wrap;
     }
-
     .dash-gov-utility-strip,
     .dash-gov-brand-row,
     .dash-gov-menu-bar {
       gap: 14px;
     }
-
     .dash-brand-left {
       min-width: 280px;
       flex: 1 1 420px;
     }
-
     .dash-brand-right {
       justify-content: flex-end;
       flex: 1 1 320px;
     }
-
     .dash-menu-links {
       padding: 0;
       margin: 0;
     }
-
     .dash-menu-link-item button {
       padding: 14px 14px;
     }
-
     .dash-gov-notice-ticker {
       height: auto;
       min-height: 34px;
     }
-
     .dash-gov-hero-section {
       padding: 0 24px;
     }
-
     .dash-hero-heading {
       font-size: clamp(40px, 3.4vw, 54px);
     }
-
     .dash-panel-card {
       min-width: 0;
       padding: 26px;
     }
-
     .dash-update-content,
     .dash-quick-text-box {
       min-width: 0;
     }
-
     .dash-quick-access-btn {
       min-height: 74px;
     }
-
     /* Dashboard dark mode: scoped to this page so other portal screens keep their own theme */
     html.dark #view-dashboard {
       --dash-page-bg: #07111f;
     }
-
     html.dark #view-dashboard,
     html.dark #view-dashboard .dash-portal-wrapper {
       background: #07111f;
       color: #e5edf6;
     }
-
     html.dark #view-dashboard .dash-switcher-bar,
     html.dark #view-dashboard .dash-gov-utility-strip {
       background: #020817;
       color: #e5edf6;
       border-color: rgba(148, 163, 184, 0.18);
     }
-
     html.dark #view-dashboard .dash-switcher-tab.inactive {
       background: #142237;
       color: #dbeafe;
     }
-
     html.dark #view-dashboard .dash-switcher-info,
     html.dark #view-dashboard .dash-gov-right button,
     html.dark #view-dashboard .dash-gov-right a {
       color: #b6c4d6;
     }
-
     html.dark #view-dashboard .dash-gov-right button:hover,
     html.dark #view-dashboard .dash-gov-right a:hover {
       color: #ffffff;
     }
-
     html.dark #view-dashboard .dash-font-btn {
       color: #e5edf6;
       border-color: rgba(226, 232, 240, 0.22);
       background: rgba(255, 255, 255, 0.04);
     }
-
     html.dark #view-dashboard .dash-gov-brand-row,
     html.dark #view-dashboard .dash-gov-info-bar,
     html.dark #view-dashboard .dash-bottom-layout-grid {
       background: #07111f;
     }
-
     html.dark #view-dashboard .dash-gov-brand-row,
     html.dark #view-dashboard .dash-gov-info-bar {
       border-color: rgba(148, 163, 184, 0.16);
     }
-
     html.dark #view-dashboard .dash-brand-title,
     html.dark #view-dashboard .dash-info-bar-left strong,
     html.dark #view-dashboard .dash-panel-title,
@@ -1544,174 +1333,143 @@
     html.dark #view-dashboard .dash-quick-title {
       color: #f8fafc;
     }
-
     html.dark #view-dashboard .dash-brand-subtitle,
     html.dark #view-dashboard .dash-info-bar-container,
     html.dark #view-dashboard .dash-update-meta,
     html.dark #view-dashboard .dash-quick-subtitle {
       color: #a9b8ca;
     }
-
     html.dark #view-dashboard .dash-gov-menu-bar {
       background: #0f2338;
       border-bottom-color: #d0a35d;
     }
-
     html.dark #view-dashboard .dash-menu-link-item button {
       color: #dbe7f5;
     }
-
     html.dark #view-dashboard .dash-menu-link-item.active button,
     html.dark #view-dashboard .dash-menu-link-item button:hover {
       background: rgba(255, 255, 255, 0.10);
       color: #ffffff;
     }
-
     html.dark #view-dashboard .dash-menu-search input {
       background: rgba(15, 23, 42, 0.7);
       border-color: rgba(226, 232, 240, 0.20);
       color: #ffffff;
     }
-
     html.dark #view-dashboard .dash-gov-notice-ticker {
       background: #21190b;
       border-bottom-color: rgba(208, 163, 93, 0.28);
     }
-
     html.dark #view-dashboard .dash-notice-marquee-text {
       color: #f6d79e;
     }
-
     html.dark #view-dashboard .dash-district-context-card {
       background: #0d1a2b;
       border-color: rgba(148, 163, 184, 0.22);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
     }
-
     html.dark #view-dashboard .dash-context-label,
     html.dark #view-dashboard .dash-district-highlight {
       color: #b6c4d6;
     }
-
     html.dark #view-dashboard .dash-district-select {
       background: #07111f;
       color: #f8fafc;
       border-color: rgba(148, 163, 184, 0.30);
     }
-
     html.dark #view-dashboard .dash-gov-hero-section {
       background: #07111f;
       border-bottom-color: rgba(148, 163, 184, 0.20);
     }
-
     html.dark #view-dashboard .dash-gov-hero-section::before {
       opacity: 0.9;
       filter: saturate(0.92) brightness(0.92) contrast(1.04);
       -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.02) 22%, rgba(0, 0, 0, 0.16) 34%, rgba(0, 0, 0, 0.54) 49%, #000000 67%, #000000 100%);
       mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.02) 22%, rgba(0, 0, 0, 0.16) 34%, rgba(0, 0, 0, 0.54) 49%, #000000 67%, #000000 100%);
     }
-
     html.dark #view-dashboard .dash-gov-hero-section::after {
       background:
         linear-gradient(90deg, #07111f 0%, #07111f 27%, rgba(7, 17, 31, 0.96) 37%, rgba(7, 17, 31, 0.74) 49%, rgba(7, 17, 31, 0.34) 64%, rgba(7, 17, 31, 0.12) 82%, rgba(7, 17, 31, 0.02) 100%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.0) 20%, rgba(2, 8, 23, 0.04) 100%);
     }
-
     html.dark #view-dashboard .dash-hero-desc,
     html.dark #view-dashboard .dash-stat-lbl {
       color: #b6c4d6;
     }
-
     html.dark #view-dashboard .dash-hero-stat-card {
       background: rgba(255, 255, 255, 0.055);
       border-color: rgba(226, 232, 240, 0.14);
     }
-
     html.dark #view-dashboard .dash-panel-card,
     html.dark #view-dashboard .dash-quick-access-btn {
       background: #0d1a2b;
       border-color: rgba(148, 163, 184, 0.22);
       box-shadow: none;
     }
-
     html.dark #view-dashboard .dash-quick-access-btn:hover {
       background: #122238;
       border-color: #d0a35d;
       box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
     }
-
     html.dark #view-dashboard .dash-quick-icon-box {
       background: #07111f;
       border-color: rgba(148, 163, 184, 0.22);
       color: #d0a35d;
     }
-
     html.dark #view-dashboard .dash-panel-header {
       border-bottom-color: rgba(148, 163, 184, 0.18);
     }
-
     html.dark #view-dashboard .dash-update-text {
       color: #e5edf6;
     }
-
     html.dark #view-dashboard .dash-badge-emgsm,
     html.dark #view-dashboard .dash-badge-new {
       background: rgba(16, 185, 129, 0.14);
       color: #7dd3aa;
       border-color: rgba(16, 185, 129, 0.28);
     }
-
     html.dark #view-dashboard .dash-badge-support {
       background: rgba(59, 130, 246, 0.14);
       color: #93c5fd;
       border-color: rgba(59, 130, 246, 0.28);
     }
-
     html.dark #view-dashboard .dash-action-icon-btn,
     html.dark #view-dashboard .dash-btn-logout {
       background: #0d1a2b;
       color: #cbd5e1;
       border-color: rgba(148, 163, 184, 0.22);
     }
-
     html.dark #view-dashboard .dash-action-icon-btn:hover {
       background: #142237;
       color: #ffffff;
       border-color: #d0a35d;
     }
-
     html.dark #view-dashboard .dash-btn-logout:hover {
       background: rgba(239, 68, 68, 0.12);
       border-color: #ef4444;
       color: #fca5a5;
     }
-
     html.dark #view-dashboard #dash-review-banner {
       background: #241707 !important;
       border-color: #b7791f !important;
     }
-
     html.dark #view-dashboard #dash-review-banner strong,
     html.dark #view-dashboard #dash-review-banner-text {
       color: #f6d79e !important;
     }
-
     @media (max-width: 1100px) {
       .dash-hero-container,
       .dash-bottom-layout-grid {
         grid-template-columns: 1fr;
         width: min(96%, 1040px);
       }
-
       .dash-hero-stats-stack {
         max-width: none;
         justify-self: stretch;
         display: none;
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
-
     }
-
     @media (max-width: 760px) {
       .dash-switcher-bar,
       .dash-gov-utility-strip,
@@ -1722,84 +1480,67 @@
         padding-left: 16px;
         padding-right: 16px;
       }
-
       .dash-switcher-bar {
         height: auto;
         gap: 8px;
       }
-
       .dash-switcher-info,
       .dash-brand-subtitle {
         display: none;
       }
-
       .dash-gov-right,
       .dash-brand-right {
         justify-content: flex-start;
       }
-
       .dash-brand-left {
         min-width: 0;
         align-items: flex-start;
       }
-
       .dash-brand-title {
         font-size: 20px;
       }
-
       .dash-menu-links,
       .dash-menu-search {
         width: 100%;
       }
-
       .dash-menu-link-item button {
         padding: 11px 10px;
         font-size: 12px;
       }
-
       .dash-menu-search {
         margin-bottom: 10px;
       }
-
       .dash-menu-search input,
       .dash-menu-search input:focus {
         width: 100%;
       }
-
       .dash-gov-hero-section {
         min-height: 520px;
         padding: 0 16px;
       }
-
       .dash-gov-hero-section::before {
         background-position: center bottom;
         background-size: 120% 60%;
         -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.02) 34%, rgba(0, 0, 0, 0.32) 54%, #000000 82%, #000000 100%);
         mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.02) 34%, rgba(0, 0, 0, 0.32) 54%, #000000 82%, #000000 100%);
       }
-
       .dash-gov-hero-section::after {
         background:
           linear-gradient(180deg, rgba(15, 32, 49, 0.98) 0%, rgba(23, 50, 77, 0.94) 47%, rgba(23, 50, 77, 0.48) 70%, rgba(23, 50, 77, 0.08) 100%);
       }
-
       .dash-hero-heading {
         font-size: 36px;
       }
-
       .dash-hero-desc {
         margin-bottom: 22px;
         font-size: 16px;
       }
-
       .dash-quick-access-grid {
         grid-template-columns: 1fr;
       }
-
       .dash-panel-card {
         padding: 18px;
       }
-
       .dash-panel-header {
         align-items: flex-start;
         gap: 12px;
@@ -1807,63 +1548,49 @@
         padding-bottom: 14px;
         margin-bottom: 18px;
       }
-
       .dash-panel-title {
         font-size: 20px;
       }
-
       .dash-panel-link-all {
         font-size: 14px;
       }
-
       .dash-updates-list {
         gap: 15px;
       }
-
       .dash-update-text {
         font-size: 15px;
         line-height: 1.5;
       }
-
       .dash-update-meta {
         font-size: 12.5px;
       }
-
       .dash-quick-access-btn {
         min-height: 70px;
         padding: 14px 15px;
       }
-
       .dash-quick-icon-box {
         width: 40px;
         height: 40px;
       }
-
       .dash-quick-title {
         font-size: 16px;
       }
-
       .dash-quick-subtitle {
         font-size: 12.5px;
       }
-
       html.dark #view-dashboard .dash-gov-hero-section {
         background: #07111f;
       }
-
       html.dark #view-dashboard .dash-gov-hero-section::after {
         background:
           linear-gradient(180deg, rgba(2, 8, 23, 0.99) 0%, rgba(9, 24, 43, 0.96) 52%, rgba(8, 17, 31, 0.68) 78%, rgba(8, 17, 31, 0.22) 100%);
       }
-
       .dash-bottom-layout-grid {
         margin: 16px auto;
         width: calc(100% - 32px);
       }
     }
   </style>
-
-  <!-- Reviewer Return Alert Banner (Preserves Returned Review logic) -->
   <div id="dash-review-banner" class="notif notif-warn" style="display:none; margin: 20px 24px; align-items: start; gap: 12px; border: 1px solid #f59e0b; background: #fffbeb; border-radius: 8px; padding: 16px;">
     <i data-lucide="alert-triangle" style="color: #f59e0b; flex-shrink:0;"></i>
     <div style="flex:1;">
@@ -1871,9 +1598,7 @@
       <div id="dash-review-banner-text" style="color: #92400e; font-size: 13px; white-space: pre-wrap;"></div>
     </div>
   </div>
-
   <div class="dash-portal-wrapper">
-    <!-- Fixed Top Switcher Bar -->
     <div class="dash-switcher-bar">
       <div class="dash-switcher-tabs">
         <a href="home.html" class="dash-switcher-tab inactive">
@@ -1887,8 +1612,6 @@
         <i data-lucide="info" style="width: 12px; height: 12px;"></i> Click tabs to switch...
       </div>
     </div>
-
-    <!-- Row 1: Official Gov Bar -->
     <div class="dash-gov-utility-strip">
       <div class="dash-gov-left">
         <span class="dash-badge-in">IN</span>
@@ -1912,8 +1635,6 @@
         <button onclick="document.getElementById('dash-main-content')?.scrollIntoView({behavior:'smooth', block:'start'})" data-i18n="skipContent">Skip to Content</button>
       </div>
     </div>
-
-    <!-- Row 2: Brand Header Row -->
     <div class="dash-gov-brand-row">
       <div class="dash-brand-left">
         <svg viewBox="0 0 100 100" width="54" height="54" style="flex-shrink:0;">
@@ -1943,8 +1664,6 @@
         </button>
       </div>
     </div>
-
-    <!-- Row 3: Menu Bar -->
     <div class="dash-gov-menu-bar">
       <ul class="dash-menu-links">
         <li class="dash-menu-link-item active">
@@ -1974,8 +1693,6 @@
         <input id="dash-portal-search" type="text" placeholder="Search portal..." data-i18n-placeholder="searchPlaceholder" onkeydown="dashRunSearch(event)" aria-label="Search portal">
       </div>
     </div>
-
-    <!-- Row 4: Notice Ticker -->
     <div class="dash-gov-notice-ticker">
       <div class="dash-notice-label">
           <i data-lucide="megaphone" style="width:12px; height:12px; stroke-width: 2.5;"></i> <span data-i18n="noticeLabel">Notice</span>
@@ -1986,8 +1703,6 @@
         </div>
       </div>
     </div>
-
-    <!-- District Context Selector Bar -->
     <div class="dash-district-context-card">
       <div class="dash-district-context-left">
         <i data-lucide="filter" style="width:16px; height:16px; color:#17324D;"></i>
@@ -2023,8 +1738,6 @@
         Active District Highlight: <span id="dash-active-district-badge" class="badge" style="background:#e2e8f0; color:#475569; padding: 4px 10px; border-radius: 4px; font-weight: 800;">None</span>
       </div>
     </div>
-
-    <!-- Hero Section -->
     <section class="dash-gov-hero-section">
       <div class="dash-hero-container">
         <div class="dash-hero-content">
@@ -2044,8 +1757,6 @@
             </button>
           </div>
         </div>
-
-        <!-- Right column stats block (populated by JS bindings) -->
         <div class="dash-hero-stats-stack">
           <div class="dash-hero-stat-card">
             <div class="dash-stat-card-left">
@@ -2071,8 +1782,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Info Bar -->
     <div id="dash-about-section" class="dash-gov-info-bar">
       <div class="dash-info-bar-container">
         <div class="dash-info-bar-left">
@@ -2085,7 +1794,6 @@
         </div>
       </div>
     </div>
-
     <section id="dash-about-dsr-section" class="dash-about-dsr-section">
       <div class="dash-about-dsr-copy">
         <span class="dash-map-kicker">About DSR</span>
@@ -2114,7 +1822,6 @@
         </p>
       </div>
     </section>
-
     <section id="dash-district-map-section" class="dash-district-map-section">
       <div class="dash-district-map-header">
         <div>
@@ -2166,10 +1873,7 @@
         </div>
       </div>
     </section>
-
-    <!-- Bottom layout columns (Updates & Quick Access) -->
     <div class="dash-bottom-layout-grid">
-      <!-- Latest Updates Panel -->
       <div class="dash-panel-card">
         <div class="dash-panel-header">
           <span class="dash-panel-title">
@@ -2218,8 +1922,6 @@
           </li>
         </ul>
       </div>
-
-      <!-- Quick Access Panel -->
       <div class="dash-panel-card">
         <div class="dash-panel-header">
           <span class="dash-panel-title">
@@ -2272,7 +1974,6 @@
         </div>
       </div>
     </div>
-
     <section id="dash-contact-section" class="dash-bottom-layout-grid" style="grid-template-columns: minmax(0, 1fr); margin-top: 0;">
       <div class="dash-panel-card">
         <div class="dash-panel-header">
@@ -2313,8 +2014,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Hidden element placeholder inputs for stats compiler to prevent errors -->
     <div style="display:none;">
       <span id="d-done">0</span>
       <span id="d-sigs">0</span>
@@ -2327,13 +2026,10 @@
       <span id="d-sigs-pct">0%</span>
       <span id="d-pdfs-pct">0%</span>
     </div>
-
   </div>
-
 </div>
 
-              <!-- ═══ PROJECTS ═══ -->
-        <div id="view-projects" class="view">
+              <div id="view-projects" class="view">
           <style>
             #view-projects {
               min-height: 100vh;
@@ -2523,7 +2219,6 @@
                 <i data-lucide="info" style="width: 12px; height: 12px;"></i> Click tabs to switch...
               </div>
             </div>
-
             <div class="dash-gov-utility-strip">
               <div class="dash-gov-left">
                 <span class="dash-badge-in">IN</span>
@@ -2547,7 +2242,6 @@
                 <button onclick="document.getElementById('projects-grid')?.scrollIntoView({behavior:'smooth', block:'start'})" data-i18n="skipContent">Skip to Content</button>
               </div>
             </div>
-
             <div class="dash-gov-brand-row">
               <div class="dash-brand-left">
                 <svg viewBox="0 0 100 100" width="54" height="54" style="flex-shrink:0;">
@@ -2577,7 +2271,6 @@
                 </button>
               </div>
             </div>
-
             <div class="dash-gov-menu-bar">
               <ul class="dash-menu-links">
                 <li class="dash-menu-link-item">
@@ -2610,7 +2303,6 @@
                 <input id="projects-portal-search" type="text" placeholder="Search portal..." data-i18n-placeholder="searchPlaceholder" onkeydown="dashRunSearch(event)" aria-label="Search portal">
               </div>
             </div>
-
             <div class="dash-gov-notice-ticker">
               <div class="dash-notice-label">
                 <i data-lucide="megaphone" style="width:12px; height:12px; stroke-width: 2.5;"></i> <span data-i18n="noticeLabel">Notice</span>
@@ -2621,7 +2313,6 @@
                 </div>
               </div>
             </div>
-
             <div class="projects-content-shell">
               <div class="header-row">
                 <div>
@@ -2648,8 +2339,7 @@
           </div>
         </div>
 
-              <!-- ═══ WORKFLOW ═══ -->
-        <div id="view-workflow" class="view">
+              <div id="view-workflow" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Report Workflow</div>
@@ -2773,8 +2463,7 @@
           </div>
         </div>
 
-      <!-- ═══ FRONT MATTER ═══ -->
-<div id="view-front-matter" class="view">
+      <div id="view-front-matter" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Front Matter</div>
@@ -2876,8 +2565,7 @@
     </div>
   </div>
 </div>
-              <!-- ═══ CHAPTERS ═══ -->
-        <div id="view-chapters" class="view">
+              <div id="view-chapters" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Report Chapters</div>
@@ -2892,9 +2580,7 @@
           <div id="chapter-list"></div>
         </div>
 
-
-              <!-- ═══ PLATES ═══ -->
-        <div id="view-plates" class="view">
+              <div id="view-plates" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Plate Section</div>
@@ -2907,9 +2593,7 @@
           <div id="plate-list"></div>
         </div>
 
-
-              <!-- ═══ GRAPHS ═══ -->
-        <div id="view-graphs" class="view">
+              <div id="view-graphs" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Cross Section Graph Generator</div>
@@ -2924,9 +2608,7 @@
           <div id="graph-list"></div>
         </div>
 
-
-              <!-- â•â•â• ANNEXURE I â•â•â• -->
-        <div id="view-anx1" class="view">
+              <div id="view-anx1" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Annexure I â€” Sand Sources</div>
@@ -2953,15 +2635,12 @@
               </label>
             </div>
           </div>
-
           <div class="notif notif-info" style="margin-bottom:16px">
             Download the Excel template for each section below â†’ Fill values locally â†’ Upload at the bottom of the
             section â†’ Click 'Download Final Annexure 1 PDF' when ready.
           </div>
-
           <div class="card">
                 <div class="card-bd">
-                  <!-- Section A -->
               <div class="anx-section">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -2972,7 +2651,6 @@
                     <span>Excel Template (Rivers)</span>
                   </button>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx1-rivers">
                     <thead>
@@ -3015,7 +2693,6 @@
                     </tbody>
                   </table>
                 </div>
-
                 <div class="section-footer"
                   style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <button class="btn btn-xs btn-outline"
@@ -3032,8 +2709,6 @@
                   </label>
                 </div>
               </div>
-
-              <!-- Section B -->
               <div class="anx-section" style="margin-top:32px;">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3045,7 +2720,6 @@
                     <span>Excel Template (De-Siltation)</span>
                   </button>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx1-desilt">
                     <thead>
@@ -3097,7 +2771,6 @@
                     </tbody>
                   </table>
                 </div>
-
                 <div class="section-footer"
                   style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <button class="btn btn-xs btn-outline"
@@ -3114,8 +2787,6 @@
                   </label>
                 </div>
               </div>
-
-              <!-- Section C -->
               <div class="anx-section" style="margin-top:32px;">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3127,7 +2798,6 @@
                     <span>Excel Template (Patta Lands)</span>
                   </button>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx1-patta">
                     <thead>
@@ -3164,7 +2834,6 @@
                     </tbody>
                   </table>
                 </div>
-
                 <div class="section-footer"
                   style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <button class="btn btn-xs btn-outline"
@@ -3181,8 +2850,6 @@
                   </label>
                 </div>
               </div>
-
-              <!-- Section D -->
               <div class="anx-section" style="margin-top:32px;">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3193,7 +2860,6 @@
                     <span>Excel Template (M-Sand)</span>
                   </button>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx1-msand">
                     <thead>
@@ -3227,7 +2893,6 @@
                     </tbody>
                   </table>
                 </div>
-
                 <div class="section-footer"
                   style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <button class="btn btn-xs btn-outline"
@@ -3244,7 +2909,6 @@
                   </label>
                 </div>
               </div>
-
                 <div class="final-actions" style="margin-top:32px; display:flex; justify-content:center;">
                   <button class="btn btn-pdf-upload btn-lg" onclick="exportAnx1PDF(this, false)"
                     style="display:inline-flex; align-items:center; gap:8px;">
@@ -3257,14 +2921,10 @@
                     <span>Update Live Preview</span>
                   </button>
                 </div>
-
               </div></div>
 </div>
 
-
-
-              <!-- â•â•â• ANNEXURE II â•â•â• -->
-        <div id="view-anx2" class="view">
+              <div id="view-anx2" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Annexure II â€” Mining Leases</div>
@@ -3292,16 +2952,12 @@
               </label>
             </div>
           </div>
-
           <div class="notif notif-info" style="margin-bottom:16px">
             Download the Excel template for each section below â†’ Fill values locally â†’ Upload at the bottom of the
             section â†’ Click 'Download Final Annexure 2 PDF' when ready.
           </div>
-
           <div class="card">
             <div class="card-bd">
-
-              <!-- Section A: Mining Leases -->
               <div id="section-a-wrapper">
                 <div class="anx-section section-a-block">
                   <div class="anx-section-header"
@@ -3314,7 +2970,6 @@
                       <span>Excel Template (Leases)</span>
                     </button>
                   </div>
-
                   <div class="tbl-wrap">
                     <table class="anx-tbl" id="anx2-leases" style="min-width:1400px">
                       <thead>
@@ -3408,7 +3063,6 @@
                       </tbody>
                     </table>
                   </div>
-
                   <div class="section-footer"
                     style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                     <button class="btn btn-xs btn-outline" onclick="addNewLeaseRow(this)"
@@ -3431,7 +3085,6 @@
                   </div>
                 </div>
               </div>
-
               <div style="margin-bottom:30px; margin-top:12px;">
                 <button class="btn btn-sm btn-pdf-upload" onclick="addSectionABlock()"
                   style="display:inline-flex; align-items:center; gap:6px;">
@@ -3439,8 +3092,6 @@
                   <span>Add Another Section A Page/Table</span>
                 </button>
               </div>
-
-              <!-- Section B: Patta Lands -->
               <div class="anx-section" style="margin-top:32px;">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3452,7 +3103,6 @@
                     <span>Excel Template (Patta Lands)</span>
                   </button>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx2-patta" style="min-width:1200px">
                     <thead>
@@ -3529,7 +3179,6 @@
                     </tfoot>
                   </table>
                 </div>
-
                 <div class="section-footer"
                   style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <button class="btn btn-xs btn-outline"
@@ -3546,8 +3195,6 @@
                   </label>
                 </div>
               </div>
-
-              <!-- Section C: De-Siltation Location -->
               <div class="anx-section" style="margin-top:32px;">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3559,7 +3206,6 @@
                     <span>Excel Template (De-Siltation)</span>
                   </button>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx2-desilt" style="min-width:1000px">
                     <thead>
@@ -3610,7 +3256,6 @@
                     </tfoot>
                   </table>
                 </div>
-
                 <div class="section-footer"
                   style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <button class="btn btn-xs btn-outline"
@@ -3627,8 +3272,6 @@
                   </label>
                 </div>
               </div>
-
-              <!-- Section D: M-Sand Plants -->
               <div class="anx-section" style="margin-top:32px;">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3640,7 +3283,6 @@
                     <span>Excel Template (M-Sand)</span>
                   </button>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx2-msand" style="min-width:1000px">
                     <thead>
@@ -3679,7 +3321,6 @@
                     </tbody>
                   </table>
                 </div>
-
                 <div class="section-footer"
                   style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <button class="btn btn-xs btn-outline"
@@ -3696,8 +3337,6 @@
                   </label>
                 </div>
               </div>
-
-              <!-- Final Action Area -->
               <div class="final-actions" style="margin-top:32px; display:flex; justify-content:center;">
                 <button class="btn btn-pdf-upload btn-lg" onclick="exportAnx2PDF(this)"
                   style="display:inline-flex; align-items:center; gap:8px;">
@@ -3705,14 +3344,11 @@
                   <span>Download Final Annexure 2 PDF</span>
                 </button>
               </div>
-
                       </div>
           </div>
         </div>
 
-
-              <!-- â•â•â• ANNEXURE III â•â•â• -->
-        <div id="view-anx3" class="view">
+              <div id="view-anx3" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Annexure III â€” Cluster Details</div>
@@ -3739,17 +3375,11 @@
               </label>
             </div>
           </div>
-
-          
-
           <div class="notif notif-info" style="margin-bottom:16px">
             Download the Excel templates â†’ Fill values locally â†’ Upload below. You can also edit cell content inline.
           </div>
-
           <div class="card">
             <div class="card-bd">
-
-              <!-- Section A: Cluster Details -->
               <div class="anx-section">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3768,7 +3398,6 @@
                     </label>
                   </div>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx3-clusters">
                     <thead>
@@ -3785,14 +3414,11 @@
                       </tr>
                     </thead>
                     <tbody id="clusterBody">
-                      <!-- rows injected by JS -->
                     </tbody>
                     <tfoot id="clusterFoot">
-                      <!-- totals injected by JS -->
                     </tfoot>
                   </table>
                 </div>
-
                 <div class="section-footer" style="margin-top:12px;">
                   <button class="btn btn-xs btn-outline" onclick="addClusterRow()"
                     style="display:inline-flex; align-items:center; gap:6px;">
@@ -3801,8 +3427,6 @@
                   </button>
                 </div>
               </div>
-
-              <!-- Section B: Contiguous Clusters -->
               <div class="anx-section" style="margin-top: 32px;">
                 <div class="anx-section-header"
                   style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -3821,7 +3445,6 @@
                     </label>
                   </div>
                 </div>
-
                 <div class="tbl-wrap">
                   <table class="anx-tbl" id="anx3-contiguous">
                     <thead>
@@ -3839,14 +3462,11 @@
                       </tr>
                     </thead>
                     <tbody id="contBody">
-                      <!-- rows injected by JS -->
                     </tbody>
                     <tfoot id="contFoot">
-                      <!-- totals injected by JS -->
                     </tfoot>
                   </table>
                 </div>
-
                 <div class="section-footer" style="margin-top:12px;">
                   <button class="btn btn-xs btn-outline" onclick="addContRow()"
                     style="display:inline-flex; align-items:center; gap:6px;">
@@ -3855,8 +3475,6 @@
                   </button>
                 </div>
               </div>
-
-              <!-- Final Action Area -->
               <div class="final-actions" style="margin-top: 32px; display: flex; justify-content: center;">
                 <button class="btn btn-pdf-upload btn-lg" onclick="exportAnx3PDF(this)"
                   style="display:inline-flex; align-items:center; gap:8px;">
@@ -3864,14 +3482,11 @@
                   <span>Download Final Annexure 3 PDF</span>
                 </button>
               </div>
-
                       </div>
           </div>
         </div>
 
-
-              <!-- ═══ ANNEXURE IV ═══ -->
-        <div id="view-anx4" class="view">
+              <div id="view-anx4" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Annexure IV — Transportation Routes</div>
@@ -3898,14 +3513,9 @@
               </label>
             </div>
           </div>
-
-          
-
-          <!-- SECTION A: INDIVIDUAL LEASE ROUTES -->
           <div style="font-weight:bold; font-size:15px; color:var(--text-mid); margin-bottom:12px;">Individual Lease
             Routes:</div>
           <div id="individual-routes-container">
-            <!-- table blocks injected dynamically -->
           </div>
           <div style="margin-bottom:30px; margin-top:12px;">
             <button class="btn btn-sm btn-pdf-upload" onclick="addRouteTableBlock()"
@@ -3914,12 +3524,9 @@
               <span>Add Another Table / Section</span>
             </button>
           </div>
-
-          <!-- SECTION B: CLUSTER TRANSPORTATION ROUTES -->
           <div style="font-weight:bold; font-size:15px; color:var(--text-mid); margin-bottom:12px; margin-top:32px;">
             Cluster Transportation Routes:</div>
           <div id="cluster-routes-container">
-            <!-- table blocks injected dynamically -->
           </div>
           <div style="margin-bottom:30px; margin-top:12px;">
             <button class="btn btn-sm btn-pdf-upload" onclick="addClusterTableBlock()"
@@ -3928,8 +3535,6 @@
               <span>Add Another Table / Section</span>
             </button>
           </div>
-
-          <!-- Final Action Area -->
           <div class="final-actions" style="margin-top:32px; display:flex; justify-content:center;">
             <button class="btn btn-pdf-upload btn-lg" onclick="exportAnx4PDF()"
               style="display:inline-flex; align-items:center; gap:8px;">
@@ -3939,8 +3544,7 @@
           </div>
         </div>
 
-      <!-- â•â•â• ANNEXURE V â•â•â• -->
-<div id="view-anx5" class="view">
+      <div id="view-anx5" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure V â€” Sand Mining Report</div>
@@ -3965,12 +3569,10 @@
         style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;overflow:hidden" onchange="handlePDFUploadAnx5(event)">
     </div>
   </div>
-
   <div class="notif notif-info" style="margin-bottom:16px">
     Download the Excel template for each section below â†’ Fill values locally â†’ Upload at the bottom of the section â†’
     Click 'Export Full Annexure-V as PDF' when ready.
   </div>
-
     <div class="card">
       <div class="card-hd">
         <div class="card-title">Bench Mark & CORS Points</div>
@@ -4031,11 +3633,8 @@
         </button>
       </div>
     </div>
-
           <div class="card">
     <div class="card-bd">
-
-      <!-- Section A: Mining Leases -->
       <div id="anx5-section-a-wrapper">
         <div class="anx-section anx5-section-a-block" id="anx5-sec1">
           <div class="anx-section-header"
@@ -4060,7 +3659,6 @@
               </label>
             </div>
           </div>
-
           <div class="tbl-wrap">
             <table class="anx-tbl" id="anx5-mining" style="min-width:1400px">
               <thead>
@@ -4149,7 +3747,6 @@
         </div>
         </div>
       </div>
-
       <div style="margin-bottom:30px; margin-top:12px;">
         <button class="btn btn-sm btn-pdf-upload" onclick="addAnx5SectionBlock('A')"
           style="display:inline-flex; align-items:center; gap:6px;">
@@ -4157,8 +3754,6 @@
           <span>Add Another Mining Table</span>
         </button>
       </div>
-
-      <!-- Section B: Patta Lands -->
       <div id="anx5-section-b-wrapper">
         <div class="anx-section anx5-section-b-block" id="anx5-sec2">
           <div class="anx-section-header"
@@ -4183,7 +3778,6 @@
               </label>
             </div>
           </div>
-
           <div class="tbl-wrap">
             <table class="anx-tbl" id="anx5-patta" style="min-width:1200px">
               <thead>
@@ -4262,7 +3856,6 @@
           </div>
         </div>
       </div>
-
       <div style="margin-bottom:30px; margin-top:12px;">
         <button class="btn btn-sm btn-pdf-upload" onclick="addAnx5SectionBlock('B')"
           style="display:inline-flex; align-items:center; gap:6px;">
@@ -4270,8 +3863,6 @@
           <span>Add Another Patta Table</span>
         </button>
       </div>
-
-      <!-- Section C: De-Siltation Locations -->
       <div id="anx5-section-c-wrapper">
         <div class="anx-section anx5-section-c-block" id="anx5-sec3">
           <div class="anx-section-header"
@@ -4296,7 +3887,6 @@
               </label>
             </div>
           </div>
-
           <div class="tbl-wrap">
             <table class="anx-tbl" id="anx5-desilt" style="min-width:1000px">
               <thead>
@@ -4363,7 +3953,6 @@
           </div>
         </div>
       </div>
-
       <div style="margin-bottom:30px; margin-top:12px;">
         <button class="btn btn-sm btn-pdf-upload" onclick="addAnx5SectionBlock('C')"
           style="display:inline-flex; align-items:center; gap:6px;">
@@ -4371,8 +3960,6 @@
           <span>Add Another De-Siltation Table</span>
         </button>
       </div>
-
-      <!-- Section D: M-Sand Plants -->
       <div id="anx5-section-d-wrapper">
         <div class="anx-section anx5-section-d-block" id="anx5-sec4">
           <div class="anx-section-header"
@@ -4397,7 +3984,6 @@
               </label>
             </div>
           </div>
-
           <div class="tbl-wrap">
             <table class="anx-tbl" id="anx5-msand" style="min-width:1000px">
               <thead>
@@ -4452,7 +4038,6 @@
           </div>
         </div>
       </div>
-
       <div style="margin-bottom:30px; margin-top:12px;">
         <button class="btn btn-sm btn-pdf-upload" onclick="addAnx5SectionBlock('D')"
           style="display:inline-flex; align-items:center; gap:6px;">
@@ -4460,8 +4045,6 @@
           <span>Add Another M-Sand Table</span>
         </button>
       </div>
-
-      <!-- Final Action Area -->
       <div class="final-actions" style="margin-top: 32px; display: flex; justify-content: center;">
         <button class="btn btn-pdf-upload btn-lg" onclick="exportAnx5PDF()"
           style="display:inline-flex; align-items:center; gap:8px;">
@@ -4469,15 +4052,11 @@
           <span>Export Full Annexure-V as PDF</span>
         </button>
       </div>
-
               </div>
           </div>
-
         </div>
 
-
-      <!-- ANNEXURE VI -->
-<div id="view-anx6" class="view">
+      <div id="view-anx6" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure VI - Final Cluster Details</div>
@@ -4502,13 +4081,10 @@
         style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;overflow:hidden" onchange="handlePDFUploadAnx6(event)">
     </div>
   </div>
-
   <div class="notif notif-info" style="margin-bottom:16px">
     Download the Excel templates â†’ Fill values locally â†’ Upload below. Final Cluster Details come before Final
     Contiguous Clusters.
   </div>
-
-
           <div class="card">
     <div class="card-bd">
       <div class="anx-section">
@@ -4535,7 +4111,6 @@
           </div>
         </div>
         </div>
-
         <div class="tbl-wrap">
           <table class="anx-tbl" id="anx6-final-clusters" style="min-width:1200px">
             <thead>
@@ -4555,7 +4130,6 @@
             <tfoot id="anx6-cluster-foot"></tfoot>
           </table>
         </div>
-
         <div class="section-footer" style="margin-top:12px;">
           <button class="btn btn-xs btn-outline" onclick="addClusterRowAnx6()"
             style="display:inline-flex; align-items:center; gap:6px;">
@@ -4564,7 +4138,6 @@
           </button>
         </div>
       </div>
-
       <div class="anx-section" style="margin-top: 32px;">
         <div class="anx-section-header"
           style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -4588,7 +4161,6 @@
             </label>
           </div>
         </div>
-
         <div class="tbl-wrap">
           <table class="anx-tbl" id="anx6-contiguous-clusters" style="min-width:1200px">
             <thead>
@@ -4609,7 +4181,6 @@
             <tfoot id="anx6-contiguous-foot"></tfoot>
           </table>
         </div>
-
         <div class="section-footer" style="margin-top:12px;">
           <button class="btn btn-xs btn-outline" onclick="addContiguousRowAnx6()"
             style="display:inline-flex; align-items:center; gap:6px;">
@@ -4618,7 +4189,6 @@
           </button>
         </div>
       </div>
-
       <div class="final-actions" style="margin-top: 32px; display: flex; justify-content: center;">
         <button class="btn btn-pdf-upload btn-lg" onclick="exportAnx6PDF()"
           style="display:inline-flex; align-items:center; gap:8px;">
@@ -4628,12 +4198,9 @@
       </div>
               </div>
           </div>
-
         </div>
 
-
-      <!-- ANNEXURE VII -->
-<div id="view-anx7" class="view">
+      <div id="view-anx7" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure VII - Transportation Routes</div>
@@ -4657,12 +4224,9 @@
       </label>
     </div>
   </div>
-
-
   <div class="g2 annexure-line-layout" style="grid-template-columns: minmax(0, 2fr) minmax(220px, 0.75fr);">
     <div class="annexure-line-main">
       <div id="anx7-individual-routes-container">
-        <!-- table blocks injected dynamically -->
       </div>
       <div style="margin-bottom:30px; margin-top:12px;">
         <button class="btn btn-sm btn-pdf-upload" onclick="addRouteTableBlockAnx7()"
@@ -4671,9 +4235,7 @@
           <span>Add Another Table / Section</span>
         </button>
       </div>
-
       <div id="anx7-cluster-routes-container">
-        <!-- table blocks injected dynamically -->
       </div>
       <div style="margin-bottom:30px; margin-top:12px;">
         <button class="btn btn-sm btn-pdf-upload" onclick="addClusterTableBlockAnx7()"
@@ -4682,7 +4244,6 @@
           <span>Add Another Table / Section</span>
         </button>
       </div>
-
       <div class="final-actions" style="margin-top:32px; display:flex; justify-content:center;">
         <button class="btn btn-pdf-upload btn-lg" onclick="exportAnx7PDF()"
           style="display:inline-flex; align-items:center; gap:8px;">
@@ -4706,8 +4267,7 @@
   </div>
 </div>
 
-      <!-- ANNEXURE B -->
-<div id="view-annexure-b" class="view">
+      <div id="view-annexure-b" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure B</div>
@@ -4743,8 +4303,7 @@
   </div>
 </div>
 
-      <!-- ANNEXURE C -->
-<div id="view-annexure-c" class="view">
+      <div id="view-annexure-c" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure C</div>
@@ -4780,8 +4339,7 @@
   </div>
 </div>
 
-      <!-- ANNEXURE D -->
-<div id="view-annexure-d" class="view">
+      <div id="view-annexure-d" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure D</div>
@@ -4817,8 +4375,7 @@
   </div>
 </div>
 
-      <!-- ANNEXURE E -->
-<div id="view-annexure-e" class="view">
+      <div id="view-annexure-e" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure E</div>
@@ -4854,14 +4411,12 @@
   </div>
 </div>
 
-      <!-- ANNEXURE F -->
-<div id="view-annexure-f" class="view">
+      <div id="view-annexure-f" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure F - Sand Ghat Coordinates, Bench Mark & CORS</div>
       <div class="page-sub">Final block sand ghat coordinates, permanent bench marks and Survey of India CORS stations.</div>
     </div>  </div>
-
   <div class="g2 annexure-line-layout" style="grid-template-columns: minmax(0, 2fr) minmax(220px, 0.75fr);">
     <div class="annexure-line-main">
 <div class="card">
@@ -4874,7 +4429,6 @@
             <span>Excel Template (Sand Ghats)</span>
           </button>
         </div>
-
         <div id="annexure-f-sand-container" class="annexure-f-table-container">
           <div class="annexure-f-table-block" data-section-type="SAND">
         <div class="tbl-wrap">
@@ -4915,7 +4469,6 @@
             </tbody>
           </table>
         </div>
-
         <div class="section-footer" style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-xs btn-outline" onclick="addRowAnnexureF('annexure-f-sand',['','','','','','','',annexureFDeleteButtonHTML()])" style="display:inline-flex; align-items:center; gap:6px;">
             <i data-lucide="plus" style="width:12px; height:12px;"></i>
@@ -4929,7 +4482,6 @@
         </div>
           </div>
         </div>
-
         <div style="margin-top:12px;">
           <button class="btn btn-sm btn-pdf-upload" onclick="addAnnexureFTableBlock('SAND')" style="display:inline-flex; align-items:center; gap:6px;">
             <i data-lucide="plus-circle" style="width:14px; height:14px;"></i>
@@ -4937,7 +4489,6 @@
           </button>
         </div>
       </div>
-
       <div class="anx-section" style="margin-top:32px;">
         <div class="anx-section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
           <div class="anx-section-title" style="font-weight:bold; font-size:14px;">b) Permanent Bench Marks:</div>
@@ -4946,7 +4497,6 @@
             <span>Excel Template (Benchmark)</span>
           </button>
         </div>
-
         <div id="annexure-f-benchmark-container" class="annexure-f-table-container">
           <div class="annexure-f-table-block" data-section-type="BENCHMARK">
         <div class="tbl-wrap">
@@ -5005,7 +4555,6 @@
             </tbody>
           </table>
         </div>
-
         <div class="section-footer" style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-xs btn-outline" onclick="addRowAnnexureF('annexure-f-benchmark',['','','','','',annexureFDeleteButtonHTML()])" style="display:inline-flex; align-items:center; gap:6px;">
             <i data-lucide="plus" style="width:12px; height:12px;"></i>
@@ -5019,7 +4568,6 @@
         </div>
           </div>
         </div>
-
         <div style="margin-top:12px;">
           <button class="btn btn-sm btn-pdf-upload" onclick="addAnnexureFTableBlock('BENCHMARK')" style="display:inline-flex; align-items:center; gap:6px;">
             <i data-lucide="plus-circle" style="width:14px; height:14px;"></i>
@@ -5027,7 +4575,6 @@
           </button>
         </div>
       </div>
-
       <div class="anx-section" style="margin-top:32px;">
         <div class="anx-section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
           <div class="anx-section-title" style="font-weight:bold; font-size:14px;">c) Survey of India CORS Stations:</div>
@@ -5036,7 +4583,6 @@
             <span>Excel Template (CORS)</span>
           </button>
         </div>
-
         <div id="annexure-f-cors-container" class="annexure-f-table-container">
           <div class="annexure-f-table-block" data-section-type="CORS">
         <div class="tbl-wrap">
@@ -5092,7 +4638,6 @@
             </tbody>
           </table>
         </div>
-
         <div class="section-footer" style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-xs btn-outline" onclick="addRowAnnexureF('annexure-f-cors',['','','','','','',annexureFDeleteButtonHTML()])" style="display:inline-flex; align-items:center; gap:6px;">
             <i data-lucide="plus" style="width:12px; height:12px;"></i>
@@ -5106,7 +4651,6 @@
         </div>
           </div>
         </div>
-
         <div style="margin-top:12px;">
           <button class="btn btn-sm btn-pdf-upload" onclick="addAnnexureFTableBlock('CORS')" style="display:inline-flex; align-items:center; gap:6px;">
             <i data-lucide="plus-circle" style="width:14px; height:14px;"></i>
@@ -5114,7 +4658,6 @@
           </button>
         </div>
       </div>
-
       <div class="anx-section" style="margin-top:32px;">
         <div class="anx-section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
           <div>
@@ -5127,10 +4670,8 @@
             <input type="file" accept="application/pdf,image/*" hidden onchange="handleAttachmentUploadAnnexureF(event)">
           </label>
         </div>
-
         <div id="annexure-f-attachment-info" style="margin-top:10px;"></div>
       </div>
-
       <div class="final-actions" style="margin-top:32px; display:flex; justify-content:center;">
         <button class="btn btn-pdf-upload btn-lg" onclick="exportAnnexureFPDF()" style="display:inline-flex; align-items:center; gap:8px;">
           <i data-lucide="file-text" style="width:18px; height:18px;"></i>
@@ -5153,8 +4694,7 @@
   </div>
 </div>
 
-      <!-- ANNEXURE G -->
-<div id="view-annexure-g" class="view">
+      <div id="view-annexure-g" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure G</div>
@@ -5190,8 +4730,7 @@
   </div>
 </div>
 
-      <!-- ANNEXURE H -->
-<div id="view-annexure-h" class="view">
+      <div id="view-annexure-h" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure H</div>
@@ -5227,8 +4766,7 @@
   </div>
 </div>
 
-      <!-- ANNEXURE I -->
-<div id="view-annexure-i" class="view">
+      <div id="view-annexure-i" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure I</div>
@@ -5264,8 +4802,7 @@
   </div>
 </div>
 
-      <!-- ANNEXURE J -->
-<div id="view-annexure-j" class="view">
+      <div id="view-annexure-j" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure J</div>
@@ -5301,14 +4838,12 @@
   </div>
 </div>
 
-      <!-- ANNEXURE K -->
-<div id="view-annexure-k" class="view">
+      <div id="view-annexure-k" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">Annexure K</div>
       <div class="page-sub">Proforma auctioned sites and Annexure A source summary.</div>
     </div>  </div>
-
   <div class="g2 annexure-line-layout" style="grid-template-columns: minmax(0, 2fr) minmax(220px, 0.75fr);">
     <div class="annexure-line-main">
 <div class="card">
@@ -5325,10 +4860,8 @@
             <input type="file" accept="application/pdf,image/*" hidden onchange="handleAttachmentUploadAnnexureK(event)">
           </label>
         </div>
-
         <div id="annexure-k-attachment-info" style="margin-top:10px;"></div>
       </div>
-
       <div class="anx-section" style="margin-top:32px;">
         <div class="anx-section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
           <div class="anx-section-title" style="font-weight:bold; font-size:14px;">Proforma_Auctioned_Sites:</div>
@@ -5337,7 +4870,6 @@
             <span>Excel Template (Proforma)</span>
           </button>
         </div>
-
         <div id="annexure-k-proforma-container" class="annexure-k-table-container">
           <div class="annexure-k-table-block" data-section-type="PROFORMA">
             <div style="font-size:12px; font-weight:700; color:var(--text-soft); margin-bottom:8px;">Example input values from Proforma_Template_One_Example.xlsx</div>
@@ -5379,7 +4911,6 @@
                 </tbody>
               </table>
             </div>
-
             <div class="section-footer" style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
               <button class="btn btn-xs btn-outline" onclick="addRowAnnexureK('annexure-k-proforma',getAnnexureKEmptyRow('PROFORMA'))" style="display:inline-flex; align-items:center; gap:6px;">
                 <i data-lucide="plus" style="width:12px; height:12px;"></i>
@@ -5393,7 +4924,6 @@
             </div>
           </div>
         </div>
-
         <div style="margin-top:12px;">
           <button class="btn btn-sm btn-pdf-upload" onclick="addAnnexureKTableBlock('PROFORMA')" style="display:inline-flex; align-items:center; gap:6px;">
             <i data-lucide="plus-circle" style="width:14px; height:14px;"></i>
@@ -5401,7 +4931,6 @@
           </button>
         </div>
       </div>
-
       <div class="anx-section" style="margin-top:32px;">
         <div class="anx-section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
           <div class="anx-section-title" style="font-weight:bold; font-size:14px;">Annexure_A:</div>
@@ -5410,7 +4939,6 @@
             <span>Excel Template (Annexure A)</span>
           </button>
         </div>
-
         <div id="annexure-k-annexure-a-container" class="annexure-k-table-container">
           <div class="annexure-k-table-block" data-section-type="ANNEXURE_A">
             <div style="font-size:12px; font-weight:700; color:var(--text-soft); margin-bottom:8px;">Example input values from Annexure_A_Template_One_Example.xlsx</div>
@@ -5438,7 +4966,6 @@
                 </tbody>
               </table>
             </div>
-
             <div class="section-footer" style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
               <button class="btn btn-xs btn-outline" onclick="addRowAnnexureK('annexure-k-annexure-a',getAnnexureKEmptyRow('ANNEXURE_A'))" style="display:inline-flex; align-items:center; gap:6px;">
                 <i data-lucide="plus" style="width:12px; height:12px;"></i>
@@ -5452,7 +4979,6 @@
             </div>
           </div>
         </div>
-
         <div style="margin-top:12px;">
           <button class="btn btn-sm btn-pdf-upload" onclick="addAnnexureKTableBlock('ANNEXURE_A')" style="display:inline-flex; align-items:center; gap:6px;">
             <i data-lucide="plus-circle" style="width:14px; height:14px;"></i>
@@ -5460,7 +4986,6 @@
           </button>
         </div>
       </div>
-
       <div class="final-actions" style="margin-top:32px; display:flex; justify-content:center;">
         <button class="btn btn-pdf-upload btn-lg" onclick="exportAnnexureKPDF()" style="display:inline-flex; align-items:center; gap:8px;">
           <i data-lucide="file-text" style="width:18px; height:18px;"></i>
@@ -5483,8 +5008,7 @@
   </div>
 </div>
 
-              <!-- ═══ DEMAND TABLE ═══ -->
-        <div id="view-demand-table" class="view">
+              <div id="view-demand-table" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Projected Demand of Gravel (in MT) District Wise</div>
@@ -5528,9 +5052,7 @@
           </div>
         </div>
 
-
-              <!-- ═══ AUCTION TABLE ═══ -->
-        <div id="view-auction-table" class="view">
+              <div id="view-auction-table" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Proforma for Auctioned Sites — District Jalandhar</div>
@@ -5568,9 +5090,7 @@
           </div>
         </div>
 
-
-              <!-- ═══ SUMMARY TABLE ═══ -->
-        <div id="view-summary-table" class="view">
+              <div id="view-summary-table" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Source-wise Summary of Excavation Quantity</div>
@@ -5613,9 +5133,7 @@
           </div>
         </div>
 
-
-              <!-- BENCH MARK TABLE -->
-        <div id="view-benchmark-table" class="view">
+              <div id="view-benchmark-table" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Bench Mark & CORS Station</div>
@@ -5629,9 +5147,7 @@
           <div id="benchmark-table-content"></div>
         </div>
 
-
-              <!-- ═══ E-SIGNATURES ═══ -->
-        <div id="view-esign" class="view">
+              <div id="view-esign" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">E-Signature Panel</div>
@@ -5643,9 +5159,7 @@
           <div id="sig-list" style="display:flex;flex-direction:column;gap:10px"></div>
         </div>
 
-
-              <!-- ═══ GENERATE PDF ═══ -->
-        <div id="view-generate" class="view">
+              <div id="view-generate" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Generate Final DSR PDF</div>
@@ -5748,8 +5262,7 @@
           </div>
         </div>
 
-              <!-- ═══ REPORT HISTORY ═══ -->
-        <div id="view-history" class="view">
+              <div id="view-history" class="view">
           <div class="header-row">
             <div>
               <div class="page-title">Report History</div>
@@ -5810,9 +5323,7 @@
           </div>
         </div>
 
-
-      <!-- USER MANAGEMENT -->
-<div id="view-users" class="view">
+      <div id="view-users" class="view">
   <div class="header-row">
     <div>
       <div class="page-title">User Management</div>
@@ -5820,7 +5331,6 @@
     </div>
     <button class="btn btn-saffron btn-sm" onclick="openAddUserPrompt()">+ Add User</button>
   </div>
-
   <div class="card">
     <div class="card-bd">
       <div class="tbl-wrap">
@@ -5846,8 +5356,7 @@
   </div>
 </div>
 
-      <!-- templates/views/audit-logs.html -->
-<div class="view" id="view-audit-logs">
+      <div class="view" id="view-audit-logs">
   <div class="card">
     <div class="card-hd">
       <h3 class="card-title">System Audit Logs</h3>
@@ -5864,15 +5373,13 @@
           </tr>
         </thead>
         <tbody id="audit-logs-tbody">
-          <!-- Populated by JS -->
         </tbody>
       </table>
     </div>
   </div>
 </div>
 
-      <!-- templates/views/sdlc-portal.html -->
-<div class="view" id="view-sdlc-portal">
+      <div class="view" id="view-sdlc-portal">
   <div class="card" style="margin-bottom: 24px; border:1px solid var(--border);">
     <div class="card-hd" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border);">
       <div>
@@ -5886,9 +5393,7 @@
       </div>
       <span class="badge badge-amber" style="font-size:11px; padding:5px 10px;" id="sdlc-portal-status">Awaiting Upload</span>
     </div>
-    
     <div class="card-bd" style="padding: 24px;">
-      <!-- Step 1 & 2: Project Selection and File Upload -->
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom:28px;">
         <div style="background:var(--bg); padding:16px 20px; border-radius:var(--r-md); border:1px solid var(--border-2);">
           <h4 style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.04em;">
@@ -5897,7 +5402,6 @@
           <div class="field">
             <label style="font-size:11.5px; margin-bottom:6px;">Choose Active District Project</label>
             <select id="sdlc-project-select" style="width:100%; padding:10px; border:1px solid var(--border-2); border-radius:8px; background:var(--card); color:var(--text);" onchange="onSdlcProjectChanged()">
-              <!-- Populated dynamically -->
               <option value="">-- Select Project --</option>
             </select>
           </div>
@@ -5905,7 +5409,6 @@
             The uploaded SDLC survey data will be compared against the selected DSR project's official entries.
           </p>
         </div>
-
         <div style="background:var(--bg); padding:16px 20px; border-radius:var(--r-md); border:1px solid var(--border-2);">
           <h4 style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.04em;">
             2. Upload SDLC Survey Report
@@ -5926,19 +5429,14 @@
           </p>
         </div>
       </div>
-
-      <!-- Step 3: Comparison Panel (Hidden until data is loaded) -->
       <div id="sdlc-comparison-container" style="display:none; border-top:1px dashed var(--border); padding-top:24px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <h4 style="font-size:14px; font-weight:700; color:var(--text); margin:0;">
             3. Side-by-Side Data Verification & Discrepancies
           </h4>
           <div style="display:flex; gap:8px;" id="sdlc-discrepancy-summary-badges">
-            <!-- Populated dynamically -->
           </div>
         </div>
-
-        <!-- Comparative Tabs -->
         <div class="auth-tabs" style="margin-bottom:16px; background:var(--bg); border:1px solid var(--border-2); border-radius:8px; padding:4px;">
           <div class="auth-tab active" id="tab-sdlc-anx4" onclick="switchSdlcTab('anx4')" style="padding:10px 14px; font-size:12.5px;">
             Annexure IV (Carrying Capacity)
@@ -5953,8 +5451,6 @@
             Annexure VII (Traffic Density)
           </div>
         </div>
-
-        <!-- Comparative Tables -->
         <div id="sdlc-tab-content-anx4" class="sdlc-tab-content">
           <table class="table" style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -5969,7 +5465,6 @@
             <tbody id="sdlc-tbody-anx4"></tbody>
           </table>
         </div>
-
         <div id="sdlc-tab-content-anx5" class="sdlc-tab-content" style="display:none;">
           <table class="table" style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -5984,7 +5479,6 @@
             <tbody id="sdlc-tbody-anx5"></tbody>
           </table>
         </div>
-
         <div id="sdlc-tab-content-anx6" class="sdlc-tab-content" style="display:none;">
           <table class="table" style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -5999,7 +5493,6 @@
             <tbody id="sdlc-tbody-anx6"></tbody>
           </table>
         </div>
-
         <div id="sdlc-tab-content-anx7" class="sdlc-tab-content" style="display:none;">
           <table class="table" style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -6014,8 +5507,6 @@
             <tbody id="sdlc-tbody-anx7"></tbody>
           </table>
         </div>
-
-        <!-- Reconciliation Signoff Zone -->
         <div style="background:rgba(224,123,0,0.06); border:1px solid rgba(224,123,0,0.2); border-radius:12px; padding:20px; margin-top:24px;">
           <h4 style="color:var(--text); font-size:13.5px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
             <i data-lucide="info" style="color:var(--saffron); width:16px; height:16px;"></i>
@@ -6045,10 +5536,8 @@
 
       </div>
     </div>
-    <!-- Dedicated PDF Preview Workspace (40% split, sticky) — Front Matter, Chapters, Plates -->
-<aside id="pdf-preview-panel" class="pdf-preview-panel" aria-label="PDF Preview" hidden>
+    <aside id="pdf-preview-panel" class="pdf-preview-panel" aria-label="PDF Preview" hidden>
   <div class="pdf-preview-card">
-    <!-- Action toolbar -->
     <div class="pdf-preview-actions">
       <div class="pdf-preview-actions-left">
         <button type="button" id="pdf-preview-zoom-out" class="pdf-preview-action-btn" title="Zoom Out" aria-label="Zoom Out">
@@ -6077,10 +5566,7 @@
         <span class="pdf-preview-action-label pdf-preview-action-label-dl">Download</span>
       </button>
     </div>
-
-    <!-- Viewer container -->
     <div id="pdf-preview-viewer" class="pdf-preview-viewer">
-      <!-- Inner dark toolbar (Adobe-style) -->
       <div class="pdf-preview-inner-bar">
         <div class="pdf-preview-inner-left">
           <button type="button" class="pdf-preview-inner-btn" id="pdf-preview-menu-btn" title="Pages" aria-label="Pages menu" disabled>
@@ -6107,16 +5593,9 @@
           </button>
         </div>
       </div>
-
-      <!-- Scrollable pages -->
       <div id="pdf-preview-scroll" class="pdf-preview-scroll pdf-preview-body">
-        <!-- Pages injected by pdf-preview.js -->
       </div>
-
-      <!-- Iframe for direct PDF preview (annexures) -->
       <iframe src="about:blank" id="pdf-preview-iframe" style="display: none; border: none; width: 100%; height: 100%; flex: 1; background: #fff;"></iframe>
-
-      <!-- Floating zoom control -->
       <div class="pdf-preview-float-zoom" aria-label="Zoom controls">
         <button type="button" id="pdf-preview-float-zoom-in" class="pdf-preview-float-btn" title="Zoom In" aria-label="Zoom In">
           <i data-lucide="plus"></i>
@@ -6126,8 +5605,6 @@
           <i data-lucide="minus"></i>
         </button>
       </div>
-
-      <!-- Floating page indicator -->
       <div id="pdf-preview-float-page" class="pdf-preview-float-page" aria-live="polite">Page 0 of 0</div>
     </div>
   </div>
@@ -6135,8 +5612,50 @@
 
   </div>
 </div>
-<!-- ═══ MODALS ═══ -->
-  <!-- Confirm Modal -->
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN 3 — AUTHORITY DASHBOARD
+═══════════════════════════════════════════════════════════════ -->
+<div id="screen-authority" class="screen">
+  <div class="authority-topbar">
+    <h1>DSR Authority Dashboard — IIT Ropar / Punjab Mining</h1>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:11px;color:rgba(255,255,255,.5)" id="auth-user-label">Authority User</span>
+      <button type="button" class="tb-action-btn" id="authority-theme-toggle" data-theme-toggle onclick="toggleDarkMode()" title="Toggle light/dark theme" aria-label="Toggle theme">
+        <i data-lucide="moon"></i>
+      </button>
+      <button class="btn btn-saffron btn-sm" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="authority-body">
+    <div class="g4" style="margin-bottom:20px">
+      <div class="stat-card" style="--accent:var(--saffron);--icon-bg:rgba(224,123,0,.1)"><div class="stat-accent"></div><div class="stat-icon"><i data-lucide="clock"></i></div><div class="stat-lbl">Awaiting Signature</div><div class="stat-val">2</div><div class="stat-info">Reports pending your sign</div></div>
+      <div class="stat-card" style="--accent:var(--green);--icon-bg:rgba(21,128,61,.1)"><div class="stat-accent"></div><div class="stat-icon"><i data-lucide="check-circle-2"></i></div><div class="stat-lbl">Signed</div><div class="stat-val">4</div><div class="stat-info">Reports signed by you</div></div>
+      <div class="stat-card" style="--accent:var(--teal);--icon-bg:rgba(12,122,114,.1)"><div class="stat-accent"></div><div class="stat-icon"><i data-lucide="file-text"></i></div><div class="stat-lbl">Under Review</div><div class="stat-val">1</div><div class="stat-info">Being reviewed</div></div>
+      <div class="stat-card" style="--accent:var(--red);--icon-bg:rgba(185,28,28,.1)"><div class="stat-accent"></div><div class="stat-icon"><i data-lucide="x-circle"></i></div><div class="stat-lbl">Rejected</div><div class="stat-val">0</div><div class="stat-info">Returned for corrections</div></div>
+    </div>
+    <div class="page-title" style="margin-bottom:16px">Reports Pending Review</div>
+    <div id="authority-reports"></div>
+    <div class="page-title" style="margin-top: 32px; margin-bottom:16px; font-size: 20px;">System Audit Logs</div>
+    <div class="card">
+      <div class="card-bd">
+        <table class="table" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+              <th style="padding: 12px; color: var(--text-soft);">Date & Time</th>
+              <th style="padding: 12px; color: var(--text-soft);">Project Name</th>
+              <th style="padding: 12px; color: var(--text-soft);">User</th>
+              <th style="padding: 12px; color: var(--text-soft);">Action</th>
+              <th style="padding: 12px; color: var(--text-soft);">Remarks</th>
+            </tr>
+          </thead>
+          <tbody id="auth-audit-logs-tbody">
+            <tr><td colspan="5" style="text-align: center; padding: 20px;">Loading audit logs...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
   <div id="modal-confirm" class="modal-overlay">
     <div class="modal-box" style="max-width:400px; max-height: max-content;">
       <div class="modal-hd">
@@ -6151,8 +5670,6 @@
       </div>
     </div>
   </div>
-
-  <!-- New Project Modal -->
   <div id="modal-project" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-hd">
@@ -6212,8 +5729,31 @@
       </div>
     </div>
   </div>
-
-  <!-- Sign Modal -->
+  <div id="modal-phase" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-hd">
+        <h3>Initiate Next DSR Phase</h3><button class="modal-close" onclick="closeModal('modal-phase')">Ã—</button>
+      </div>
+      <div class="modal-bd">
+        <div class="notif notif-info" style="margin-bottom:14px; display:flex; align-items:flex-start; gap:8px;">
+          <i data-lucide="lock" style="width:16px; height:16px; flex-shrink:0;"></i>
+          <span>The source phase will be locked for audit. A new editable phase will be created with copied data, reports, and attachments.</span>
+        </div>
+        <div class="field-group">
+          <div class="field"><label>Source Phase</label><div id="phase-source-title" style="padding:10px 12px; border:1px solid var(--border-2); border-radius:8px; background:var(--bg); font-weight:800; color:var(--text);"></div></div>
+          <div class="field-row">
+            <div class="field"><label>New Phase</label><div id="phase-next-no" style="padding:10px 12px; border:1px solid var(--border-2); border-radius:8px; background:var(--bg); font-weight:800; color:var(--text);">Phase 2</div></div>
+            <div class="field"><label>Highlight Color for New Uploads</label><select id="phase-upload-color"></select></div>
+          </div>
+          <div class="field"><label>New Phase Title</label><input id="phase-title" placeholder="District Survey Report - Phase 2"></div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn btn-outline" onclick="closeModal('modal-phase')">Cancel</button>
+        <button class="btn btn-saffron" onclick="createNextPhase()">Create Editable Phase</button>
+      </div>
+    </div>
+  </div>
   <div id="modal-sign" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-hd">
@@ -6236,8 +5776,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Authority Sign Modal -->
   <div id="modal-auth-sign" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-hd">
@@ -6258,8 +5796,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Reviewer Floating Notes Box -->
   <div id="reviewer-floating-notes" class="reviewer-floating-notes" style="display:none;">
     <div class="reviewer-notes-header">
       <div style="font-weight:700; font-size:13px; display:flex; align-items:center; gap:8px; min-width:0;">
@@ -6281,8 +5817,6 @@
       <button class="btn btn-saffron btn-sm" onclick="openReviewModal()">Review & Return →</button>
     </div>
   </div>
-
-  <!-- Review Modal -->
   <div id="modal-review" class="modal-overlay">
     <div class="modal-box" style="max-width:600px;">
       <div class="modal-hd">
@@ -6303,47 +5837,45 @@
       </div>
     </div>
   </div>
-
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  
-
-<script defer src="js/api.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/state.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/hierarchy.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/performance.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/navigation.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/auth.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/projects.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/frontmatter.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/chapters.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/plates.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/graphs.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/users.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/tables.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/anx1.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/anx2.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/anx3.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/anx4.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/anx5.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/anx6.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/anx7.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-b.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-c.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-d.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-e.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-f.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-g.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-h.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-i.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-j.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/annexure-k.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/signatures.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/pdf.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/pdf-preview.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/audit-logs.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/sdlc.js?v=live-fixes-20260610-accessibility-language"></script>
-<script defer src="js/main.js?v=live-fixes-20260610-accessibility-language"></script>
+<script defer src="js/api.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/state.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/phase.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/hierarchy.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/performance.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/navigation.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/auth.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/projects.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/frontmatter.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/chapters.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/plates.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/graphs.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/users.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/tables.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/anx1.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/anx2.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/anx3.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/anx4.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/anx5.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/anx6.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/anx7.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/more-annexures.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-b.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-c.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-d.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-e.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-f.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-g.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-h.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-i.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-j.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/annexure-k.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/signatures.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/pdf.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/pdf-preview.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/audit-logs.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/sdlc.js?v=grid-live-lines-cleanup-20260611"></script>
+<script defer src="js/main.js?v=grid-live-lines-cleanup-20260611"></script>
 </body>
 </html>

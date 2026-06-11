@@ -5,7 +5,6 @@ const PORTAL_FONT_MIN = 85;
 const PORTAL_FONT_MAX = 125;
 const PORTAL_FONT_STEP = 5;
 let currentFontScale = Number(localStorage.getItem('portalFontScale') || 100);
-
 const PORTAL_I18N = {
   en: {
     languageApplied: 'English language enabled.',
@@ -74,15 +73,12 @@ const PORTAL_I18N = {
     langPunjabi: 'ਪੰਜਾਬੀ'
   }
 };
-
 let currentPortalLanguage = localStorage.getItem('portalLanguage') || 'en';
-
 function clampPortalFontScale(value) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return 100;
   return Math.min(PORTAL_FONT_MAX, Math.max(PORTAL_FONT_MIN, parsed));
 }
-
 function refreshFontControls() {
   document.querySelectorAll('.dash-font-btn').forEach((btn) => {
     const label = (btn.textContent || '').trim();
@@ -93,7 +89,6 @@ function refreshFontControls() {
     btn.setAttribute('aria-pressed', String(isActive));
   });
 }
-
 function applyPortalFontScale() {
   currentFontScale = clampPortalFontScale(currentFontScale);
   const scale = currentFontScale / 100;
@@ -106,12 +101,10 @@ function applyPortalFontScale() {
   localStorage.setItem('portalFontScale', String(currentFontScale));
   refreshFontControls();
 }
-
 window.changeFontSize = function(delta) {
   currentFontScale = delta === 0 ? 100 : currentFontScale + (delta * PORTAL_FONT_STEP);
   applyPortalFontScale();
 };
-
 function refreshLanguageControls(lang) {
   const labels = PORTAL_I18N[lang] || PORTAL_I18N.en;
   const buttonText = {
@@ -119,7 +112,6 @@ function refreshLanguageControls(lang) {
     hi: labels.langHindi,
     pa: labels.langPunjabi
   };
-
   document.querySelectorAll('.dash-lang-btn').forEach((btn) => {
     const btnLang = btn.dataset.lang || 'en';
     btn.textContent = buttonText[btnLang] || btnLang.toUpperCase();
@@ -128,7 +120,6 @@ function refreshLanguageControls(lang) {
     btn.setAttribute('aria-pressed', String(isActive));
   });
 }
-
 window.applyPortalLanguage = function(lang, showToast = true) {
   const nextLang = PORTAL_I18N[lang] ? lang : 'en';
   const labels = PORTAL_I18N[nextLang];
@@ -136,12 +127,10 @@ window.applyPortalLanguage = function(lang, showToast = true) {
   localStorage.setItem('portalLanguage', nextLang);
   document.documentElement.lang = nextLang === 'pa' ? 'pa-IN' : nextLang === 'hi' ? 'hi-IN' : 'en-IN';
   document.documentElement.dataset.portalLanguage = nextLang;
-
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.dataset.i18n;
     if (key && labels[key]) el.textContent = labels[key];
   });
-
   document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
     const key = el.dataset.i18nPlaceholder;
     if (key && labels[key]) {
@@ -149,59 +138,45 @@ window.applyPortalLanguage = function(lang, showToast = true) {
       el.setAttribute('aria-label', labels[key]);
     }
   });
-
   refreshLanguageControls(nextLang);
   if (showToast && typeof dashPortalToast === 'function') {
     dashPortalToast(labels.languageApplied, 'success');
   }
 };
-
 window.addEventListener('DOMContentLoaded',()=>{
   applyPortalFontScale();
   applyPortalLanguage(currentPortalLanguage, false);
-
   if (typeof repairMainContentStructure === 'function') {
     repairMainContentStructure();
     setTimeout(repairMainContentStructure, 0);
   }
-  // Initialize workflow checklist listener when section is clicked
   const workflowView = document.getElementById('view-workflow');
   if (workflowView) {
     workflowView.addEventListener('click', renderWorkflowChecklist, {once:true});
   }
-  
-  // Clean up overlays and other elements on load
-  console.log("DSR Portal initialized successfully.");
   if (window.initLucide) initLucide();
-
-  // Global listener to default empty cells to 'NUL' on blur/focusout
   document.body.addEventListener('focusout', function(e) {
     if (e.target.tagName === 'TD' && (e.target.contentEditable === 'true' || e.target.hasAttribute('contenteditable'))) {
       const text = e.target.innerText.trim();
       if (text === '') {
         e.target.innerText = 'NUL';
-        // Dispatch input event to trigger any calculation bindings attached
         const inputEvent = new Event('input', { bubbles: true });
         e.target.dispatchEvent(inputEvent);
       }
     }
   });
 });
-
 function enforceReviewerReadOnly() {
     if (typeof enforceActiveViewHierarchy === 'function') {
         enforceActiveViewHierarchy();
     }
 }
-
 window.reviewerNotes = {};
 window.reviewerNotesMinimized = localStorage.getItem('reviewerNotesMinimized') !== '0';
-
 function applyReviewerNotesMinimizedState() {
     const box = document.getElementById('reviewer-floating-notes');
     const btn = document.getElementById('reviewer-notes-minimize-btn');
     if (!box) return;
-
     box.classList.toggle('is-minimized', !!window.reviewerNotesMinimized);
     if (btn) {
         btn.title = window.reviewerNotesMinimized ? 'Expand reviewer notes' : 'Minimize reviewer notes';
@@ -212,21 +187,18 @@ function applyReviewerNotesMinimizedState() {
     }
     if (window.initLucide) initLucide();
 }
-
 function toggleReviewerNotesMinimized() {
     window.reviewerNotesMinimized = !window.reviewerNotesMinimized;
     localStorage.setItem('reviewerNotesMinimized', window.reviewerNotesMinimized ? '1' : '0');
     applyReviewerNotesMinimizedState();
 }
 window.toggleReviewerNotesMinimized = toggleReviewerNotesMinimized;
-
 function loadReviewerNoteForView(viewId, viewTitle) {
     const notesBox = document.getElementById('reviewer-floating-notes');
     if (typeof S === 'undefined' || !hasReviewAccess() || !S.activeProject) {
         if (notesBox) notesBox.style.display = 'none';
         return;
     }
-    // Only show for content views
     if (['dashboard', 'workflow', 'users', 'history'].includes(viewId)) {
         if (notesBox) notesBox.style.display = 'none';
         return;
@@ -236,10 +208,8 @@ function loadReviewerNoteForView(viewId, viewTitle) {
     document.getElementById('reviewer-notes-section-title').textContent = viewTitle || viewId;
     document.getElementById('reviewer-section-note').value = window.reviewerNotes[viewId] || '';
     document.getElementById('reviewer-section-note').dataset.viewId = viewId;
-    
     if (window.lucide) window.lucide.createIcons();
 }
-
 function saveReviewerNote() {
     const el = document.getElementById('reviewer-section-note');
     const viewId = el.dataset.viewId;
@@ -247,9 +217,7 @@ function saveReviewerNote() {
         window.reviewerNotes[viewId] = el.value;
     }
 }
-
 function openReviewModal() {
-    // Auto-populate from reviewerNotes
     let aggregated = '';
     for (let [viewId, note] of Object.entries(window.reviewerNotes)) {
         if (note.trim()) {
@@ -259,24 +227,19 @@ function openReviewModal() {
     document.getElementById('review-aggregated-notes').value = aggregated.trim();
     document.getElementById('modal-review').classList.add('open');
 }
-
 async function submitReviewReturn() {
     const comments = document.getElementById('review-aggregated-notes').value.trim();
     if (!comments) { toast('Please enter review comments', 'error'); return; }
     if (!S.activeProject) { toast('No active project', 'error'); return; }
-
     try {
         await apiSubmitWorkflowAction(S.activeProject.id, 'RETURN', comments);
         toast('Report returned to Data Entry', 'success');
-        
-        // Clear notes
         window.reviewerNotes = {};
         if (S.activeProject) {
             localStorage.removeItem(`reviewerNotes_${S.activeProject.id}`);
         }
         const noteArea = document.getElementById('reviewer-section-note');
         if (noteArea) noteArea.value = '';
-        
         closeModal('modal-review');
         if (typeof renderProjects === 'function') renderProjects();
         showView('dashboard', null);
@@ -284,7 +247,6 @@ async function submitReviewReturn() {
         toast('Error returning report: ' + e.message, 'error');
     }
 }
-
 async function submitReviewApprove() {
     if (!S.activeProject) return;
     try {
@@ -296,8 +258,6 @@ async function submitReviewApprove() {
         toast('Error approving report: ' + e.message, 'error');
     }
 }
-
-// Automatically check history when dashboard loads or project opens
 async function checkReviewStatus(projectId) {
     if (S.role !== 'user') return; // Only show alert to data entry
     try {
@@ -321,8 +281,6 @@ async function checkReviewStatus(projectId) {
                 }
                 const notifDot = document.getElementById('tb-notif-dot');
                 if (notifDot) notifDot.style.display = 'block';
-                
-                // Parse the aggregated remarks and populate reviewerNotes so DEO can see them in floating boxes!
                 if (latest.remarks) {
                     window.reviewerNotes = {};
                     const sections = latest.remarks.split('[');
@@ -343,7 +301,6 @@ async function checkReviewStatus(projectId) {
         console.error('Error fetching review status:', e);
     }
 }
-
 async function renderHistoryTable() {
     if (!S.activeProject) return;
     const tbody = document.getElementById('history-table-body');
@@ -355,7 +312,6 @@ async function renderHistoryTable() {
             tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No history available</td></tr>';
             return;
         }
-        
         let html = '';
         history.forEach(log => {
             const dateStr = new Date(log.performedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
@@ -364,7 +320,6 @@ async function renderHistoryTable() {
             if (log.action === 'RETURN' || log.action === 'REJECT') badgeCls = 'badge-amber';
             if (log.action === 'SUBMIT') badgeCls = 'badge-blue';
             if (log.action === 'WARNING_IGNORED' || log.action === 'WARNING_IGNORED_SAME_CONTENT') badgeCls = 'badge-red';
-            
             html += `<tr>
                 <td>${dateStr}</td>
                 <td><span class="badge ${badgeCls}">${log.action}</span></td>
@@ -377,16 +332,12 @@ async function renderHistoryTable() {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:red;">Failed to load history</td></tr>`;
     }
 }
-
-
-
 function toggleNotificationDropdown() {
   const dd = document.getElementById('tb-notif-dropdown');
   if (dd) {
     dd.classList.toggle('show');
   }
 }
-
 function updateNotificationUI(returnedReports) {
   const dot = document.getElementById('tb-notif-dot');
   const list = document.getElementById('tb-notif-list');
@@ -406,7 +357,6 @@ function updateNotificationUI(returnedReports) {
     list.innerHTML = '<div style="padding: 8px; color: #666; font-size: 13px; text-align: center;">No new notifications</div>';
   }
 }
-
 function openProjectAndWorkflow(projectId) {
   toggleNotificationDropdown();
   const proj = S.projects.find(p => p.id === projectId);
@@ -415,26 +365,21 @@ function openProjectAndWorkflow(projectId) {
     showView('workflow', null);
   }
 }
-
 async function syncNotificationsAndReviewStatus() {
   if (typeof S === 'undefined') return;
   const banner = document.getElementById('dash-review-banner');
   const dot = document.getElementById('tb-notif-dot');
   const list = document.getElementById('tb-notif-list');
-  
   if (banner) {
     banner.style.display = 'none';
     banner.innerHTML = '';
   }
   if (dot) dot.style.display = 'none';
   if (list) list.innerHTML = '<div style="padding: 8px; color: var(--text-soft); font-size: 13px; text-align: center;">Loading notifications...</div>';
-  
   let bannerHtml = '';
   let notifHtml = '';
   let hasUnresolvedReturn = false;
-  
   if (!S.projects) return;
-  
   for (let p of S.projects) {
     try {
       const history = await apiFetchReportHistory(p.id);
@@ -442,8 +387,6 @@ async function syncNotificationsAndReviewStatus() {
         const latest = history[0];
         if (latest.action === 'RETURN' || latest.action === 'REJECT') {
           hasUnresolvedReturn = true;
-          
-          // Add to dashboard banner
           if (banner) {
             bannerHtml += `
               <div style="background:var(--amber-lt); border:1.5px solid var(--amber); border-radius:var(--r-md); padding:16px; margin-bottom:12px; display:flex; flex-direction:column; gap:10px; box-shadow: 0 4px 12px rgba(245,158,11,0.15);">
@@ -461,7 +404,6 @@ async function syncNotificationsAndReviewStatus() {
                     </div>
                   </div>
                 </div>
-                
                 <!-- Reply Section -->
                 <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px; padding-left:32px;">
                   <textarea id="reply-text-${p.id}" placeholder="Type your reply to the reviewer here..." style="width:100%; min-height:60px; padding:10px; border-radius:6px; border:1px solid var(--border-2); background:var(--bg); color:var(--text); font-size:12.5px; resize:vertical; outline:none;" oninput="this.style.borderColor='var(--amber)'" onblur="this.style.borderColor='var(--border-2)'"></textarea>
@@ -472,8 +414,6 @@ async function syncNotificationsAndReviewStatus() {
               </div>
             `;
           }
-          
-          // Add to topbar dropdown list
           notifHtml += `
             <div style="padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer;" onclick="openProjectAndWorkflow(${p.id})">
               <div style="font-size: 13px; font-weight: 600; color: #ef4444; display:flex; align-items:center; gap:6px;">
@@ -490,7 +430,6 @@ async function syncNotificationsAndReviewStatus() {
       console.error('Error syncing project status:', p.id, e);
     }
   }
-  
   if (hasUnresolvedReturn) {
     if (dot) dot.style.display = 'block';
     if (list && notifHtml) list.innerHTML = notifHtml;
@@ -521,25 +460,18 @@ async function syncNotificationsAndReviewStatus() {
     }
   }
 }
-
 async function submitDeoReply(projectId) {
   const textEl = document.getElementById(`reply-text-${projectId}`);
   const remarks = textEl ? textEl.value.trim() : '';
   if (!remarks) { toast('Please enter a reply message', 'error'); return; }
-  
   try {
     await apiFetch(`/reports/${projectId}/workflow`, {
       method: 'POST',
       body: JSON.stringify({ action: 'DEO_REPLY', remarks: remarks })
     });
     toast('Reply submitted successfully!', 'success');
-    
-    // Clear textarea
     if (textEl) textEl.value = '';
-    
-    // Refresh notifications and status
     await syncNotificationsAndReviewStatus();
-    
     if (typeof renderProjects === 'function') renderProjects();
     if (typeof renderHistoryTable === 'function' && S.activeProject && S.activeProject.id === projectId) {
       renderHistoryTable();
@@ -548,14 +480,10 @@ async function submitDeoReply(projectId) {
     toast('Failed to send reply: ' + e.message, 'error');
   }
 }
-
-// Mouse movement live grid spotlight tracker for all subpages
 window.addEventListener('mousemove', (e) => {
   document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
   document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
 });
-
-// Page transition exit handler with horizontal slide animation direction
 document.addEventListener('DOMContentLoaded', () => {
   const transitionLinks = document.querySelectorAll('a[href$=".html"], a.nav-link-item, a.btn-premium-cta');
   transitionLinks.forEach(link => {
@@ -563,7 +491,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetUrl = this.getAttribute('href');
       if (targetUrl && !targetUrl.startsWith('#') && !targetUrl.startsWith('javascript:')) {
         e.preventDefault();
-        // If transitioning back to home page, slide right (simulate going back)
         if (targetUrl.includes('index.html') || targetUrl === '/' || targetUrl === '') {
           document.body.classList.add('slide-to-right');
         } else {

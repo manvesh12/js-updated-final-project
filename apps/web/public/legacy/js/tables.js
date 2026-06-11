@@ -2,7 +2,6 @@
    TABLES & ANNEXURES HELPERS
 ══════════════════════════════════════ */
 function delRow(btn) { btn.closest('tr').remove(); }
-
 function addRow(tableId, cells) {
   const tbody=document.querySelector('#'+tableId+' tbody');
   if (!tbody) return;
@@ -17,12 +16,9 @@ function addRow(tableId, cells) {
   tbody.appendChild(tr);
   if (window.initLucide) window.initLucide();
 }
-
-
 function downloadAnxTemplate(n) {
   let csvContent = "";
   let filename = "";
-  
   if (n === 5) {
     csvContent = "Point Name,Type (Bench Mark/CORS),Latitude,Longitude,Elevation (m),Remarks\n";
     filename = "Annexure_V_Benchmarks_Template.csv";
@@ -36,7 +32,6 @@ function downloadAnxTemplate(n) {
     toast(`⬇ Annexure ${toRoman(n)} Excel template downloaded`,'success');
     return;
   }
-
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
@@ -48,26 +43,19 @@ function downloadAnxTemplate(n) {
   document.body.removeChild(link);
   toast(`⬇ Annexure ${toRoman(n)} Excel template downloaded`,'success');
 }
-
-// Global hook to hide add buttons/actions in tables if read-only
 window.addEventListener('DOMContentLoaded', () => {
   const originalShowView = window.showView;
   if (typeof originalShowView === 'function') {
     window.showView = function(id, btn, push) {
       originalShowView(id, btn, push);
-      
       if (['tables','anx1','anx2','anx3','anx4','anx5','anx6','anx7'].includes(id) || id.startsWith('anx')) {
         const isReadOnly = isUserReadOnly();
-        
-        // Hide "Add Row" and upload buttons in all active sections
         const actionBtns = document.querySelectorAll('.active .btn-saffron, .active .btn-outline[onclick^="trigUp"], .active .upload-zone');
         actionBtns.forEach(el => {
           if (el.innerText.includes('Add Row') || el.innerText.includes('Upload') || el.classList.contains('upload-zone') || el.getAttribute('onclick')?.includes('trigUp')) {
             el.style.display = isReadOnly ? 'none' : '';
           }
         });
-        
-        // Disable contenteditable
         if (isReadOnly) {
           const editables = document.querySelectorAll('.active [contenteditable="true"], .active [contenteditable=""]');
           editables.forEach(el => {
@@ -75,12 +63,8 @@ window.addEventListener('DOMContentLoaded', () => {
             el.style.cursor = 'not-allowed';
             el.style.backgroundColor = 'var(--off)';
           });
-          
-          // Disable selects
           const selects = document.querySelectorAll('.active select');
           selects.forEach(el => el.disabled = true);
-          
-          // Hide action column headers and cells
           const ths = document.querySelectorAll('.active th');
           ths.forEach(th => {
             if (th.innerText.toLowerCase().includes('action')) th.style.display = 'none';
@@ -95,7 +79,6 @@ window.addEventListener('DOMContentLoaded', () => {
     };
   }
 });
-
 function handleAnxUpload(e,n) {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
@@ -105,23 +88,19 @@ function handleAnxUpload(e,n) {
       const workbook = XLSX.read(data, { type: 'array' });
       const sheets = workbook.SheetNames;
       if (!sheets.length) throw new Error('No sheets found in Excel file');
-
       const tableIds = getAnnexureTableIds(n);
       let updated = 0;
-
       sheets.forEach(sheetName => {
         const sheet = workbook.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
         const tableId = findAnnexureTableId(n, sheetName, tableIds);
         if (tableId && populateTableFromSheet(tableId, rows)) updated += 1;
       });
-
       if (!updated && tableIds.length && sheets.length === 1) {
         const sheet = workbook.Sheets[sheets[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
         if (populateTableFromSheet(tableIds[0], rows)) updated = 1;
       }
-
       if (!updated) throw new Error('No matching annexure table found');
       toast(`✅ Annexure ${toRoman(n)} uploaded and ${updated} table(s) updated`,'success');
     } catch (err) {
@@ -132,7 +111,6 @@ function handleAnxUpload(e,n) {
   reader.readAsArrayBuffer(file);
   e.target.value = '';
 }
-
 function getAnnexureTableIds(n) {
   return {
     1: ['anx1-rivers','anx1-desilt','anx1-patta','anx1-msand'],
@@ -144,7 +122,6 @@ function getAnnexureTableIds(n) {
     7: ['anx7-patta-final']
   }[n] || [];
 }
-
 function findAnnexureTableId(n, sheetName, tableIds) {
   const key = String(sheetName || '').trim().toLowerCase();
   const patterns = {
@@ -164,31 +141,26 @@ function findAnnexureTableId(n, sheetName, tableIds) {
     'anx6-final-clusters': ['final cluster','cluster summary'],
     'anx7-patta-final': ['patta']
   };
-
   for (const tableId of tableIds) {
     const keys = patterns[tableId] || [];
     if (keys.some(k => key.includes(k))) return tableId;
   }
   return tableIds[0] || null;
 }
-
 function populateTableFromSheet(tableId, rows) {
   const table = document.getElementById(tableId);
   if (!table) return false;
   const tbody = table.querySelector('tbody');
   if (!tbody) return false;
-
   const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText.trim().toLowerCase());
   const cleanRows = rows.filter(row => Array.isArray(row) && row.some(cell => String(cell || '').trim() !== ''));
   if (!cleanRows.length) return false;
-
   const firstRow = cleanRows[0].map(cell => String(cell || '').trim().toLowerCase());
   const isHeaderRow = firstRow.every((value, index) => {
     const header = headers[index] || '';
     return value && (header.includes(value) || value.includes(header));
   });
   if (isHeaderRow) cleanRows.shift();
-
   const uploadRows = cleanRows.map(row => {
     const cells = [];
     headers.forEach((_, index) => {
@@ -202,7 +174,6 @@ function populateTableFromSheet(tableId, rows) {
     }
     return cells;
   });
-
   const addUploadedRow = (row) => {
     const tr = document.createElement('tr');
     row.forEach(value => {
@@ -213,19 +184,24 @@ function populateTableFromSheet(tableId, rows) {
       const escaped = value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       tr.insertAdjacentHTML('beforeend', `<td contenteditable>${escaped}</td>`);
     });
+    if (typeof normalizePhaseNo === 'function' && normalizePhaseNo(S.activeProject) > 1 && typeof applyPhaseHighlightToRow === 'function') {
+      applyPhaseHighlightToRow(tr, getActivePhaseUploadColor(), 'PHASE2_NEW');
+    }
     tbody.appendChild(tr);
   };
-
   if (typeof rbacApplyExcelRowsToTable === 'function') {
     rbacApplyExcelRowsToTable(table, uploadRows, addUploadedRow);
   } else {
     tbody.innerHTML = '';
     uploadRows.forEach(addUploadedRow);
   }
+  if (typeof normalizePhaseNo === 'function' && normalizePhaseNo(S.activeProject) > 1 && typeof recordPhaseChange === 'function') {
+    recordPhaseChange(tableId, 'PHASE2_NEW', `${uploadRows.length} uploaded row(s)`, getActivePhaseUploadColor());
+    if (typeof debouncedSaveState === 'function') debouncedSaveState();
+  }
   if (window.initLucide) window.initLucide();
   return true;
 }
-
 function handleTableUpload(e) {
   const f = e.target.files[0]; if (!f) return;
   const sel = document.getElementById('table-upload-select');
@@ -245,7 +221,6 @@ function handleTableUpload(e) {
   reader.readAsArrayBuffer(f);
   e.target.value = '';
 }
-
 function exportAnxPDF(n) {
   if (n === 5 && typeof exportAnx5PDF === 'function') {
     exportAnx5PDF();
@@ -257,9 +232,7 @@ function exportAnxPDF(n) {
     toast(`📄 Annexure ${typeof n==='number'?toRoman(n):n} PDF exported`,'success');
   }
 }
-
 function toRoman(n) { return ['I','II','III','IV','V','VI','VII'][n-1]||n; }
-
 function mountBenchmarkPanel(targetId) {
   const panel = document.getElementById('anx-benchmark-cors-panel');
   const target = document.getElementById(targetId);
@@ -267,7 +240,6 @@ function mountBenchmarkPanel(targetId) {
   if (panel.parentElement !== target) target.appendChild(panel);
   if (window.initLucide) window.initLucide();
 }
-
 function switchAnxTab(id, btn) {
   ['coords','benchmark','final-clusters','patta-final','desilt-final'].forEach(t=>{
     const el=document.getElementById('anx-tab-'+t); if(el) el.style.display=t===id?'block':'none';
@@ -277,7 +249,6 @@ function switchAnxTab(id, btn) {
   tabs.forEach(b=>b.classList.remove('active'));
   if (btn) btn.classList.add('active');
 }
-
 /* ══════════════════════════════════════
    DEMAND TABLE
 ══════════════════════════════════════ */
@@ -294,14 +265,12 @@ function initDemandTable() {
       <td contenteditable class="num" oninput="updateDemandTotals()">0</td>
     </tr>`).join('');
 }
-
 function addDemandRow() {
   const tbody=document.getElementById('demand-tbody');
   if (!tbody) return;
   const n=tbody.rows.length+1;
   tbody.insertAdjacentHTML('beforeend',`<tr><td>${n}</td><td contenteditable>New District</td>${Array(6).fill('<td contenteditable class="num" oninput="updateDemandTotals()">0</td>').join('')}</tr>`);
 }
-
 function updateDemandTotals() {
   const tbody=document.getElementById('demand-tbody'); if(!tbody) return;
   for (let col=0;col<6;col++) {
@@ -310,10 +279,8 @@ function updateDemandTotals() {
     const el=document.getElementById('dt-'+col); if(el) el.textContent=fmtN(total,0);
   }
 }
-
 function exportDemandExcel() { toast('⬇ Demand table Excel downloaded','success'); }
 function exportDemandPDF() { toast('📄 Demand table PDF exported','success'); }
-
 /* ══════════════════════════════════════
    SUMMARY TABLE
 ══════════════════════════════════════ */
@@ -332,7 +299,6 @@ function initSummaryTable() {
     </tr>`).join('');
   if (window.initLucide) window.initLucide();
 }
-
 function addSummaryRow() {
   const tbody=document.getElementById('summary-tbody');
   if (!tbody) return;
@@ -346,7 +312,6 @@ function addSummaryRow() {
   </tr>`);
   if (window.initLucide) window.initLucide();
 }
-
 function updateSummaryTotals() {
   const tbody=document.getElementById('summary-tbody'); if(!tbody) return;
   const ids=['sum-sites','sum-area','sum-excav','sum-excav60'];
@@ -356,9 +321,7 @@ function updateSummaryTotals() {
     const el=document.getElementById(id); if(el) el.textContent=fmtN(total,2);
   });
 }
-
 function exportSummaryPDF() { toast('📄 Summary table PDF exported','success'); }
-
 /* ══════════════════════════════════════
    AUCTION TABLE
 ══════════════════════════════════════ */
@@ -378,7 +341,6 @@ function initAuctionTable() {
   </tr>`;
   if (window.initLucide) window.initLucide();
 }
-
 function addAuctionRow() {
   const tbody=document.getElementById('auction-tbody');
   if (!tbody) return;
@@ -395,5 +357,4 @@ function addAuctionRow() {
   </tr>`);
   if (window.initLucide) window.initLucide();
 }
-
 function exportAuctionPDF() { toast('📄 Auctioned sites PDF exported','success'); }

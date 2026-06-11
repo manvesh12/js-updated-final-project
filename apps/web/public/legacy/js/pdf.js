@@ -6,15 +6,11 @@ function generateFinalPDF() {
   const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
   const W=210, pad=15;
   let y=20;
-
   const dist=document.getElementById('pdf-district')?.value||'Jalandhar';
   const yr=document.getElementById('pdf-year')?.value||'2025-26';
-
   const govBlue=[26,51,102];
   const navyArr=[11,29,58];
   const saffron=[224,123,0];
-
-  // Helper
   const addPageHeader=(section)=>{
     doc.setFillColor(...navyArr); doc.rect(0,0,W,14,'F');
     doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,255,255);
@@ -22,11 +18,8 @@ function generateFinalPDF() {
     doc.text(section,W-pad,8,{align:'right'});
     doc.setDrawColor(224,123,0); doc.setLineWidth(0.8); doc.line(pad,15,W-pad,15);
   };
-
-  // COVER PAGE or uploaded front-matter PDFs
   let coverInserted = false;
   if (S.uploadedPDFs && S.uploadedPDFs.cover && S.uploadedPDFs.cover.length) {
-    // Use uploaded cover PDF pages (rendered to images)
     S.uploadedPDFs.cover.forEach((img, idx) => {
       if (idx > 0) doc.addPage();
       try { doc.addImage(img, 'PNG', 0, 0, W, 297); } catch(e) { try { doc.addImage(img, 'JPEG', 0, 0, W, 297); } catch(_){} }
@@ -45,23 +38,17 @@ function generateFinalPDF() {
     doc.text(S.frontMatter.district.toUpperCase() + ' DISTRICT', W/2, 80, {align:'center'});
     doc.setFontSize(13); doc.setTextColor(...navyArr); doc.text(S.frontMatter.state + ' · ' + S.frontMatter.year, W/2, 90, {align:'center'});
     doc.setFontSize(10); doc.setTextColor(...govBlue);
-    
-    // Split long Prepared By and Assisted By texts if needed
     const prepLines = doc.splitTextToSize('PREPARED BY: ' + S.frontMatter.preparedBy.toUpperCase(), W - 2*pad);
     doc.text(prepLines, W/2, 130, {align:'center'});
     const assistLines = doc.splitTextToSize('ASSISTED BY: ' + S.frontMatter.assistedBy.toUpperCase(), W - 2*pad);
     doc.text(assistLines, W/2, 130 + (prepLines.length * 6), {align:'center'});
   }
-
-  // Include other front-matter uploads (certificate, toc) after cover
   ['cert','toc'].forEach(type => {
     const pages = S.uploadedPDFs && S.uploadedPDFs[type];
     if (pages && pages.length) {
       pages.forEach(img => { doc.addPage(); try { doc.addImage(img, 'PNG', 0, 0, W, 297); } catch(e) { try { doc.addImage(img, 'JPEG', 0, 0, W, 297); } catch(_){} } });
     }
   });
-
-  // PREFACE PAGE
   let prefaceInserted = false;
   if (S.uploadedPDFs && S.uploadedPDFs.pref && S.uploadedPDFs.pref.length) {
     S.uploadedPDFs.pref.forEach(img => { doc.addPage(); try { doc.addImage(img, 'PNG', 0, 0, W, 297); } catch(e) { try { doc.addImage(img, 'JPEG', 0, 0, W, 297); } catch(_){} } });
@@ -75,8 +62,6 @@ function generateFinalPDF() {
     const prefLines = doc.splitTextToSize(S.frontMatter.preface, W - 2*pad);
     doc.text(prefLines, pad, y);
   }
-
-  // ACKNOWLEDGEMENT PAGE
   if (S.frontMatter.acknowledgement) {
     doc.addPage(); y = 25; addPageHeader('ACKNOWLEDGEMENT');
     doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(...navyArr);
@@ -85,8 +70,6 @@ function generateFinalPDF() {
     const ackLines = doc.splitTextToSize(S.frontMatter.acknowledgement, W - 2*pad);
     doc.text(ackLines, pad, y);
   }
-
-  // TABLE OF CONTENTS
   doc.addPage(); y=25; addPageHeader('CONTENTS');
   doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...navyArr);
   doc.text('TABLE OF CONTENTS', W/2, y, {align:'center'}); y+=12;
@@ -95,8 +78,6 @@ function generateFinalPDF() {
     doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(50,50,80);
     doc.text(`${i+1}.  ${ch.name}`, pad, y); y+=7;
   });
-
-  // CHAPTERS
   S.chapters.forEach((ch,i)=>{
     doc.addPage(); addPageHeader('CHAPTER '+(i+1));
     y=25;
@@ -109,7 +90,6 @@ function generateFinalPDF() {
     if (chapterPages && chapterPages.length) {
       doc.setFontSize(9); doc.setTextColor(120,120,140);
       doc.text(`[Chapter content appended from uploaded file: ${ch.fileName || 'document.pdf'}]`, pad, y);
-
       chapterPages.forEach((img, pageIdx) => {
         doc.addPage();
         doc.setFillColor(...navyArr); doc.rect(0, 0, W, 14, 'F');
@@ -117,10 +97,8 @@ function generateFinalPDF() {
         doc.text(`DISTRICT SURVEY REPORT — ${dist.toUpperCase()} · EMGSM 2020`, W/2, 8, {align:'center'});
         doc.text(`CHAPTER ${i+1} — UPLOADED CONTENT (Pg ${pageIdx + 1}/${chapterPages.length})`, W-pad, 8, {align:'right'});
         doc.setDrawColor(224,123,0); doc.setLineWidth(0.8); doc.line(pad,15,W-pad,15);
-
         doc.setDrawColor(200,200,200); doc.setLineWidth(0.5);
         doc.rect(pad, 20, W - 2*pad, 260); // Frame
-
         try {
           doc.addImage(img, 'PNG', pad + 1, 21, W - 2*pad - 2, 258);
         } catch(e) {
@@ -132,8 +110,6 @@ function generateFinalPDF() {
       doc.text('[Full chapter content to be included from uploaded PDF or text data]', pad, y);
     }
   });
-
-  // GRAPHS DATA WITH CANVAS EXTRACTION
   if (S.graphs.length) {
     doc.addPage(); addPageHeader('CROSS SECTION ANALYSIS'); y=25;
     doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...navyArr);
@@ -157,8 +133,6 @@ function generateFinalPDF() {
         ]
       });
       y=doc.lastAutoTable.finalY+10;
-
-      // Draw the actual Canvas Graph
       const canvas = document.getElementById('canvas-' + g.id + '-post') || document.getElementById('canvas-' + g.id);
       if (canvas) {
         if (y > 200) { doc.addPage(); y=20; addPageHeader('CROSS SECTION GRAPH'); }
@@ -170,8 +144,6 @@ function generateFinalPDF() {
       }
     });
   }
-
-  // PLATES
   if (S.plates.length) {
     doc.addPage(); addPageHeader('PLATE SECTION'); y=25;
     doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...navyArr);
@@ -182,8 +154,6 @@ function generateFinalPDF() {
       const fileStatus = p.fileName ? `[File: ${p.fileName}]` : '[No file uploaded]';
       doc.text(`Plate ${i+1}: ${p.name}  ${fileStatus}`, pad, y); y+=7;
     });
-
-    // Append the visual plates
     S.plates.forEach((p, i) => {
       if (p.pages && p.pages.length) {
         p.pages.forEach((img, pageIdx) => {
@@ -204,8 +174,6 @@ function generateFinalPDF() {
       }
     });
   }
-
-  // ALL TABLES (ANNEXURES & DATA TABLES)
   const allTablesData = [
     { title: 'ANNEXURE I(a) — RIVERS', id: '#anx1-rivers' },
     { title: 'ANNEXURE I(b) — DE-SILTATION', id: '#anx1-desilt' },
@@ -232,7 +200,6 @@ function generateFinalPDF() {
     { title: 'DATA TABLE — AUCTIONED SITES', id: '#auction-tbl' },
     { title: 'DATA TABLE — SOURCE SUMMARY', id: '#summary-tbl' }
   ];
-
   allTablesData.forEach((tblConfig, index) => {
     let tables = [];
     if (tblConfig.id === '#anx2-leases') {
@@ -241,22 +208,17 @@ function generateFinalPDF() {
       const el = document.querySelector(tblConfig.id);
       if (el) tables.push(el);
     }
-
     tables.forEach((tableEl, tblIdx) => {
       if (tableEl && tableEl.rows.length > 1) { // ensure it has rows beyond header
         doc.addPage(); addPageHeader(tblConfig.title.split(' — ')[0]); y=25;
         doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...navyArr);
-        
         let title = tblConfig.title;
         if (tblConfig.id === '#anx2-leases' && tables.length > 1) {
           title += ` (Table ${tblIdx + 1})`;
         }
         doc.text(title, W/2, y, {align:'center'}); y+=10;
-
         const head = []; const body = []; const foot = [];
         let hasActionCol = false;
-
-        // Extract Headers
         tableEl.querySelectorAll('thead tr').forEach(tr => {
           const rowData = [];
           tr.querySelectorAll('th, td').forEach(cell => rowData.push(cell.innerText.trim()));
@@ -266,8 +228,6 @@ function generateFinalPDF() {
           }
           head.push(rowData);
         });
-
-        // Extract Body
         tableEl.querySelectorAll('tbody tr').forEach(tr => {
           const rowData = [];
           tr.querySelectorAll('th, td').forEach(cell => {
@@ -277,8 +237,6 @@ function generateFinalPDF() {
           if (hasActionCol) rowData.pop();
           body.push(rowData);
         });
-
-        // Extract Footer (if any)
         tableEl.querySelectorAll('tfoot tr').forEach(tr => {
           const rowData = [];
           tr.querySelectorAll('th, td').forEach(cell => {
@@ -290,8 +248,6 @@ function generateFinalPDF() {
           }
           foot.push(rowData);
         });
-
-        // Render the extracted table structure natively into PDF
         doc.autoTable({
           startY: y, margin: {left:pad, right:pad}, styles: {fontSize: 7, cellPadding: 2},
           headStyles: {fillColor: navyArr},
@@ -303,23 +259,18 @@ function generateFinalPDF() {
         });
       }
     });
-
-    // Check if this is the last table of the current Annexure group
     const currentPrefix = tblConfig.title.split('(')[0].trim().split(' ')[0] + ' ' + tblConfig.title.split('(')[0].trim().split(' ')[1]; // E.g. "ANNEXURE I"
     const nextTblConfig = allTablesData[index + 1];
     let nextPrefix = '';
     if (nextTblConfig) {
       nextPrefix = nextTblConfig.title.split('(')[0].trim().split(' ')[0] + ' ' + nextTblConfig.title.split('(')[0].trim().split(' ')[1];
     }
-    
-    // Inject uploaded PDFs if the Annexure group is changing
     if (currentPrefix !== nextPrefix && currentPrefix.startsWith('ANNEXURE')) {
       let uploadKey = '';
       if (currentPrefix === 'ANNEXURE I') uploadKey = 'anx1';
       else if (currentPrefix === 'ANNEXURE II') uploadKey = 'anx2';
       else if (currentPrefix === 'ANNEXURE III') uploadKey = 'anx3';
       else if (currentPrefix === 'ANNEXURE IV') uploadKey = 'anx4';
-      
       if (uploadKey && S.uploadedPDFs && S.uploadedPDFs[uploadKey] && S.uploadedPDFs[uploadKey].length > 0) {
         S.uploadedPDFs[uploadKey].forEach((img, pageIdx) => {
           doc.addPage();
@@ -328,11 +279,8 @@ function generateFinalPDF() {
           doc.text(`DISTRICT SURVEY REPORT — ${dist.toUpperCase()} · EMGSM 2020`, W/2, 8, {align:'center'});
           doc.text(`${currentPrefix} — UPLOADED DOCUMENT (Pg ${pageIdx + 1}/${S.uploadedPDFs[uploadKey].length})`, W-pad, 8, {align:'right'});
           doc.setDrawColor(224,123,0); doc.setLineWidth(0.8); doc.line(pad,15,W-pad,15);
-          
-          // Draw a clean border for the uploaded image
           doc.setDrawColor(200,200,200); doc.setLineWidth(0.5);
           doc.rect(pad, 20, W - 2*pad, 260); // Frame
-          
           try { 
             doc.addImage(img, 'PNG', pad + 1, 21, W - 2*pad - 2, 258); 
           } catch(e) { 
@@ -342,8 +290,6 @@ function generateFinalPDF() {
       }
     }
   });
-
-  // SIGNATURE PAGE
   doc.addPage(); addPageHeader('DIGITAL SIGNATURES'); y=25;
   doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...navyArr);
   doc.text('DIGITAL SIGNATURE REGISTER', W/2, y, {align:'center'}); y+=12;
@@ -353,19 +299,15 @@ function generateFinalPDF() {
     head:[['#','Role','Officer','Status','Signed At','Method']],
     body:S.signatures.map(s=>[s.order,s.role,s.name,s.signed?'SIGNED':'PENDING',s.signedAt||'—',s.method||'—'])
   });
-
-  // SDLC COMPARISON & RECONCILIATION REPORT (APPENDED AT THE END)
   if (S.sdlcData && S.sdlcData.projectId === S.activeProject.id && S.sdlcData.verified) {
     doc.addPage();
     addPageHeader('SDLC RECONCILIATION REPORT');
     y = 25;
-    
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.setTextColor(...navyArr);
     doc.text('SDLC SURVEY VERIFICATION REPORT', W/2, y, {align:'center'});
     y += 12;
-
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(50, 50, 70);
@@ -373,8 +315,6 @@ function generateFinalPDF() {
     const linesDesc = doc.splitTextToSize(sdlcDesc, W - 2*pad);
     doc.text(linesDesc, pad, y);
     y += linesDesc.length * 5 + 8;
-
-    // 1. Annexure IV Comparison
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
     doc.text('Annexure IV — Route Carrying Capacity Verification', pad, y);
@@ -388,8 +328,6 @@ function generateFinalPDF() {
       body: S.sdlcData.anx4.map(row => [row.name, row.dsrVal, row.sdlcVal, row.variance, row.matched ? 'MATCHED' : 'RECONCILED'])
     });
     y = doc.lastAutoTable.finalY + 10;
-
-    // 2. Annexure V Comparison
     if (y > 220) { doc.addPage(); addPageHeader('SDLC RECONCILIATION REPORT'); y = 25; }
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
@@ -404,8 +342,6 @@ function generateFinalPDF() {
       body: S.sdlcData.anx5.map(row => [row.id, row.dsrCoords, row.sdlcCoords, row.dsrElev, row.sdlcElev, row.matched ? 'MATCHED' : 'RECONCILED'])
     });
     y = doc.lastAutoTable.finalY + 10;
-
-    // 3. Annexure VI Comparison
     if (y > 220) { doc.addPage(); addPageHeader('SDLC RECONCILIATION REPORT'); y = 25; }
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
@@ -420,8 +356,6 @@ function generateFinalPDF() {
       body: S.sdlcData.anx6.map(row => [row.id, row.dsrVal, row.sdlcVal, row.variance, row.matched ? 'MATCHED' : 'RECONCILED'])
     });
     y = doc.lastAutoTable.finalY + 10;
-
-    // 4. Annexure VII Comparison
     if (y > 220) { doc.addPage(); addPageHeader('SDLC RECONCILIATION REPORT'); y = 25; }
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
@@ -436,8 +370,6 @@ function generateFinalPDF() {
       body: S.sdlcData.anx7.map(row => [row.name, row.dsrVal, row.sdlcVal, row.variance, row.matched ? 'MATCHED' : 'RECONCILED'])
     });
   }
-
-  // FOOTER ON ALL PAGES
   const total=doc.getNumberOfPages();
   for (let p=1;p<=total;p++) {
     doc.setPage(p);
@@ -446,18 +378,15 @@ function generateFinalPDF() {
     doc.text(`PREPARED BY: SUB-DIVISIONAL COMMITTEE, ${dist.toUpperCase()} | ASSISTED BY: RSP GREEN DEVELOPMENT AND LABORATORIES PVT. LTD`, pad, 291);
     doc.text(`Page ${p} of ${total}`, W-pad, 291, {align:'right'});
   }
-
   const fname=`DSR-${dist}-${yr.replace('/','-')}-${new Date().toISOString().split('T')[0]}.pdf`;
   doc.save(fname);
   toast('PDF generated: '+fname,'success');
 }
-
 async function generateFinalPDF(regenerate = false) {
   if (!canAccessFinalDsrPdf()) {
     showFinalPdfAccessDenied();
     return;
   }
-
   const progressBox = document.getElementById('final-pdf-progress');
   const progressLabel = document.getElementById('final-pdf-progress-label');
   const progressPct = document.getElementById('final-pdf-progress-pct');
@@ -465,14 +394,12 @@ async function generateFinalPDF(regenerate = false) {
   const warningBox = document.getElementById('final-pdf-warnings');
   const resultBox = document.getElementById('final-pdf-result');
   const generateBtn = document.getElementById('final-pdf-generate-btn');
-
   const setProgress = (label, pct) => {
     if (progressBox) progressBox.style.display = 'block';
     if (progressLabel) progressLabel.textContent = label;
     if (progressPct) progressPct.textContent = `${pct}%`;
     if (progressBar) progressBar.style.width = `${pct}%`;
   };
-
   const showWarnings = (warnings) => {
     if (!warningBox) return;
     if (!warnings.length) {
@@ -483,24 +410,19 @@ async function generateFinalPDF(regenerate = false) {
     warningBox.style.display = 'block';
     warningBox.innerHTML = `<strong>Warnings:</strong><br>${warnings.map(w => `- ${w}`).join('<br>')}`;
   };
-
   try {
     if (!window.jspdf || !window.jspdf.jsPDF || !window.jspdf.jsPDF.API.autoTable) {
       setProgress('Loading PDF engine...', 5);
       await ensurePortalVendors(['jspdf', 'autotable']);
     }
-
     if (generateBtn) generateBtn.disabled = true;
     if (resultBox) resultBox.style.display = 'none';
-
     setProgress('Collecting Data...', 12);
     if (typeof persistProjectState === 'function') {
       await persistProjectState();
     }
-
     const warnings = validateFinalPdfInputs();
     showWarnings(warnings);
-
     setProgress('Building PDF...', 28);
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -516,10 +438,13 @@ async function generateFinalPDF(regenerate = false) {
     const version = document.getElementById('pdf-version')?.value || S.frontMatter?.version || 'Final Approved Draft';
     const generatedAt = new Date();
     const sectionStarts = [];
-
     const safe = (value, fallback = '-') => String(value ?? fallback).trim() || fallback;
     const hasText = (value) => String(value ?? '').trim().length > 0;
-
+    const hexToRgb = (hex, fallback = [245, 158, 11]) => {
+      const value = String(hex || '').replace('#', '').trim();
+      if (!/^[0-9a-f]{6}$/i.test(value)) return fallback;
+      return [0, 2, 4].map(index => parseInt(value.slice(index, index + 2), 16));
+    };
     const addHeader = (sectionTitle) => {
       doc.setFillColor(...navy);
       doc.rect(0, 0, W, 14, 'F');
@@ -532,7 +457,6 @@ async function generateFinalPDF(regenerate = false) {
       doc.setLineWidth(0.7);
       doc.line(pad, 15, W - pad, 15);
     };
-
     const beginSection = (title) => {
       doc.addPage();
       sectionStarts.push({ title, page: doc.getCurrentPageInfo().pageNumber });
@@ -545,7 +469,6 @@ async function generateFinalPDF(regenerate = false) {
       doc.line(pad, 34, W - pad, 34);
       return 44;
     };
-
     const writeParagraph = (text, y, options = {}) => {
       if (!hasText(text)) return y;
       doc.setFont('helvetica', options.bold ? 'bold' : 'normal');
@@ -555,7 +478,6 @@ async function generateFinalPDF(regenerate = false) {
       doc.text(lines, options.x || pad, y);
       return y + (lines.length * (options.lineHeight || 5.5)) + (options.after || 6);
     };
-
     const addImagePage = (src, title) => {
       if (!src) return;
       doc.addPage();
@@ -571,13 +493,11 @@ async function generateFinalPDF(regenerate = false) {
         }
       }
     };
-
     const addUploadedPages = (pages, title) => {
       if (!Array.isArray(pages) || !pages.length) return false;
       pages.forEach((page, index) => addImagePage(page, `${title} - Attachment ${index + 1}`));
       return true;
     };
-
     const tableRowsFromElement = (table) => {
       if (!table) return null;
       const getCells = (row) => Array.from(row.children)
@@ -587,12 +507,14 @@ async function generateFinalPDF(regenerate = false) {
           return (select ? select.value : cell.innerText || '').replace(/\s+/g, ' ').trim();
         });
       const head = Array.from(table.querySelectorAll('thead tr')).map(getCells).filter(row => row.some(Boolean));
-      const body = Array.from(table.querySelectorAll('tbody tr')).map(getCells).filter(row => row.some(Boolean));
+      const bodyRows = Array.from(table.querySelectorAll('tbody tr'))
+        .map(row => ({ cells: getCells(row), meta: { origin: row.dataset.phaseOrigin || '', color: row.dataset.phaseColor || '' } }))
+        .filter(row => row.cells.some(Boolean));
+      const body = bodyRows.map(row => row.cells);
       if (!head.length && !body.length) return null;
       if (!body.some(row => row.some(cell => cell && !/^na$/i.test(cell)))) return null;
-      return { head: head.length ? head : [body.shift() || ['Details']], body };
+      return { head: head.length ? head : [body.shift() || ['Details']], body, rowMeta: bodyRows.map(row => row.meta) };
     };
-
     const addTable = (table, title) => {
       const data = tableRowsFromElement(table);
       if (!data) return false;
@@ -605,11 +527,38 @@ async function generateFinalPDF(regenerate = false) {
         theme: 'grid',
         styles: { fontSize: 7.2, cellPadding: 2, overflow: 'linebreak' },
         headStyles: { fillColor: navy, textColor: [255, 255, 255], fontStyle: 'bold' },
-        alternateRowStyles: { fillColor: [247, 249, 252] }
+        alternateRowStyles: { fillColor: [247, 249, 252] },
+        didParseCell: (cellData) => {
+          if (cellData.section !== 'body') return;
+          const rowMeta = data.rowMeta?.[cellData.row.index];
+          if (!rowMeta?.color) return;
+          cellData.cell.styles.fillColor = hexToRgb(rowMeta.color, [230, 247, 238]);
+        }
       });
       return true;
     };
-
+    const addPhaseChangeSummary = () => {
+      if (typeof getPhaseChangeSummaryRows !== 'function') return false;
+      const rows = getPhaseChangeSummaryRows();
+      if (!rows.length) return false;
+      let y = beginSection('Phase Change Summary');
+      y = writeParagraph(`This report is generated for ${getProjectPhaseLabel(S.activeProject)}. Imported Phase 1 data remains locked; new and updated Phase 2 records are tracked with color metadata.`, y, { size: 9.5, after: 6 });
+      doc.autoTable({
+        startY: y,
+        margin: { left: pad, right: pad },
+        head: [['Type', 'Record / Section', 'Color']],
+        body: rows.map(row => [row[0], row[1], row[2]]),
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 2.4 },
+        headStyles: { fillColor: navy, textColor: [255, 255, 255] },
+        didParseCell: (cellData) => {
+          if (cellData.section !== 'body' || cellData.column.index !== 2) return;
+          cellData.cell.styles.fillColor = hexToRgb(rows[cellData.row.index]?.[2], [226, 232, 240]);
+          cellData.cell.styles.textColor = [20, 24, 32];
+        }
+      });
+      return true;
+    };
     const addTables = (configs) => {
       let added = false;
       configs.forEach(cfg => {
@@ -621,7 +570,6 @@ async function generateFinalPDF(regenerate = false) {
       });
       return added;
     };
-
     const addEntryList = (title, entries) => {
       const rows = (entries || []).filter(item => hasText(item.name) || hasText(item.summary) || (item.pages && item.pages.length));
       if (!rows.length) return false;
@@ -641,7 +589,6 @@ async function generateFinalPDF(regenerate = false) {
       });
       return true;
     };
-
     const addGraphSection = () => {
       if (!Array.isArray(S.graphs) || !S.graphs.length) return false;
       let y = beginSection('Cross Section Graphs');
@@ -683,7 +630,6 @@ async function generateFinalPDF(regenerate = false) {
       });
       return true;
     };
-
     const addFrontMatter = () => {
       let y = beginSection('Front Matter');
       y = writeParagraph(safe(S.frontMatter?.title, S.activeProject?.title || 'District Survey Report'), y, { bold: true, size: 14, color: navy, after: 8 });
@@ -709,7 +655,6 @@ async function generateFinalPDF(regenerate = false) {
       ['cover', 'cert', 'toc', 'pref'].forEach(key => addUploadedPages(S.uploadedPDFs?.[key], `Front Matter - ${key.toUpperCase()}`));
       return true;
     };
-
     const addChapter = (chapterNo) => {
       const ch = (S.chapters || []).find(item => Number(item.id) === chapterNo) || (S.chapters || [])[chapterNo - 1];
       if (!ch || (!hasText(ch.name) && !hasText(ch.summary) && !S.chapterPDFs?.[ch.id]?.length)) return false;
@@ -720,7 +665,6 @@ async function generateFinalPDF(regenerate = false) {
       addUploadedPages(S.chapterPDFs?.[ch.id], `Chapter ${chapterNo}`);
       return true;
     };
-
     const addPlates = () => {
       if (!Array.isArray(S.plates) || !S.plates.length) return false;
       let y = beginSection('All Plate Sections');
@@ -734,18 +678,15 @@ async function generateFinalPDF(regenerate = false) {
       addUploadedPages(S.uploadedPDFs?.plates, 'Plate Section');
       return true;
     };
-
     const waitFor = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     const withTimeout = (promise, ms, label) => Promise.race([
       promise,
       new Promise((_, reject) => setTimeout(() => reject(new Error(`${label} timed out`)), ms))
     ]);
-
     const dataUrlToBlob = async (dataUrl) => {
       const res = await fetch(dataUrl);
       return res.blob();
     };
-
     const pdfBlobToImages = async (blob) => {
       await ensurePortalVendors(['pdfjs']);
       const arrayBuffer = await blob.arrayBuffer();
@@ -763,7 +704,6 @@ async function generateFinalPDF(regenerate = false) {
       }
       return pages;
     };
-
     const htmlPreviewToPdfBlob = async (iframe, filename) => {
       await ensurePortalVendors(['html2pdf']);
       const body = iframe?.contentDocument?.body;
@@ -782,13 +722,11 @@ async function generateFinalPDF(regenerate = false) {
         filename
       );
     };
-
     const getPreviewIframe = (viewId) => {
       if (window.getAnnexurePreviewIframe) return window.getAnnexurePreviewIframe(viewId);
       const ids = window.pdfPreview?.IFRAME_IDS || {};
       return document.getElementById(ids[viewId] || 'pdf-preview-iframe');
     };
-
     const waitForPreviewBlob = async (viewId) => {
       const iframe = getPreviewIframe(viewId);
       for (let attempt = 0; attempt < 30; attempt += 1) {
@@ -804,7 +742,6 @@ async function generateFinalPDF(regenerate = false) {
       }
       return null;
     };
-
     const addNativeTablesAsPreviewFallback = (title, tableConfigs) => {
       const before = doc.getNumberOfPages();
       tableConfigs.forEach(cfg => {
@@ -815,7 +752,6 @@ async function generateFinalPDF(regenerate = false) {
       if (!added) warnings.push(`${title} has no filled preview tables available.`);
       return added;
     };
-
     const getAnnexurePreviewPages = async (viewId) => {
       const directPreviewGetters = {
         'annexure-b': 'getAnnexureBPages',
@@ -831,12 +767,10 @@ async function generateFinalPDF(regenerate = false) {
       if (getter && typeof window.pdfPreview?.[getter] === 'function') {
         return window.pdfPreview[getter]().map(page => typeof page === 'string' ? page : page.src).filter(Boolean);
       }
-
       const exportFnName = window.pdfPreview?.getAnnexureExportFnName
         ? window.pdfPreview.getAnnexureExportFnName(viewId)
         : `export${viewId.charAt(0).toUpperCase()}${viewId.slice(1)}PDF`;
       if (typeof window[exportFnName] !== 'function') return [];
-
       const iframe = getPreviewIframe(viewId);
       if (iframe) {
         iframe.removeAttribute('src');
@@ -847,7 +781,6 @@ async function generateFinalPDF(regenerate = false) {
       const blob = await waitForPreviewBlob(viewId);
       return blob ? pdfBlobToImages(blob) : [];
     };
-
     const addAnnexureFromPreview = async (title, viewId) => {
       let pages = [];
       try {
@@ -898,7 +831,6 @@ async function generateFinalPDF(regenerate = false) {
       pages.forEach((page, index) => addImagePage(page, `${title} - Page ${index + 1}`));
       return true;
     };
-
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
     doc.setTextColor(...navy);
@@ -914,13 +846,12 @@ async function generateFinalPDF(regenerate = false) {
     doc.text(`Version: ${version}`, W / 2, 116, { align: 'center' });
     doc.addPage();
     const tocPage = doc.getCurrentPageInfo().pageNumber;
-
+    addPhaseChangeSummary();
     addFrontMatter();
     for (let i = 1; i <= 10; i += 1) addChapter(i);
     setProgress('Merging Sections...', 52);
     addPlates();
     addGraphSection();
-
     const annexurePreviewOrder = [
       ['Annexure I - Sources', 'anx1'],
       ['Annexure II - Leases', 'anx2'],
@@ -940,13 +871,11 @@ async function generateFinalPDF(regenerate = false) {
       ['Annexure J', 'annexure-j'],
       ['Annexure K', 'annexure-k']
     ];
-
     for (let annexureIndex = 0; annexureIndex < annexurePreviewOrder.length; annexureIndex += 1) {
       const [title, viewId] = annexurePreviewOrder[annexureIndex];
       setProgress(`Merging Sections... ${title}`, 52 + Math.min(24, Math.round(annexureIndex * 1.4)));
       await addAnnexureFromPreview(title, viewId);
     }
-
     if (Array.isArray(S.signatures) && S.signatures.length) {
       let y = beginSection('Digital Signature Register');
       doc.autoTable({
@@ -965,7 +894,6 @@ async function generateFinalPDF(regenerate = false) {
         headStyles: { fillColor: navy }
       });
     }
-
     setProgress('Finalizing Document...', 78);
     doc.setPage(tocPage);
     addHeader('Table of Contents');
@@ -989,7 +917,6 @@ async function generateFinalPDF(regenerate = false) {
       doc.line(pad, tocY + 1.5, W - pad, tocY + 1.5);
       tocY += 7;
     });
-
     const totalPages = doc.getNumberOfPages();
     for (let p = 1; p <= totalPages; p += 1) {
       doc.setPage(p);
@@ -1001,14 +928,12 @@ async function generateFinalPDF(regenerate = false) {
       doc.text(`Project: ${safe(S.activeProject?.title || S.frontMatter?.title)} | District: ${district} | Version: ${version}`, pad, 291);
       doc.text(`Page ${p} of ${totalPages}`, W - pad, 291, { align: 'right' });
     }
-
     setProgress('Finalizing Document...', 90);
     const safeDistrict = district.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'Punjab';
     const safeYear = year.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || '2025-26';
     const fileName = `DSR-${safeDistrict}-${safeYear}-Final-${generatedAt.toISOString().slice(0, 10)}.pdf`;
     const dataUri = doc.output('datauristring');
     const base64 = dataUri.split(',')[1];
-
     if (S.activeProject?.id) {
       await apiFetch('/upload-pdf', {
         method: 'POST',
@@ -1033,7 +958,6 @@ async function generateFinalPDF(regenerate = false) {
       if (typeof persistProjectState === 'function') await persistProjectState();
       if (typeof renderDashboard === 'function') renderDashboard();
     }
-
     window.finalDsrPdfBlobUrl = URL.createObjectURL(doc.output('blob'));
     window.finalDsrPdfFileName = fileName;
     setProgress('Finalizing Document...', 100);
@@ -1050,7 +974,6 @@ async function generateFinalPDF(regenerate = false) {
     if (generateBtn) generateBtn.disabled = false;
   }
 }
-
 function validateFinalPdfInputs() {
   const warnings = [];
   if (!S.frontMatter || !S.frontMatter.title || !S.frontMatter.district) {
@@ -1071,22 +994,18 @@ function validateFinalPdfInputs() {
   });
   return warnings;
 }
-
 function getFinalPdfUrl(inline = true) {
   if (!S.activeProject?.id || !S.activeProject?.finalPdfName) return window.finalDsrPdfBlobUrl || '';
   return window.projectPdfUrl ? window.projectPdfUrl('final', inline) : `/api/download-pdf?projectId=${encodeURIComponent(S.activeProject.id)}&annexureId=final${inline ? '&inline=true' : ''}`;
 }
-
 function canAccessFinalDsrPdf() {
   return S?.role === 'admin' || S?.backendRole === 'ROLE_ADMIN' || S?.user?.email === 'admin@demo.com' || (typeof hasAdminAccess === 'function' && hasAdminAccess());
 }
-
 function showFinalPdfAccessDenied() {
   const message = 'Access Denied - Only Administrators can download or email the Final DSR PDF.';
   if (typeof toast === 'function') toast(message, 'error');
   else alert(message);
 }
-
 function updateFinalPdfAdminUI() {
   const allowed = canAccessFinalDsrPdf();
   document.querySelectorAll('.final-pdf-admin-action').forEach(el => {
@@ -1096,7 +1015,6 @@ function updateFinalPdfAdminUI() {
   const lock = document.getElementById('final-pdf-admin-lock');
   if (lock) lock.style.display = allowed ? 'none' : 'block';
 }
-
 async function fetchFinalPdfBlob(inline = true) {
   if (!canAccessFinalDsrPdf()) {
     showFinalPdfAccessDenied();
@@ -1119,7 +1037,6 @@ async function fetchFinalPdfBlob(inline = true) {
   }
   return response.blob();
 }
-
 async function previewFinalPDF() {
   const url = getFinalPdfUrl(true);
   try {
@@ -1130,7 +1047,6 @@ async function previewFinalPDF() {
     toast(err.message || 'Unable to preview Final DSR PDF', 'error');
   }
 }
-
 async function downloadFinalPDF() {
   try {
     const blob = await fetchFinalPdfBlob(false);
@@ -1145,7 +1061,6 @@ async function downloadFinalPDF() {
     toast(err.message || 'Unable to download Final DSR PDF', 'error');
   }
 }
-
 async function emailFinalPDF() {
   if (!canAccessFinalDsrPdf()) {
     showFinalPdfAccessDenied();
@@ -1167,7 +1082,6 @@ async function emailFinalPDF() {
     toast(err.message || 'Unable to email Final DSR PDF', 'error');
   }
 }
-
 window.generateFinalPDF = generateFinalPDF;
 window.previewFinalPDF = previewFinalPDF;
 window.downloadFinalPDF = downloadFinalPDF;
@@ -1175,11 +1089,8 @@ window.emailFinalPDF = emailFinalPDF;
 window.updateFinalPdfAdminUI = updateFinalPdfAdminUI;
 window.canAccessFinalDsrPdf = canAccessFinalDsrPdf;
 window.showFinalPdfAccessDenied = showFinalPdfAccessDenied;
-
 async function submitForReview(ignoreWarning = false) {
   if (!S.activeProject) return;
-  
-  // Mandatory check: if report status was returned or rejected, verify that the DEO has replied
   try {
     if (typeof apiFetchReportHistory === 'function') {
       const history = await apiFetchReportHistory(S.activeProject.id);
@@ -1195,10 +1106,8 @@ async function submitForReview(ignoreWarning = false) {
   } catch (err) {
     console.error('Failed to verify report history state:', err);
   }
-
   try {
     let deoRemarks = 'Submitted by DEO';
-    // If it's a regular submission, ask for a reply note (optional)
     if (!ignoreWarning) {
         const reply = prompt('Enter your reply / remarks for the reviewer (Optional):', '');
         if (reply !== null && reply.trim() !== '') {
@@ -1207,7 +1116,6 @@ async function submitForReview(ignoreWarning = false) {
             return; // Cancelled
         }
     }
-
     const payload = { action: 'SUBMIT', remarks: deoRemarks, ignoreWarning: ignoreWarning };
     await apiFetch(`/reports/${S.activeProject.id}/workflow`, {
       method: 'POST',
@@ -1226,7 +1134,6 @@ async function submitForReview(ignoreWarning = false) {
     }
   }
 }
-
 /* ══════════════════════════════════════
    AUTHORITY DASHBOARD
  ══════════════════════════════════════ */
@@ -1266,7 +1173,6 @@ function renderAuthorityReports() {
     </div>`).join('');
   initLucide();
 }
-
 function openAuthoritySign(id, title) {
   document.getElementById('auth-sign-content').innerHTML=`
     <div style="background:var(--off);border:1px solid var(--border);border-radius:var(--r-md);padding:14px;margin-bottom:14px">
@@ -1286,7 +1192,6 @@ function openAuthoritySign(id, title) {
   }
   initLucide();
 }
-
 function authoritySign() {
   if (document.getElementById('auth-otp').value!=='123456') { toast('Invalid OTP. Demo: 123456','error'); return; }
   closeModal('modal-auth-sign');

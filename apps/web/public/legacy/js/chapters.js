@@ -1,9 +1,7 @@
 /* Chapters management */
-
 function renderChapters() {
   const el = document.getElementById('chapter-list');
   if (!el) return;
-
   el.innerHTML = S.chapters.map((ch, i) => {
     const pageCount = S.chapterPDFs && S.chapterPDFs[ch.id] ? S.chapterPDFs[ch.id].length : 0;
     const fileInfoHTML = ch.fileName ? `
@@ -25,7 +23,6 @@ function renderChapters() {
       <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
         <label class="btn btn-xs btn-outline" style="cursor:pointer">Upload Chapter PDF <input type="file" accept=".pdf" hidden onchange="handleChapterUpload(event,${ch.id})"></label>
       </div>`;
-
     return `
       <div class="chapter-item">
         <div class="ch-num">${i + 1}</div>
@@ -41,11 +38,9 @@ function renderChapters() {
         </div>
       </div>`;
   }).join('');
-
   if (typeof applyChapterAccess === 'function') applyChapterAccess(el);
   if (window.initLucide) window.initLucide();
 }
-
 function addChapter() {
   if (typeof canEditView === 'function' && !canEditView('chapters')) {
     toast('You do not have access to add chapters.', 'error');
@@ -55,7 +50,6 @@ function addChapter() {
   renderChapters();
   if (window.debouncedSaveState) window.debouncedSaveState();
 }
-
 function deleteChapter(id) {
   const idx = S.chapters.findIndex(c => c.id === id);
   if (typeof canEditChapter === 'function' && !canEditChapter(idx + 1)) {
@@ -71,7 +65,6 @@ function deleteChapter(id) {
     toast('Chapter removed', 'info');
   });
 }
-
 function moveChapter(idx, dir) {
   if (typeof canEditChapter === 'function' && (!canEditChapter(idx + 1) || !canEditChapter(idx + dir + 1))) {
     toast('Chapter movement is locked for your role.', 'error');
@@ -82,11 +75,9 @@ function moveChapter(idx, dir) {
   if (window.pdfPreview) window.pdfPreview.notifyUpdate('chapters');
   if (window.debouncedSaveState) window.debouncedSaveState();
 }
-
 function handleChapterUpload(e, id) {
   const f = e.target.files[0];
   if (!f) return;
-
   const ch = S.chapters.find(x => x.id === id);
   const idx = S.chapters.findIndex(x => x.id === id);
   if (!ch) return;
@@ -95,24 +86,20 @@ function handleChapterUpload(e, id) {
     e.target.value = '';
     return;
   }
-
   const sizeStr = (f.size / 1024).toFixed(1) + ' KB';
   if (f.type !== 'application/pdf') {
     toast('Please upload a PDF file.', 'error');
     return;
   }
-
   ch.fileName = f.name;
   ch.fileSize = 'Processing PDF...';
   renderChapters();
-
   if (typeof renderPdfToImages !== 'function') {
     toast('PDF engine not loaded yet', 'error');
     ch.fileSize = 'Error (Engine not loaded)';
     renderChapters();
     return;
   }
-
   renderPdfToImages(f, (err, imgs) => {
     if (err) {
       console.error(err);
@@ -130,7 +117,6 @@ function handleChapterUpload(e, id) {
     if (window.debouncedSaveState) window.debouncedSaveState();
   });
 }
-
 function deleteChapterFile(id) {
   const ch = S.chapters.find(x => x.id === id);
   const idx = S.chapters.findIndex(x => x.id === id);
@@ -147,7 +133,6 @@ function deleteChapterFile(id) {
   if (window.debouncedSaveState) window.debouncedSaveState();
   toast('Chapter PDF removed', 'success');
 }
-
 window.deleteChapterFile = deleteChapterFile;
 window.handleChapterUpload = handleChapterUpload;
 window.addChapter = addChapter;

@@ -26,12 +26,10 @@ function renderSignatures() {
       </div>
     </div>`;
   }).join('');
-  
   const pendingCountEl = document.getElementById('sb-pending-sigs');
   if (pendingCountEl) pendingCountEl.textContent=S.signatures.filter(s=>!s.signed).length;
   initLucide();
 }
-
 function openSign(id) {
   const s=S.signatures.find(x=>x.id===id);
   document.getElementById('sign-modal-title').textContent=`Sign — ${s.role}`;
@@ -59,24 +57,20 @@ function openSign(id) {
   initSignaturePad();
   initLucide();
 }
-
 let sigCanvas, sigCtx, isSigDrawing = false;
 function initSignaturePad(canvasId = 'signature-pad') {
   sigCanvas = document.getElementById(canvasId);
   if(!sigCanvas) return;
   sigCtx = sigCanvas.getContext('2d');
   clearSignatureCanvas();
-
   sigCanvas.onmousedown = (e) => { isSigDrawing = true; drawSig(e); };
   sigCanvas.onmouseup = () => { isSigDrawing = false; sigCtx.beginPath(); };
   sigCanvas.onmousemove = drawSig;
   sigCanvas.onmouseout = () => { isSigDrawing = false; sigCtx.beginPath(); };
-
   sigCanvas.ontouchstart = (e) => { e.preventDefault(); isSigDrawing = true; drawSig(e.touches[0]); };
   sigCanvas.ontouchend = (e) => { e.preventDefault(); isSigDrawing = false; sigCtx.beginPath(); };
   sigCanvas.ontouchmove = (e) => { e.preventDefault(); drawSig(e.touches[0]); };
 }
-
 function drawSig(e) {
   if(!isSigDrawing) return;
   const rect = sigCanvas.getBoundingClientRect();
@@ -84,23 +78,19 @@ function drawSig(e) {
   const scaleY = sigCanvas.height / rect.height;
   const x = (e.clientX - rect.left) * scaleX;
   const y = (e.clientY - rect.top) * scaleY;
-  
   sigCtx.lineWidth = 3;
   sigCtx.lineCap = 'round';
   sigCtx.strokeStyle = document.documentElement.classList.contains('dark') ? '#ffffff' : '#0d1d36';
-  
   sigCtx.lineTo(x, y);
   sigCtx.stroke();
   sigCtx.beginPath();
   sigCtx.moveTo(x, y);
 }
-
 function clearSignatureCanvas() {
   if(!sigCtx) return;
   sigCtx.clearRect(0,0,sigCanvas.width, sigCanvas.height);
   sigCtx.beginPath();
 }
-
 function doSign() {
   const otp=document.getElementById('sign-otp').value;
   if (otp!=='123456') { toast('Invalid OTP. Demo: 123456','error'); return; }
@@ -115,8 +105,6 @@ function doSign() {
   }
   closeModal('modal-sign');
   renderSignatures(); renderFinalChecklist();
-  
-  // Persist state forcefully to save signatures (bypassing role block)
   if (S.activeProject && S.activeProject.id) {
     const stateSnapshot = {
       frontMatter: S.frontMatter, chapters: S.chapters, plates: S.plates, graphs: S.graphs,
@@ -141,7 +129,6 @@ function doSign() {
     toast('Signed successfully (Local).','success');
   }
 }
-
 function renderFinalChecklist() {
   const el=document.getElementById('final-checklist'); if(!el) return;
   const sigs=S.signatures.filter(s=>s.signed).length;
@@ -177,7 +164,6 @@ function renderFinalChecklist() {
   if (typeof updateFinalPdfAdminUI === 'function') updateFinalPdfAdminUI();
   initLucide();
 }
-
 function renderWorkflowChecklist() {
   const el=document.getElementById('workflow-checklist'); if(!el) return;
   const items=[

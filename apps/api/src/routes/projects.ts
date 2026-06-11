@@ -23,6 +23,23 @@ function visibleWhere(userRole: Role, district?: string | null) {
   return {};
 }
 
+function readProjectState(projectState?: string | null) {
+  if (!projectState) return {};
+  try {
+    const parsed = JSON.parse(projectState);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function phaseProjectName(source: { projectName: string; district?: string | null; phaseNo: number }, nextPhaseNo: number, title?: string) {
+  if (title && title.trim()) return title.trim();
+  const district = source.district || "Punjab";
+  const base = source.projectName.replace(/\s+-\s+Phase\s+\d+$/i, "");
+  return `${base || `District Survey Report - ${district}`} - Phase ${nextPhaseNo}`;
+}
+
 projectsRouter.get("/", async (req, res) => {
   const projects = await prisma.project.findMany({
     where: visibleWhere(req.user!.role, req.user!.district),
@@ -87,6 +104,130 @@ projectsRouter.post("/", async (req, res) => {
   });
 
   res.status(201).json(jsonSafe(toProjectDto(created)));
+});
+
+projectsRouter.post("/:id/phases", async (req, res) => {
+  if (!canAdmin(req.user!.role)) {
+    res.status(403).json({ error: "Only Administrators can initiate the next phase." });
+    return;
+  }
+
+  const id = parseBigIntParam(req.params.id, res, "source phase id");
+  if (!id) return;
+
+  const source = await prisma.project.findUnique({
+    where: { id },
+    include: { files: true }
+  });
+  if (!source) {
+    res.status(404).json({ error: "Source DSR phase not found" });
+    return;
+  }
+
+  const nextPhaseNo = Math.max(2, Number(req.body?.phaseNo || source.phaseNo + 1));
+  const uploadColor = String(req.body?.uploadColor || "#34C759");
+  const importedAt = new Date().toISOString();
+  const sourceState = readProjectState(source.projectState);
+  const sourcePhaseMeta =
+    sourceState.phaseMetadata && typeof sourceState.phaseMetadata === "object" && !Array.isArray(sourceState.phaseMetadata)
+      ? sourceState.phaseMetadata
+      : {};
+
+  const lockedSourceState = {
+    ...sourceState,
+    phaseMetadata: {
+      ...sourcePhaseMeta,
+      phaseNo: source.phaseNo || 1,
+      locked: true,
+      lockedAt: importedAt,
+      lockedReason: `Phase ${nextPhaseNo} initiated`
+    }
+  };
+
+  const nextState = {
+    ...sourceState,
+    phaseMetadata: {
+      phaseNo: nextPhaseNo,
+      parentPhaseId: Number(source.id),
+      parentPhaseTitle: source.title || source.projectName,
+      parentPhaseNo: source.phaseNo || 1,
+      importedAt,
+      locked: false,
+      defaultUploadColor: uploadColor,
+      origin: "PHASE_IMPORTED"
+    },
+    phaseChangeLog: [
+      {
+        type: "PHASE_CREATED",
+        section: "Project",
+        label: `Imported data from Phase ${source.phaseNo || 1}`,
+        color: "#94A3B8",
+        at: importedAt,
+        by: Number(req.user!.id)
+      }
+    ]
+  };
+
+  const created = await prisma.$transaction(async (tx) => {
+    await tx.project.update({
+      where: { id: source.id },
+      data: {
+        phaseLocked: true,
+        projectState: JSON.stringify(lockedSourceState)
+      }
+    });
+
+    const nextProject = await tx.project.create({
+      data: {
+        projectName: phaseProjectName(source, nextPhaseNo, req.body?.title),
+        title: phaseProjectName(source, nextPhaseNo, req.body?.title),
+        district: source.district,
+        year: source.year,
+        mineral: source.mineral,
+        rivers: source.rivers,
+        description: source.description,
+        progress: 0,
+        status: ProjectStatus.IN_PROGRESS,
+        signatures: 0,
+        phaseNo: nextPhaseNo,
+        parentPhaseId: source.id,
+        phaseLocked: false,
+        phaseOrigin: `Imported from project ${source.id} / Phase ${source.phaseNo || 1}`,
+        createdBy: req.user!.id,
+        projectState: JSON.stringify(nextState)
+      }
+    });
+
+    if (source.files.length) {
+      await tx.dsrFile.createMany({
+        data: source.files.map((file) => ({
+          projectId: nextProject.id,
+          annexureId: file.annexureId,
+          fileName: file.fileName,
+          objectKey: file.objectKey,
+          contentType: file.contentType,
+          sizeBytes: file.sizeBytes
+        })),
+        skipDuplicates: true
+      });
+    }
+
+    await tx.workflowHistory.create({
+      data: {
+        reportId: nextProject.id,
+        action: "PROJECT_PHASE_INITIATED",
+        remarks: `Phase ${nextPhaseNo} created from Phase ${source.phaseNo || 1} (${source.district || "Punjab"})`,
+        performedBy: req.user!.id
+      }
+    });
+
+    return tx.project.findUnique({
+      where: { id: nextProject.id },
+      include: { files: true }
+    });
+  });
+
+  res.status(201).json(jsonSafe(toProjectDto(created!)));
 });
 
 projectsRouter.get("/:id", async (req, res) => {

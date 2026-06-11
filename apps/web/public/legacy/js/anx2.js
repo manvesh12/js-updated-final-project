@@ -1,12 +1,9 @@
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    ANNEXURE II â€” MINING LEASES
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-
-// --- 1. TEMPLATE DOWNLOAD ---
 function downloadSectionTemplateAnx2(sectionType) {
   let csvContent = "";
   let filename = "";
-
   switch(sectionType) {
     case 'A':
       csvContent = "River Details,Sand Bar Code,Lease Details,Area (Ha),Latitude,Longitude,Distance from PA/WC (KM),Mining leases within 500m (Yes/No),Bulk Density (gm/cc),Depth of Deposits (m),Total Excavation (MT/YR),Total Excavation (Net 60%),Mineral to be mined,Existing/Proposed,Remarks\n";
@@ -25,7 +22,6 @@ function downloadSectionTemplateAnx2(sectionType) {
       filename = "Table_D_MSand_Template.csv";
       break;
   }
-
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
@@ -36,17 +32,13 @@ function downloadSectionTemplateAnx2(sectionType) {
   link.click();
   document.body.removeChild(link);
 }
-
-// --- 2. EXCEL UPLOAD PARSING ---
 function handleSectionUploadAnx2(event, sectionType) {
   const file = event.target.files[0];
   if (!file) return;
-
   const input = event.target;
   const sectionBlock = input.closest('.anx-section') || input.closest('.section-a-block');
   const table = sectionBlock ? sectionBlock.querySelector('table') : null;
   const targetTableId = table ? table.id : '';
-
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
@@ -54,12 +46,10 @@ function handleSectionUploadAnx2(event, sectionType) {
       const workbook = XLSX.read(data, { type: 'array' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-      
       if (rows.length === 0) {
         toast("The uploaded file is empty.", "warn");
         return;
       }
-
       processExcelDataAnx2(rows, sectionType, targetTableId);
     } catch (error) {
       toast("Error parsing file. Please ensure it is a valid Excel or CSV file.", "error");
@@ -69,11 +59,9 @@ function handleSectionUploadAnx2(event, sectionType) {
   };
   reader.readAsArrayBuffer(file);
 }
-
 function processExcelDataAnx2(rows, sectionType, tableId) {
   const validRows = rows.filter(row => row.some(cell => String(cell !== undefined && cell !== null ? cell : "").trim() !== ""));
   let startIndex = 0;
-
   const headerIdx = validRows.findIndex(row => {
     const rowStr = row.map(c => String(c || '')).join(' ').toLowerCase();
     if (sectionType === 'A') return rowStr.includes('lease') || rowStr.includes('river');
@@ -82,33 +70,26 @@ function processExcelDataAnx2(rows, sectionType, tableId) {
     if (sectionType === 'D') return rowStr.includes('plant') || rowStr.includes('msand');
     return false;
   });
-
   if (headerIdx >= 0) {
     startIndex = headerIdx + 1;
   }
-
   const dataRows = validRows.slice(startIndex);
-  
   if (dataRows.length === 0) {
     toast("No data found after the header in the uploaded file.", "warn");
     return;
   }
-  
   if (!tableId) {
     if (sectionType === 'A') tableId = 'anx2-leases';
     if (sectionType === 'B') tableId = 'anx2-patta';
     if (sectionType === 'C') tableId = 'anx2-desilt';
     if (sectionType === 'D') tableId = 'anx2-msand';
   }
-
   const uploadRows = [];
   dataRows.forEach((rowData, index) => {
     while (rowData.length < 18) rowData.push(""); 
-
     const isReadOnly = isUserReadOnly();
     let cellDataArray = [];
     const actionBtn = `<button class='btn btn-xs btn-danger' onclick='delRowAnx2(this)' style='display:${isReadOnly ? 'none' : 'inline-flex'};align-items:center;justify-content:center;padding:4px;'><i data-lucide='trash-2' style='width:12px;height:12px;'></i></button>`;
-
     if (sectionType === 'A') {
       let slNo = String(index + 1);
       let area = parseFloat(rowData[3]) || 0; 
@@ -117,10 +98,8 @@ function processExcelDataAnx2(rows, sectionType, tableId) {
       let gross = area * 10000 * depth * bulkDensity;
       let net = gross * 0.60;
       let withinVal = String(rowData[7] || "").trim();
-      
       let epVal = String(rowData[13] || "").trim().toLowerCase();
       let epSelect = `<select ${isReadOnly ? 'disabled' : ''}><option ${epVal === 'existing' || epVal !== 'proposed' ? 'selected' : ''}>Existing</option><option ${epVal === 'proposed' ? 'selected' : ''}>Proposed</option></select>`;
-
       cellDataArray = [
         slNo,
         rowData[0], // River Details
@@ -148,7 +127,6 @@ function processExcelDataAnx2(rows, sectionType, tableId) {
       let mineral = Math.round(reserve * 0.60);
       let epVal = String(rowData[10] || "").trim().toLowerCase();
       let epSelect = `<select ${isReadOnly ? 'disabled' : ''}><option ${epVal === 'existing' || epVal !== 'proposed' ? 'selected' : ''}>Existing</option><option ${epVal === 'proposed' ? 'selected' : ''}>Proposed</option></select>`;
-
       cellDataArray = [
         slNo,
         rowData[0], // Owner
@@ -169,7 +147,6 @@ function processExcelDataAnx2(rows, sectionType, tableId) {
     else if (sectionType === 'C') {
       let epVal = String(rowData[9] || "").trim().toLowerCase();
       let epSelect = `<select ${isReadOnly ? 'disabled' : ''}><option ${epVal === 'existing' || epVal !== 'proposed' ? 'selected' : ''}>Existing</option><option ${epVal === 'proposed' ? 'selected' : ''}>Proposed</option></select>`;
-
       cellDataArray = [
         rowData[0], // Name of Reservoir/Dams
         rowData[1], // Maintain/Controlled by
@@ -187,7 +164,6 @@ function processExcelDataAnx2(rows, sectionType, tableId) {
     else if (sectionType === 'D') {
       let epVal = String(rowData[7] || "").trim().toLowerCase();
       let epSelect = `<select ${isReadOnly ? 'disabled' : ''}><option ${epVal === 'existing' || epVal !== 'proposed' ? 'selected' : ''}>Existing</option><option ${epVal === 'proposed' ? 'selected' : ''}>Proposed</option></select>`;
-
       cellDataArray = [
         rowData[0], // Plant Name
         rowData[1], // Owner
@@ -209,26 +185,20 @@ function processExcelDataAnx2(rows, sectionType, tableId) {
     tbody.innerHTML = '';
     uploadRows.forEach(row => addRowAnx2(tableId, row));
   }
-
   if (sectionType === 'B') updatePattaGrandTotals();
   if (sectionType === 'C') updateDesiltGrandTotals();
-
   toast(`Uploaded section ${sectionType} data successfully`, 'success');
 }
-
 function addRowAnx2(tableId, cellDataArray) {
   const tbody = document.querySelector('#' + tableId + ' tbody');
   if (!tbody) return;
   const tr = document.createElement('tr');
-  
   cellDataArray.forEach((data, index) => {
     const td = document.createElement('td');
     let dataStr = String(data !== undefined && data !== null ? data : '').trim();
-
     if (dataStr === '' && !dataStr.includes('<button') && !dataStr.includes('<select')) {
       dataStr = 'NUL';
     }
-
     if (!dataStr.includes('<button') && !dataStr.includes('<select')) {
       if (isUserReadOnly()) {
         td.contentEditable = "false";
@@ -238,8 +208,6 @@ function addRowAnx2(tableId, cellDataArray) {
         td.contentEditable = "true";
       }
       td.textContent = dataStr;
-      
-      // Bind calculations on input:
       if (tableId.startsWith('anx2-leases')) {
         if (index === 4 || index === 9 || index === 10) {
           td.addEventListener('input', function() { calcLeaseRow(this); });
@@ -258,8 +226,6 @@ function addRowAnx2(tableId, cellDataArray) {
     }
     tr.appendChild(td);
   });
-  
-  // Add dynamic class hooks for computation columns
   if (tableId.startsWith('anx2-leases')) {
     tr.children[11].classList.add('calc-total');
     tr.children[12].classList.add('calc-net');
@@ -275,44 +241,33 @@ function addRowAnx2(tableId, cellDataArray) {
   else if(tableId === 'anx2-desilt') {
     tr.children[7].addEventListener('input', updateDesiltGrandTotals);
   }
-
   tbody.appendChild(tr);
   if (window.initLucide) window.initLucide();
 }
-
-// --- 3. DYNAMIC CALCULATIONS ---
 function calcLeaseRow(element) {
   const row = element.closest('tr');
   const cells = row.cells;
   const area = parseFloat(cells[4].innerText) || 0;
   const bulkDensity = parseFloat(cells[9].innerText) || 0;
   const depth = parseFloat(cells[10].innerText) || 0;
-  
-  // Formula: Area * Bulk Density * Depth * 10000
   const gross = area * 10000 * depth * bulkDensity;
   const net = gross * 0.60;
-  
   cells[11].innerText = gross > 0 ? gross.toFixed(2) : "0.00";
   cells[12].innerText = net > 0 ? net.toFixed(2) : "0.00";
 }
-
 function calcPattaRow(element) {
   const row = element.closest('tr');
   const cells = row.cells;
   const area = parseFloat(cells[3].innerText) || 0;
   const reserve = Math.round(area * 10000 * 3 * 1.52);
   const mineral = Math.round(reserve * 0.60);
-  
   cells[9].innerText = reserve;
   cells[10].innerText = mineral;
-  
   updatePattaGrandTotals();
 }
-
 function calcDesiltRow(element) {
   updateDesiltGrandTotals();
 }
-
 function updatePattaGrandTotals() {
   const table = document.getElementById('anx2-patta');
   if (!table) return;
@@ -322,20 +277,16 @@ function updatePattaGrandTotals() {
     resSum += parseFloat(tr.querySelector('.p-reserve')?.innerText || tr.children[9].innerText) || 0;
     minSum += parseFloat(tr.querySelector('.p-min')?.innerText || tr.children[10].innerText) || 0;
   });
-  
   const sumAreaEl = document.getElementById('patta-sum-area');
   const sumReserveEl = document.getElementById('patta-sum-reserve');
   const sumMineralEl = document.getElementById('patta-sum-mineral');
-  
   if (sumAreaEl) sumAreaEl.innerText = areaSum.toFixed(2);
   if (sumReserveEl) sumReserveEl.innerText = resSum.toFixed(0);
   if (sumMineralEl) sumMineralEl.innerText = minSum.toFixed(2);
 }
-
 function updatePattaTotals() {
   updatePattaGrandTotals();
 }
-
 function updateDesiltGrandTotals() {
   const table = document.getElementById('anx2-desilt');
   if (!table) return;
@@ -343,15 +294,12 @@ function updateDesiltGrandTotals() {
   table.querySelectorAll('tbody tr').forEach(tr => {
     sizeSum += parseFloat(tr.children[7].innerText) || 0;
   });
-  
   const sumSizeEl = document.getElementById('desilt-sum-size');
   if (sumSizeEl) sumSizeEl.innerText = sizeSum.toFixed(2);
 }
-
 function updateDesiltTotals() {
   updateDesiltGrandTotals();
 }
-
 function delRowAnx2(btn) {
   const table = btn.closest('table');
   const tableId = table.id;
@@ -362,66 +310,44 @@ function delRowAnx2(btn) {
     updateDesiltGrandTotals();
   }
 }
-
 function addNewLeaseRow(btn) {
   const tableId = btn.closest('.anx-section').querySelector('table').id;
   const isReadOnly = isUserReadOnly();
   addRowAnx2(tableId, ['', '', '', '', '0', '', '', '', '', '1.54', '3.00', '0.00', '0.00', 'Sand', `<select ${isReadOnly ? 'disabled' : ''}><option>Existing</option><option>Proposed</option></select>`, '', `<button class='btn btn-xs btn-danger' onclick='delRowAnx2(this)' style='display:${isReadOnly ? 'none' : 'inline-flex'};align-items:center;justify-content:center;padding:4px;'><i data-lucide='trash-2' style='width:12px;height:12px;'></i></button>`]);
 }
-
 let sectionACount = 1;
 function addSectionABlock() {
   sectionACount++;
   const wrapper = document.getElementById('section-a-wrapper');
   const originalBlock = wrapper.querySelector('.section-a-block'); 
   const newBlock = originalBlock.cloneNode(true);
-  
-  // Ensure remove button is visible on cloned blocks
   newBlock.querySelector('.rm-sec-a-btn').style.display = 'inline-flex';
-  
-  // Update title to indicate it's a new page/block
   const title = newBlock.querySelector('.anx-section-title');
   title.innerText = `a) Potential Mining Leases (Existing & Proposed) Rivers - Table ${sectionACount}:`;
-  
-  // Update table ID dynamically
   const newTable = newBlock.querySelector('table');
   newTable.id = 'anx2-leases-' + sectionACount;
-  
-  // Clear tbody content from the clone
   const tbody = newTable.querySelector('tbody');
   tbody.innerHTML = '';
-  
   wrapper.appendChild(newBlock);
-  
-  // Automatically add 1 empty default row
   addNewLeaseRow(newBlock.querySelector('.section-footer button'));
 }
-
-// -- Helper to extract text from contenteditable including newlines correctly --
 function getCellText(td) {
   const select = td.querySelector('select');
   if (select) return select.value;
   return td.innerText.trim();
 }
-
-// --- 4. LANDSCAPE PAGINATED PDF GENERATOR (NATIVE jsPDF + AutoTable) ---
 function exportAnx2PDF(btn, isLivePreview = false) {
   const { jsPDF } = window.jspdf;
-  // Landscape orientation, pt unit, A4 size
   const doc = new jsPDF('l', 'pt', 'a4'); 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  
   let startY = 80;
-
-  // Generic Header/Footer Function
   const drawHeaderFooter = (data) => {
     doc.setFont("times", "normal");
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.text("Page " + data.pageNumber, pageWidth / 2, pageHeight - 20, { align: "center" });
   };
-
   const extractData = (tableId) => {
     const tbl = document.getElementById(tableId);
     const headers = Array.from(tbl.querySelectorAll('thead th')).slice(0, -1).map(th => th.innerText.trim().replace(/\n/g, ' '));
@@ -436,34 +362,26 @@ function exportAnx2PDF(btn, isLivePreview = false) {
     });
     return { headers, rows };
   };
-
-  // --- PAGE 1: Mining Leases (Dynamic multiple pages) ---
   const sectionABlocks = document.querySelectorAll('.section-a-block');
-  
   sectionABlocks.forEach((block, index) => {
     if (index > 0) {
       doc.addPage();
       startY = 80;
     }
-    
     if (index === 0) {
       doc.setFont("times", "bold");
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0);
       doc.text("Annexure-II", pageWidth - 40, 55, { align: "right" }); // Top right annexure label
     }
-
     doc.setFont("times", "bold");
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
-    
     const titleExt = sectionABlocks.length > 1 ? ` (Table ${index + 1})` : '';
     doc.text(`> List of Potential Mining Leases (Existing & Proposed) Rivers${titleExt}:`, 40, startY);
     startY += 15;
-
     const tableId = block.querySelector('table').id;
     const leaseData = extractData(tableId);
-    
     doc.autoTable({
       startY: startY,
       head: [leaseData.headers],
@@ -477,20 +395,14 @@ function exportAnx2PDF(btn, isLivePreview = false) {
       },
       didDrawPage: (data) => drawHeaderFooter(data)
     });
-    
     startY = doc.lastAutoTable.finalY + 15;
   });
-
-  // --- PAGE 2: Patta, Desiltation, M-Sand ---
   doc.addPage();
   startY = 80;
-
-  // 1. Patta Lands
   doc.setFont("times", "bold");
   doc.setFontSize(11);
   doc.text("> Patta Lands/Khatedari Land: (Existing & Proposed):", 40, startY);
   startY += 15;
-
   const pattaData = extractData('anx2-patta');
   doc.autoTable({
     startY: startY,
@@ -510,19 +422,15 @@ function exportAnx2PDF(btn, isLivePreview = false) {
     footStyles: { fillColor: false, fontStyle: 'bold', textColor: 0 },
     didDrawPage: (data) => drawHeaderFooter(data)
   });
-
   startY = doc.lastAutoTable.finalY + 15;
   doc.setFont("times", "italic");
   doc.setFontSize(9);
   doc.text("(Reference: Table of the Proforma for the district of Jalandhar , Page no 560 -563 )", pageWidth - 40, startY, {align: 'right'});
   startY += 20;
-
-  // 2. De-Siltation
   doc.setFont("times", "bold");
   doc.setFontSize(11);
   doc.text("> De-Siltation Location: (Lakes/Ponds/Dams etc.) (Existing & Proposed)", 40, startY);
   startY += 15;
-
   const desiltData = extractData('anx2-desilt');
   doc.autoTable({
     startY: startY,
@@ -538,17 +446,13 @@ function exportAnx2PDF(btn, isLivePreview = false) {
     headStyles: { fillColor: false, fontStyle: 'bold', textColor: 0 },
     footStyles: { fillColor: false, fontStyle: 'bold', textColor: 0 }
   });
-
   startY = doc.lastAutoTable.finalY + 15;
   doc.setFont("times", "bold");
   doc.text("Note: The quantity of De-silting shall be assessed as per actual site conditions at the time of de-silting and got approved from the competent authority.", pageWidth / 2, startY, {align: 'center'});
   startY += 30;
-
-  // 3. M-Sand Plants
   doc.setFontSize(11);
   doc.text("> M-Sand Plants : ( Existing & Proposed)", 40, startY);
   startY += 15;
-
   const msandData = extractData('anx2-msand');
   doc.autoTable({
     startY: startY,
@@ -559,8 +463,6 @@ function exportAnx2PDF(btn, isLivePreview = false) {
     headStyles: { fillColor: false, fontStyle: 'bold', textColor: 0 },
     margin: { left: doc.internal.pageSize.getWidth()/2 - 300, right: doc.internal.pageSize.getWidth()/2 - 300 } 
   });
-
-  // Save PDF
   if (isLivePreview) {
     const blob = doc.output('blob');
     const blobUrl = URL.createObjectURL(blob);
@@ -571,9 +473,6 @@ function exportAnx2PDF(btn, isLivePreview = false) {
     toast('PDF downloaded successfully!', 'success');
   }
 }
-
-// --- 5. HANDLE PDF UPLOAD & PREVIEW ---
-// --- 5. HANDLE PDF UPLOAD & PREVIEW ---
 function renderPdfUploadUIAnx2() {
   const nameEl = document.getElementById('anx2-uploaded-filename');
   const dlBtn = document.getElementById('anx2-download-btn');
@@ -581,9 +480,7 @@ function renderPdfUploadUIAnx2() {
   const previewBtn = document.getElementById('anx2-preview-btn');
   const previewSection = document.getElementById('pdf-preview-section-anx2');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx2') : document.getElementById('pdf-iframe-anx2'));
-  
   if (!nameEl || !dlBtn) return;
-
   if (!S.activeProject) {
     nameEl.style.display = 'none';
     dlBtn.style.display = 'none';
@@ -592,9 +489,7 @@ function renderPdfUploadUIAnx2() {
     if (previewSection) previewSection.style.display = 'none';
     return;
   }
-
   const pdfName = S.activeProject.anx2PdfName;
-
   if (!pdfName) {
     nameEl.style.display = 'none';
     dlBtn.style.display = 'none';
@@ -610,7 +505,6 @@ function renderPdfUploadUIAnx2() {
     dlBtn.style.display = 'inline-flex';
     if (delBtn) delBtn.style.display = !isUserReadOnly() ? 'inline-flex' : 'none';
     if (previewBtn) previewBtn.style.display = 'inline-flex';
-    
     if (previewSection && previewSection.style.display === 'block' && iframe) {
       if (S.activeProject.pdfData && S.activeProject.pdfData.anx2) {
         if (iframe.src !== S.activeProject.pdfData.anx2) {
@@ -619,16 +513,13 @@ function renderPdfUploadUIAnx2() {
       }
     }
   }
-
   if (window.initLucide) window.initLucide();
 }
 window.renderPdfUploadUIAnx2 = renderPdfUploadUIAnx2;
-
 function togglePDFPreviewAnx2() {
   const previewSection = document.getElementById('pdf-preview-section-anx2');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx2') : document.getElementById('pdf-iframe-anx2'));
   if (!previewSection || !iframe) return;
-
   if (previewSection.style.display === 'block') {
     previewSection.style.display = 'none';
     if (iframe.src.startsWith('blob:')) {
@@ -644,15 +535,11 @@ function togglePDFPreviewAnx2() {
     }
   }
 }
-
 async function deletePdfAnx2() {
   if (!S.activeProject) return;
-  
   if (!confirm("Are you sure you want to delete the uploaded PDF? This will remove the file from the server.")) {
     return;
   }
-  
-  // Hide preview and clear iframe first to release Windows file lock
   const previewSection = document.getElementById('pdf-preview-section-anx2');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx2') : document.getElementById('pdf-iframe-anx2'));
   if (previewSection) previewSection.style.display = 'none';
@@ -662,9 +549,7 @@ async function deletePdfAnx2() {
     }
     iframe.src = 'about:blank';
   }
-
   toast("Deleting PDF...", "info");
-  
   S.activeProject.anx2PdfName = null;
   if (S.activeProject.pdfData) {
     if (S.activeProject.pdfData.anx2 && S.activeProject.pdfData.anx2.startsWith('blob:')) {
@@ -672,29 +557,23 @@ async function deletePdfAnx2() {
     }
     S.activeProject.pdfData.anx2 = null;
   }
-  
   const pIdx = S.projects.findIndex(p => p.id === S.activeProject.id);
   if (pIdx !== -1) {
     S.projects[pIdx].anx2PdfName = null;
     if (S.projects[pIdx].pdfData) S.projects[pIdx].pdfData.anx2 = null;
   }
-  
   renderPdfUploadUIAnx2();
   toast("PDF deleted successfully.", "success");
 }
-
 function handlePDFUploadAnx2(event) {
   const file = event.target.files[0];
   if (!file) return;
-
   if (!file.name.toLowerCase().endsWith('.pdf')) {
     toast('Error: Only PDF files are allowed.', 'danger');
     event.target.value = '';
     return;
   }
-
   toast('Uploading PDF...', 'info');
-
   const fileURL = URL.createObjectURL(file);
   S.activeProject.anx2PdfName = file.name;
   if (!S.activeProject.pdfData) S.activeProject.pdfData = {};
@@ -702,7 +581,6 @@ function handlePDFUploadAnx2(event) {
   if (window.storeProjectPdf) {
     window.storeProjectPdf('anx2', file).catch(err => console.error('Backend PDF upload failed:', err));
   }
-
   if (window.renderPdfToImages) {
     window.renderPdfToImages(file, (err, imgs) => {
       if (!err && imgs) {
@@ -712,28 +590,23 @@ function handlePDFUploadAnx2(event) {
       }
     });
   }
-
   const pIdx = S.projects.findIndex(p => p.id === S.activeProject.id);
   if (pIdx !== -1) {
     S.projects[pIdx].anx2PdfName = file.name;
     if (!S.projects[pIdx].pdfData) S.projects[pIdx].pdfData = {};
     S.projects[pIdx].pdfData.anx2 = fileURL;
   }
-  
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx2') : document.getElementById('pdf-iframe-anx2'));
   if (iframe) {
     iframe.src = fileURL;
   }
-  
   renderPdfUploadUIAnx2();
   toast('PDF uploaded and preview loaded!', 'success');
   event.target.value = '';
 }
-
 function closePDFPreviewAnx2() {
   const previewSection = document.getElementById('pdf-preview-section-anx2');
   const iframe = (window.getAnnexurePreviewIframe ? window.getAnnexurePreviewIframe('anx2') : document.getElementById('pdf-iframe-anx2'));
-  
   if (previewSection) previewSection.style.display = 'none';
   if (iframe) {
     if (iframe.src.startsWith('blob:')) {
@@ -742,7 +615,6 @@ function closePDFPreviewAnx2() {
     iframe.src = 'about:blank';
   }
 }
-
 function downloadPdfAnx2() {
   if (!S.activeProject) {
     toast('Please select and open a project first.', 'warn');
@@ -764,8 +636,6 @@ function downloadPdfAnx2() {
   a.click();
   document.body.removeChild(a);
 }
-
-// Auto Live Preview whenever the table changes
 document.addEventListener('input', (e) => {
   if (e.target.closest('#view-anx2 table')) {
     if (window.anx2DebounceTimer) clearTimeout(window.anx2DebounceTimer);
@@ -774,9 +644,6 @@ document.addEventListener('input', (e) => {
     }, 1500); // 1.5 seconds after typing stops
   }
 });
-
-
-
 document.addEventListener('change', (e) => {
   if (e.target.closest('#view-anx2 table')) {
     if (window.anx2DebounceTimer) clearTimeout(window.anx2DebounceTimer);
@@ -785,5 +652,4 @@ document.addEventListener('change', (e) => {
     }, 300);
   }
 });
-
 window.exportAnx2PDF = exportAnx2PDF;

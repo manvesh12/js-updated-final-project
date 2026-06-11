@@ -1,8 +1,6 @@
 /* ══════════════════════════════════════
    FRONT MATTER HANDLING
    ══════════════════════════════════════ */
-
-// Ensure state property exists
 if (!S.frontMatter) {
   S.frontMatter = {
     title: 'District Survey Report for Sand Mining',
@@ -16,17 +14,11 @@ if (!S.frontMatter) {
     acknowledgement: 'The Sub-Divisional Committee of Jalandhar District acknowledges the support of the Punjab State Government, Department of Geology and Mining, and all field surveyors who contributed to this report.'
   };
 }
-
-// Global functions matching inline HTML onclick/onchange handlers
 function trigUp(id) {
   const el = document.getElementById(id);
   if (el) el.click();
 }
-
-function syncPreview() {
-  console.log("Front Matter preview synced.");
-}
-
+function syncPreview() {}
 async function uploadFrontMatterPdfToBackend(type, file) {
   if (!file || file.type !== 'application/pdf') return;
   if (!window.S || !S.activeProject || !S.activeProject.id) {
@@ -37,7 +29,6 @@ async function uploadFrontMatterPdfToBackend(type, file) {
     console.warn('Backend PDF upload helper is not available.');
     return;
   }
-
   try {
     await window.storeProjectPdf(type, file);
     toast(`${file.name} saved to project storage.`, 'success');
@@ -46,7 +37,6 @@ async function uploadFrontMatterPdfToBackend(type, file) {
     toast(err.message || 'PDF preview updated, but server upload failed.', 'error');
   }
 }
-
 /**
  * Converts a PDF file into an array of image data URLs using PDF.js.
  * @param {File} file 
@@ -60,17 +50,13 @@ function renderPdfToImages(file, callback) {
       callback(new Error('PDF.js library is not loaded on this page.'), null);
       return;
     }
-
-    // Set up PDF.js worker if not already set
     if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     }
-
     pdfjsLib.getDocument(typedarray).promise.then(function (pdf) {
       const pageImages = [];
       let pagesRendered = 0;
       const numPages = pdf.numPages;
-
       function renderPage(pageNum) {
         pdf.getPage(pageNum).then(function (page) {
           const viewport = page.getViewport({ scale: 1.5 }); // High quality preview scale
@@ -78,14 +64,11 @@ function renderPdfToImages(file, callback) {
           const context = canvas.getContext('2d');
           canvas.height = viewport.height;
           canvas.width = viewport.width;
-
           const renderContext = {
             canvasContext: context,
             viewport: viewport
           };
-
           page.render(renderContext).promise.then(function () {
-            // Convert page canvas to high-quality JPEG to minimize final PDF size
             const imgData = canvas.toDataURL('image/jpeg', 0.85);
             pageImages.push(imgData);
             pagesRendered++;
@@ -97,17 +80,14 @@ function renderPdfToImages(file, callback) {
           }).catch(err => callback(err, null));
         }).catch(err => callback(err, null));
       }
-
       renderPage(1);
     }).catch(err => callback(err, null));
   };
   fileReader.readAsArrayBuffer(file);
 }
-
 function handleFMUpload(e, type) {
   const f = e.target.files[0];
   if (!f) return;
-
   const el = document.getElementById(`fm-${type}-file`);
   if (el) {
     el.innerHTML = `
@@ -120,15 +100,12 @@ function handleFMUpload(e, type) {
         <span class="badge badge-green">✓ Ready</span>
       </div>`;
   }
-
-  // If PDF, convert pages to images and store in S.uploadedPDFs
   if (f.type === 'application/pdf') {
     uploadFrontMatterPdfToBackend(type, f);
     renderPdfToImages(f, (err, imgs) => {
       if (err) {
         console.error(err);
         toast('⚠️ PDF render failed, falling back to basic preview', 'error');
-        // Fallback: Store the blob URL
         const url = URL.createObjectURL(f);
         if (!S.uploadedPDFs) S.uploadedPDFs = {};
         S.uploadedPDFs[type] = [url];
@@ -143,7 +120,6 @@ function handleFMUpload(e, type) {
       if (window.debouncedSaveState) window.debouncedSaveState();
     });
   } else {
-    // Non-PDF files: store as object URL for preview
     const url = URL.createObjectURL(f);
     if (!S.uploadedPDFs) S.uploadedPDFs = {};
     S.uploadedPDFs[type] = [url];
@@ -152,47 +128,31 @@ function handleFMUpload(e, type) {
     if (window.debouncedSaveState) window.debouncedSaveState();
   }
 }
-
-// Populate UI form inputs from state
 function loadFrontMatter() {
-  // Sync from S.activeProject if selected
   if (S.activeProject) {
     S.frontMatter.district = S.activeProject.district || S.frontMatter.district;
     S.frontMatter.year = S.activeProject.year || S.frontMatter.year;
     S.frontMatter.title = S.activeProject.title || S.frontMatter.title;
   }
-
   const f = S.frontMatter;
-
-  // Hook up inputs directly with their explicit IDs
   const titleEl = document.getElementById('fm-title');
   if (titleEl) titleEl.value = f.title || '';
-
   const distEl = document.getElementById('fm-district');
   if (distEl) distEl.value = f.district || '';
-
   const yearEl = document.getElementById('fm-year');
   if (yearEl) yearEl.value = f.year || '';
-
   const prefaceEl = document.getElementById('fm-preface');
   if (prefaceEl) prefaceEl.value = f.preface || '';
-
   const stateEl = document.getElementById('fm-state');
   if (stateEl) stateEl.value = f.state || '';
-
   const versionEl = document.getElementById('fm-version');
   if (versionEl) versionEl.value = f.version || '';
-
   const prepEl = document.getElementById('fm-prepared-by');
   if (prepEl) prepEl.value = f.preparedBy || '';
-
   const assistEl = document.getElementById('fm-assisted-by');
   if (assistEl) assistEl.value = f.assistedBy || '';
-
   const ackEl = document.getElementById('fm-acknowledgement');
   if (ackEl) ackEl.value = f.acknowledgement || '';
-
-  // Clean up any old upload previews when reloading a project
   ['cover', 'cert', 'toc', 'pref'].forEach(type => {
     const el = document.getElementById(`fm-${type}-file`);
     if (el) {
@@ -212,13 +172,10 @@ function loadFrontMatter() {
     }
   });
 }
-
-// Sync back changes in UI fields to state
 function bindFrontMatterEvents() {
   const notifyFmPreview = () => {
     if (window.pdfPreview) window.pdfPreview.notifyUpdate('front-matter');
   };
-
   const titleEl = document.getElementById('fm-title');
   if (titleEl) {
     titleEl.addEventListener('input', (e) => {
@@ -227,19 +184,16 @@ function bindFrontMatterEvents() {
       notifyFmPreview();
     });
   }
-
   const distEl = document.getElementById('fm-district');
   if (distEl) {
     distEl.addEventListener('input', (e) => {
       S.frontMatter.district = e.target.value;
-      // Sync with topbar and active project
       const topBadge = document.getElementById('tb-district-badge');
       if (topBadge) topBadge.textContent = e.target.value;
       if (S.activeProject) S.activeProject.district = e.target.value;
       notifyFmPreview();
     });
   }
-
   const yearEl = document.getElementById('fm-year');
   if (yearEl) {
     yearEl.addEventListener('input', (e) => {
@@ -248,7 +202,6 @@ function bindFrontMatterEvents() {
       notifyFmPreview();
     });
   }
-
   const prefaceEl = document.getElementById('fm-preface');
   if (prefaceEl) {
     prefaceEl.addEventListener('input', (e) => {
@@ -256,7 +209,6 @@ function bindFrontMatterEvents() {
       notifyFmPreview();
     });
   }
-
   const stateEl = document.getElementById('fm-state');
   if (stateEl) {
     stateEl.addEventListener('input', (e) => {
@@ -264,7 +216,6 @@ function bindFrontMatterEvents() {
       notifyFmPreview();
     });
   }
-
   const versionEl = document.getElementById('fm-version');
   if (versionEl) {
     versionEl.addEventListener('input', (e) => {
@@ -272,7 +223,6 @@ function bindFrontMatterEvents() {
       notifyFmPreview();
     });
   }
-
   const prepEl = document.getElementById('fm-prepared-by');
   if (prepEl) {
     prepEl.addEventListener('input', (e) => {
@@ -280,7 +230,6 @@ function bindFrontMatterEvents() {
       notifyFmPreview();
     });
   }
-
   const assistEl = document.getElementById('fm-assisted-by');
   if (assistEl) {
     assistEl.addEventListener('input', (e) => {
@@ -288,7 +237,6 @@ function bindFrontMatterEvents() {
       notifyFmPreview();
     });
   }
-
   const ackEl = document.getElementById('fm-acknowledgement');
   if (ackEl) {
     ackEl.addEventListener('input', (e) => {
@@ -297,13 +245,8 @@ function bindFrontMatterEvents() {
     });
   }
 }
-
-// Hook into DOMContentLoaded
 window.addEventListener('DOMContentLoaded', () => {
-  // Bind inputs
   bindFrontMatterEvents();
-
-  // Hook loadFrontMatter to openProject using async/await to prevent race conditions
   const originalOpenProject = window.openProject;
   if (typeof originalOpenProject === 'function') {
     window.openProject = async function (id) {
@@ -311,8 +254,6 @@ window.addEventListener('DOMContentLoaded', () => {
       loadFrontMatter();
     };
   }
-
-  // Hook loadFrontMatter to showView
   const originalShowView = window.showView;
   if (typeof originalShowView === 'function') {
     window.showView = function (id, btn, push) {

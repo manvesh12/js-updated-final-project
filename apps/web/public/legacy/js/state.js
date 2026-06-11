@@ -9,13 +9,19 @@ const PUNJAB_DISTRICTS = [
   'Sangrur', 'Shaheed Bhagat Singh Nagar', 'Sri Muktsar Sahib', 'Tarn Taran'
 ];
 window.PUNJAB_DISTRICTS = PUNJAB_DISTRICTS;
-
 const S = {
   user: null,
   role: 'user',
   activeProject: null,
   pendingOTPsigId: null,
   projects: [],
+  phaseMetadata: {
+    phaseNo: 1,
+    parentPhaseId: null,
+    locked: false,
+    defaultUploadColor: '#34C759'
+  },
+  phaseChangeLog: [],
   chapters: [
     { id:1, name:'CHAPTER 1 — INTRODUCTION', summary:'Overview of the district and purpose of the DSR under EMGSM 2020 guidelines.' },
     { id:2, name:'CHAPTER 2 — OVERVIEW OF MINING ACTIVITIES IN THE DISTRICT', summary:'Current and historical sand mining activities, lease details, and district statistics.' },
@@ -89,25 +95,17 @@ const S = {
     acknowledgement: 'The Sub-Divisional Committee of Jalandhar District acknowledges the support of the Punjab State Government, Department of Geology and Mining, and all field surveyors who contributed to this report.'
   }
 };
-
 window.S = S;
-
-// Deep copy of the initial state to restore on logout
 const DEFAULT_STATE = JSON.parse(JSON.stringify(S));
-
 /**
  * Resets S to its original, fresh default properties.
  */
 function resetSState() {
   if (typeof S === 'undefined') return;
-  // Clear existing keys from S
   for (let key in S) {
     delete S[key];
   }
-  // Restore initial state attributes
   Object.assign(S, JSON.parse(JSON.stringify(DEFAULT_STATE)));
-  
-  // Clear any other session specific caches
   window.reviewerNotes = {};
   if (typeof clearActiveProject === 'function') {
     clearActiveProject();

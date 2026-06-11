@@ -7,9 +7,7 @@ const PORTAL_VENDOR_ASSETS = {
   pdfjs: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js',
   html2pdf: 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 };
-
 const portalVendorPromises = {};
-
 function loadPortalScript(src, key) {
   const id = key || src;
   if (portalVendorPromises[id]) return portalVendorPromises[id];
@@ -21,7 +19,6 @@ function loadPortalScript(src, key) {
     });
     return portalVendorPromises[id];
   }
-
   portalVendorPromises[id] = new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = src;
@@ -34,7 +31,6 @@ function loadPortalScript(src, key) {
   });
   return portalVendorPromises[id];
 }
-
 function ensurePortalVendor(name) {
   if (name === 'chart' && window.Chart) return Promise.resolve();
   if (name === 'xlsx' && window.XLSX) return Promise.resolve();
@@ -44,18 +40,15 @@ function ensurePortalVendor(name) {
   if (name === 'html2pdf' && window.html2pdf) return Promise.resolve();
   return loadPortalScript(PORTAL_VENDOR_ASSETS[name], name);
 }
-
 function ensurePortalVendors(names) {
   return names.reduce((chain, name) => chain.then(() => ensurePortalVendor(name)), Promise.resolve());
 }
-
 function runWhenIdle(fn, timeout = 1400) {
   if ('requestIdleCallback' in window) {
     return window.requestIdleCallback(fn, { timeout });
   }
   return window.setTimeout(fn, Math.min(timeout, 350));
 }
-
 function preloadPortalVendorsAfterLogin() {
   runWhenIdle(() => {
     ensurePortalVendor('xlsx').catch(() => {});
@@ -67,7 +60,6 @@ function preloadPortalVendorsAfterLogin() {
     ensurePortalVendors(['html2pdf', 'pdfjs']).catch(() => {});
   }, 3600);
 }
-
 function ensurePortalAssetsForView(viewId, done) {
   const required = [];
   if (viewId === 'graphs') required.push('chart');
@@ -75,7 +67,6 @@ function ensurePortalAssetsForView(viewId, done) {
     required.push('jspdf', 'autotable');
   }
   if (!required.length) return true;
-
   const ready = required.every(name => {
     if (name === 'chart') return !!window.Chart;
     if (name === 'jspdf') return !!window.jspdf;
@@ -83,7 +74,6 @@ function ensurePortalAssetsForView(viewId, done) {
     return false;
   });
   if (ready) return true;
-
   if (typeof toast === 'function') toast('Preparing section tools...', 'info');
   ensurePortalVendors(required)
     .then(() => {
@@ -95,7 +85,6 @@ function ensurePortalAssetsForView(viewId, done) {
     });
   return false;
 }
-
 document.addEventListener('pointerdown', event => {
   const target = event.target?.closest?.('button,label,.upload-zone,input[type="file"]');
   if (!target) return;
@@ -107,7 +96,6 @@ document.addEventListener('pointerdown', event => {
     ensurePortalVendors(['jspdf', 'autotable']).catch(() => {});
   }
 }, { capture: true, passive: true });
-
 document.addEventListener('change', event => {
   const input = event.target;
   if (!input || input.type !== 'file' || !input.files?.length) return;
@@ -115,7 +103,6 @@ document.addEventListener('change', event => {
   const accept = input.getAttribute('accept') || '';
   const isExcel = /\.(xlsx|xls|csv)$/i.test(fileName) || /xlsx|xls|csv/i.test(accept);
   if (!isExcel || window.XLSX) return;
-
   event.preventDefault();
   event.stopImmediatePropagation();
   ensurePortalVendor('xlsx')
@@ -127,14 +114,12 @@ document.addEventListener('change', event => {
       if (typeof toast === 'function') toast('Excel tools could not load. Please try again.', 'error');
     });
 }, { capture: true });
-
 document.addEventListener('click', event => {
   const target = event.target?.closest?.('button,a,label');
   if (!target || target.dataset.portalPdfReady === 'true') return;
   const text = `${target.textContent || ''} ${target.getAttribute('onclick') || ''}`.toLowerCase();
   const looksLikePdfAction = text.includes('pdf') || text.includes('generatefinal') || text.includes('download final');
   if (!looksLikePdfAction || (window.jspdf && window.html2pdf)) return;
-
   event.preventDefault();
   event.stopImmediatePropagation();
   if (typeof toast === 'function') toast('Preparing PDF tools...', 'info');
@@ -149,7 +134,6 @@ document.addEventListener('click', event => {
       if (typeof toast === 'function') toast('PDF tools could not load. Please try again.', 'error');
     });
 }, { capture: true });
-
 window.ensurePortalVendor = ensurePortalVendor;
 window.ensurePortalVendors = ensurePortalVendors;
 window.ensurePortalAssetsForView = ensurePortalAssetsForView;

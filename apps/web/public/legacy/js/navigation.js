@@ -5,7 +5,6 @@ let viewHistory = [];
 let currentViewId = 'dashboard';
 let isSidebarPinned = false;
 let sidebarTimer;
-
 function setSidebarCollapsed(collapsed) {
   collapsed = Boolean(collapsed);
   clearTimeout(sidebarTimer);
@@ -18,19 +17,16 @@ function setSidebarCollapsed(collapsed) {
     sidebar.classList.remove('mobile-open');
     document.body.classList.remove('mobile-sidebar-open');
   }
-
   const isCollapsed = document.body.classList.contains('sidebar-hidden');
   if (isCollapsed !== collapsed) {
     document.body.classList.toggle('sidebar-hidden', collapsed);
   }
   isSidebarPinned = !collapsed;
-
   const toggleBtn = document.getElementById('tb-sidebar-toggle');
   if (toggleBtn) {
     toggleBtn.setAttribute('aria-expanded', String(!collapsed));
   }
 }
-
 function toggleSidebar(event) {
   if (event && typeof event.preventDefault === 'function') event.preventDefault();
   if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
@@ -42,17 +38,14 @@ function toggleSidebar(event) {
   setSidebarCollapsed(shouldCollapse);
   return false;
 }
-
 function expandSidebar() {
   if (isSidebarPinned) return;
   clearTimeout(sidebarTimer);
 }
-
 function collapseSidebar() {
   if (isSidebarPinned) return;
   clearTimeout(sidebarTimer);
 }
-
 window.addEventListener('resize', () => {
   const sidebar = document.getElementById('sidebar');
   if (window.matchMedia && !window.matchMedia('(max-width: 900px)').matches) {
@@ -60,15 +53,12 @@ window.addEventListener('resize', () => {
     document.body.classList.remove('mobile-sidebar-open');
   }
 });
-
-// Initialize history state on load and preserve any valid view hash
 const initialHash = window.location.hash ? window.location.hash.slice(1).trim() : null;
 const initialView = initialHash && document.getElementById('view-' + initialHash) ? initialHash : currentViewId;
 if (history.state === null) {
   currentViewId = initialView;
   history.replaceState({ viewId: currentViewId }, '', '#' + currentViewId);
 }
-
 window.addEventListener('popstate', (event) => {
   if (event.state && event.state.viewId) {
     const idx = viewHistory.indexOf(event.state.viewId);
@@ -81,7 +71,6 @@ window.addEventListener('popstate', (event) => {
     showView('dashboard', null, false);
   }
 });
-
 async function initApp() {
   if (typeof currentDistrictFilter !== 'undefined' && !S.activeProject) currentDistrictFilter = 'ALL';
   try {
@@ -97,8 +86,6 @@ async function initApp() {
     S.projectLoadError = err.message || 'Failed to load projects from backend';
     if (typeof toast === 'function') toast('Projects could not load: ' + S.projectLoadError, 'error');
   }
-
-  // Fetch reports for Notifications and Workflow
   try {
     const reports = await apiFetch('/reports');
     if (reports && Array.isArray(reports)) {
@@ -106,7 +93,6 @@ async function initApp() {
         const rep = reports.find(r => r.projectId === p.id);
         if (rep) p.reportStatus = rep.status;
       });
-
       if (typeof syncNotificationsAndReviewStatus === 'function') {
         syncNotificationsAndReviewStatus();
       } else {
@@ -117,7 +103,6 @@ async function initApp() {
   } catch (err) {
     console.error('Failed to load reports for notifications', err);
   }
-
   renderDashboard();
   renderProjects();
   if (typeof updateRolePermissionUI === 'function') updateRolePermissionUI();
@@ -126,7 +111,6 @@ async function initApp() {
   const pendingSigsBadge = document.getElementById('sb-pending-sigs');
   if (pendingSigsBadge) pendingSigsBadge.textContent = S.signatures.filter(s => !s.signed).length;
 }
-
 window.scrollToSection = function (viewId, sectionId, parentBtn) {
   showView(viewId, parentBtn);
   setTimeout(() => {
@@ -143,36 +127,27 @@ window.scrollToSection = function (viewId, sectionId, parentBtn) {
     }
   }, 150);
 };
-
 window.toggleSubMenu = function (id) {
   const el = document.getElementById(id);
   if (!el) return;
   const isVisible = el.style.display === 'block';
-
-  // Close all flyouts
   document.querySelectorAll('.flyout-menu').forEach(m => m.style.display = 'none');
-
-  // Toggle the clicked one
   if (!isVisible) {
     el.style.display = 'block';
   }
 };
-
 window.toggleMoreAnnexuresInline = function () {
   const el = document.getElementById('inline-more-annexures');
   if (!el) return;
   const isVisible = el.style.display === 'flex';
   el.style.display = isVisible ? 'none' : 'flex';
 };
-
 function isAnnexureViewId(id) {
   return /^anx[1-7]$/.test(id) || /^annexure-[b-k]$/.test(id);
 }
-
 function isCoreAnnexureViewId(id) {
   return /^anx[1-7]$/.test(id);
 }
-
 function getAnnexureInstructionText(id) {
   const map = {
     anx1: 'Fill the source tables, upload section Excel files where needed, and use the live preview to check Annexure I before download.',
@@ -187,7 +162,6 @@ function getAnnexureInstructionText(id) {
   };
   return map[id] || `Upload and manage ${id.replace('annexure-', 'Annexure ').toUpperCase()} entries. Use the right-side preview to check the final output.`;
 }
-
 function buildAnnexureInstructions(id) {
   const wrap = document.createElement('div');
   wrap.className = 'annexure-line-instructions';
@@ -202,13 +176,11 @@ function buildAnnexureInstructions(id) {
     </div>`;
   return wrap;
 }
-
 function normalizeAnnexureViewLayout(id) {
   if (!isAnnexureViewId(id)) return;
   const view = document.getElementById('view-' + id);
   if (!view) return;
   const shouldHideInstructions = isCoreAnnexureViewId(id);
-
   const existingLayout = view.querySelector(':scope > .annexure-unified-layout, :scope > .annexure-line-layout, :scope > .g2');
   if (existingLayout) {
     existingLayout.classList.add('annexure-unified-layout', 'annexure-line-layout');
@@ -228,18 +200,15 @@ function normalizeAnnexureViewLayout(id) {
     }
     return;
   }
-
   const header = view.querySelector(':scope > .header-row');
   const layout = document.createElement('div');
   layout.className = 'g2 annexure-unified-layout annexure-line-layout';
   const main = document.createElement('div');
   main.className = 'annexure-line-main';
-
   Array.from(view.children).forEach(child => {
     if (child === header) return;
     main.appendChild(child);
   });
-
   layout.appendChild(main);
   if (shouldHideInstructions) {
     layout.classList.add('annexure-no-instructions');
@@ -253,13 +222,11 @@ function normalizeAnnexureViewLayout(id) {
     view.appendChild(layout);
   }
 }
-
 function refreshCoreAnnexurePreview(id) {
   if (window.pdfPreview && typeof window.pdfPreview.generateAnnexureLivePreview === 'function') {
     window.pdfPreview.generateAnnexureLivePreview(id, 80);
     return;
   }
-
   const fn = {
     anx1: window.exportAnx1PDF,
     anx2: window.exportAnx2PDF,
@@ -270,7 +237,6 @@ function refreshCoreAnnexurePreview(id) {
     anx7: window.exportAnx7PDF
   }[id];
   if (typeof fn !== 'function') return;
-
   const run = () => fn(null, true);
   if (typeof ensurePortalVendors === 'function') {
     ensurePortalVendors(['jspdf', 'autotable']).then(run).catch(err => {
@@ -281,14 +247,12 @@ function refreshCoreAnnexurePreview(id) {
     setTimeout(run, 80);
   }
 }
-
 function addGenericAnnexureRow(table, viewId) {
   const tbody = table ? table.querySelector('tbody') : null;
   if (!tbody) return;
   const templateRow = tbody.rows[tbody.rows.length - 1];
   const columnCount = table.querySelectorAll('thead th').length || templateRow?.cells.length || 1;
   const tr = document.createElement('tr');
-
   for (let i = 0; i < columnCount; i++) {
     const sourceCell = templateRow ? templateRow.cells[i] : null;
     const td = document.createElement('td');
@@ -303,12 +267,10 @@ function addGenericAnnexureRow(table, viewId) {
     }
     tr.appendChild(td);
   }
-
   tbody.appendChild(tr);
   if (window.initLucide) window.initLucide();
   refreshCoreAnnexurePreview(viewId);
 }
-
 function addGenericAnnexureColumn(table, viewId) {
   if (!table) return;
   const headerRow = table.querySelector('thead tr');
@@ -318,7 +280,6 @@ function addGenericAnnexureColumn(table, viewId) {
   th.textContent = 'New Column';
   th.style.minWidth = '120px';
   if (headerRow) headerRow.insertBefore(th, actionHeader || null);
-
   table.querySelectorAll('tbody tr').forEach(row => {
     const actionCell = Array.from(row.children).find(td => td.querySelector('button') || td.classList.contains('no-print'));
     const td = document.createElement('td');
@@ -326,10 +287,8 @@ function addGenericAnnexureColumn(table, viewId) {
     td.textContent = 'NA';
     row.insertBefore(td, actionCell || null);
   });
-
   refreshCoreAnnexurePreview(viewId);
 }
-
 function addCoreAnnexureTableControls(id) {
   if (!isCoreAnnexureViewId(id)) return;
   const view = document.getElementById('view-' + id);
@@ -339,7 +298,6 @@ function addCoreAnnexureTableControls(id) {
     table.dataset.liveControlsAttached = 'true';
     const wrap = table.closest('.tbl-wrap') || table.parentElement;
     if (!wrap || wrap.nextElementSibling?.classList.contains('anx-table-live-actions')) return;
-
     const actions = document.createElement('div');
     actions.className = 'anx-table-live-actions';
     actions.innerHTML = `
@@ -352,7 +310,6 @@ function addCoreAnnexureTableControls(id) {
         <span>Add Column</span>
       </button>`;
     wrap.insertAdjacentElement('afterend', actions);
-
     actions.querySelector('.anx-live-add-row')?.addEventListener('click', () => {
       const block = table.closest('.card, .anx-section') || view;
       const existingAddRow = Array.from(block.querySelectorAll('button')).find(btn => {
@@ -364,26 +321,21 @@ function addCoreAnnexureTableControls(id) {
       else addGenericAnnexureRow(table, id);
       refreshCoreAnnexurePreview(id);
     });
-
     actions.querySelector('.anx-live-add-column')?.addEventListener('click', () => addGenericAnnexureColumn(table, id));
   });
   if (window.initLucide) window.initLucide();
 }
-
 function repairMainContentStructure() {
   const workspace = document.querySelector('.app-workspace');
   const mainContent = document.querySelector('.main-content');
   const pageBody = mainContent ? mainContent.querySelector('.page-body') : null;
   if (!workspace || !mainContent || !pageBody) return;
-
   workspace.querySelectorAll(':scope > .view, :scope > div[id^="view-"]').forEach(view => {
     pageBody.appendChild(view);
   });
-
   workspace.scrollLeft = 0;
   mainContent.scrollLeft = 0;
 }
-
 function showView(id, btn, push = true) {
   repairMainContentStructure();
   if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) {
@@ -392,7 +344,6 @@ function showView(id, btn, push = true) {
     document.body.classList.remove('mobile-sidebar-open');
     document.body.classList.add('sidebar-hidden');
   }
-
   if (typeof hasModuleAccess === 'function' && typeof S !== 'undefined' && S.user && !hasModuleAccess(id)) {
     if (typeof showUnauthorizedAccessError === 'function') showUnauthorizedAccessError();
     else if (typeof toast === 'function') toast('You are not authorized to access this section.', 'error');
@@ -405,36 +356,28 @@ function showView(id, btn, push = true) {
   if (typeof ensurePortalAssetsForView === 'function' && !ensurePortalAssetsForView(id, () => showView(id, btn, push))) {
     return;
   }
-  // Hide flyout menus whenever a main view changes
   document.querySelectorAll('.flyout-menu').forEach(m => m.style.display = 'none');
-
   if (push && currentViewId && currentViewId !== id) {
     viewHistory.push(currentViewId);
     history.pushState({ viewId: id }, '', '#' + id);
   }
   currentViewId = id;
-
   if (id === 'dashboard') {
     document.body.classList.add('view-dashboard-active');
   } else {
     document.body.classList.remove('view-dashboard-active');
   }
   document.body.classList.toggle('view-projects-active', id === 'projects');
-
-  // Toggle display of back button based on history
   const backBtn = document.getElementById('tb-back-btn');
   if (backBtn) {
     backBtn.style.display = viewHistory.length > 0 ? 'flex' : 'none';
   }
-
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tb-sub-nav-btn').forEach(b => b.classList.remove('active'));
-
   const el = document.getElementById('view-' + id);
   if (el) {
     el.classList.add('active');
-    // Auto-scroll to the newly active view
     setTimeout(() => {
       const mainContent = document.querySelector('.main-content');
       if (id === 'dashboard') {
@@ -451,25 +394,19 @@ function showView(id, btn, push = true) {
       document.body.scrollLeft = 0;
     }, 50);
   }
-
-  // Auto-expand the More Annexures inline section if viewing a sub-annexure
   if (id.startsWith('annexure-')) {
     const inlineMenu = document.getElementById('inline-more-annexures');
     if (inlineMenu) inlineMenu.style.display = 'flex';
   }
-
-  // Highlight active sidebar item
   if (btn) {
     btn.classList.add('active');
   } else {
-    // Attempt to locate and highlight matching button in sidebar
     const targetBtn = Array.from(document.querySelectorAll('.sb-item')).find(b => {
       const onclickAttr = b.getAttribute('onclick');
       return onclickAttr && onclickAttr.includes(`'${id}'`);
     });
     if (targetBtn) targetBtn.classList.add('active');
   }
-
   const topbarBtn = Array.from(document.querySelectorAll('.tb-sub-nav-btn')).find(b => {
     const onclickAttr = b.getAttribute('onclick') || '';
     if (id === 'dashboard') return onclickAttr.includes("'dashboard'");
@@ -478,7 +415,6 @@ function showView(id, btn, push = true) {
     return false;
   });
   if (topbarBtn) topbarBtn.classList.add('active');
-
   const titles = {
     'dashboard': 'Dashboard', 'projects': 'My DSR Projects', 'workflow': 'Report Workflow',
     'front-matter': 'Front Matter', 'chapters': 'Chapters (10)', 'plates': 'Plate Section',
@@ -494,10 +430,8 @@ function showView(id, btn, push = true) {
     'esign': 'E-Signature Panel', 'generate': 'Generate Final PDF', 'history': 'Report History', 'users': 'User Management',
     'audit-logs': 'System Audit Logs'
   };
-
   const titleEl = document.getElementById('topbar-title');
   if (titleEl) titleEl.textContent = titles[id] || id;
-
   if (id === 'esign') renderSignatures();
   if (id === 'generate') renderFinalChecklist();
   if (id === 'chapters') renderChapters();
@@ -554,7 +488,6 @@ function showView(id, btn, push = true) {
   if (S.activeProject && typeof updateActiveProjectCardUI === 'function') updateActiveProjectCardUI();
   normalizeAnnexureViewLayout(id);
   addCoreAnnexureTableControls(id);
-
   const previewSections = ['front-matter', 'chapters', 'plates', 'anx1', 'anx2', 'anx3', 'anx4', 'anx5', 'anx6', 'anx7', 'annexure-b', 'annexure-c', 'annexure-d', 'annexure-e', 'annexure-f', 'annexure-g', 'annexure-h', 'annexure-i', 'annexure-j', 'annexure-k'];
   if (window.portalPreviewTimer) {
     clearTimeout(window.portalPreviewTimer);
@@ -572,29 +505,24 @@ function showView(id, btn, push = true) {
   } else {
     if (window.pdfPreview) window.pdfPreview.hide();
   }
-
   if (id === 'dashboard' || id === 'projects') {
     renderDistrictLegends();
   } else if (typeof runWhenIdle === 'function') {
     runWhenIdle(() => renderDistrictLegends(), 900);
   }
   initLucide(el || document);
-
   if (typeof enforceReviewerReadOnly === 'function') {
     requestAnimationFrame(() => enforceReviewerReadOnly());
   }
-
   if (typeof loadReviewerNoteForView === 'function') {
     loadReviewerNoteForView(id, titles[id] || id);
   }
 }
-
 function goBackView() {
   if (viewHistory.length > 0) {
     history.back();
   }
 }
-
 let lucideRenderQueued = false;
 function initLucide(root) {
   if (!window.lucide || lucideRenderQueued) return;
@@ -621,11 +549,9 @@ function initLucide(root) {
     }
   });
 }
-
 window.addEventListener('load', () => {
   if (window.initLucide) window.initLucide();
 });
-
 function updateSidebarToggleVisibility() {
   const toggleBtn = document.getElementById('tb-sidebar-toggle');
   if (!toggleBtn) return;
@@ -636,7 +562,6 @@ function updateSidebarToggleVisibility() {
   }
   toggleBtn.setAttribute('aria-expanded', String(!document.body.classList.contains('sidebar-hidden')));
 }
-
 function clearActiveProject() {
   if (typeof S !== 'undefined') {
     S.activeProject = null;
@@ -647,8 +572,6 @@ function clearActiveProject() {
     if (typeof updateActiveDistrictUI === 'function') updateActiveDistrictUI('Punjab');
     if (typeof updateActiveProjectCardUI === 'function') updateActiveProjectCardUI();
     if (typeof filterDashboardByDistrict === 'function') filterDashboardByDistrict('ALL');
-    
-    // Collapse and unpin sidebar when active project is cleared
     setSidebarCollapsed(true);
     updateSidebarToggleVisibility();
     S.annexureB = [];
@@ -661,32 +584,24 @@ function clearActiveProject() {
     S.annexureJ = [];
   }
 }
-
 /* Theme logic lives in js/theme.js (loaded in <head> for instant light default) */
-
 let confirmCallback = null;
-
 function customConfirm(msg, cb) {
   document.getElementById('confirm-msg').textContent = msg;
   confirmCallback = cb;
   document.getElementById('modal-confirm').classList.add('open');
 }
-
 function doConfirm() {
   closeModal('modal-confirm');
   if (confirmCallback) confirmCallback();
 }
-
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-// Bind close modal on clicking overlay background
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.modal-overlay').forEach(m => {
     m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
   });
   if (typeof updateDarkModeIcon === 'function') updateDarkModeIcon();
 });
-
 let toastTimer;
 function toast(msg, type = 'info') {
   const el = document.getElementById('toast');
@@ -695,53 +610,42 @@ function toast(msg, type = 'info') {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 4200);
 }
-
-// Global utility for formatting numbers
 function fmtN(v, dec = 2) {
   const n = Number(v);
   if (isNaN(n)) return '0';
   return n.toLocaleString('en-IN', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
-
 /* ── District Management System ── */
 const DISTRICT_COLORS = {
   'Jalandhar': {
-    // Indigo Blue (#4F46E5)
     light: { bg: 'rgba(79, 70, 229, 0.15)', border: '#4F46E5', text: '#3730a3', glow: 'rgba(79, 70, 229, 0.25)' },
     dark: { bg: 'rgba(99, 102, 241, 0.25)', border: '#818cf8', text: '#e0e7ff', glow: 'rgba(129, 140, 248, 0.4)' }
   },
   'Ludhiana': {
-    // Cyan (#06B6D4)
     light: { bg: 'rgba(6, 182, 212, 0.15)', border: '#0891b2', text: '#155e75', glow: 'rgba(6, 182, 212, 0.25)' },
     dark: { bg: 'rgba(6, 182, 212, 0.25)', border: '#22d3ee', text: '#ecfeff', glow: 'rgba(34, 211, 238, 0.4)' }
   },
   'Mansa': {
-    // Purple Violet (#9333EA)
     light: { bg: 'rgba(147, 51, 234, 0.15)', border: '#9333EA', text: '#6b21a8', glow: 'rgba(147, 51, 234, 0.25)' },
     dark: { bg: 'rgba(168, 85, 247, 0.25)', border: '#c084fc', text: '#faf5ff', glow: 'rgba(192, 132, 252, 0.4)' }
   },
   'Hoshiarpur': {
-    // Teal (#0F766E)
     light: { bg: 'rgba(15, 118, 110, 0.15)', border: '#0F766E', text: '#115e59', glow: 'rgba(15, 118, 110, 0.25)' },
     dark: { bg: 'rgba(20, 184, 166, 0.25)', border: '#2dd4bf', text: '#f0fdfa', glow: 'rgba(45, 212, 191, 0.4)' }
   },
   'Pathankot': {
-    // Orange Amber (#EA580C)
     light: { bg: 'rgba(234, 88, 12, 0.15)', border: '#EA580C', text: '#9a3412', glow: 'rgba(234, 88, 12, 0.25)' },
     dark: { bg: 'rgba(249, 115, 22, 0.25)', border: '#fb923c', text: '#fff7ed', glow: 'rgba(251, 146, 60, 0.4)' }
   },
   'Rupnagar': {
-    // Rose Pink (#E11D48)
     light: { bg: 'rgba(225, 29, 72, 0.15)', border: '#E11D48', text: '#9f1239', glow: 'rgba(225, 29, 72, 0.25)' },
     dark: { bg: 'rgba(244, 63, 94, 0.25)', border: '#fda4af', text: '#fff1f2', glow: 'rgba(253, 164, 175, 0.4)' }
   },
   'Tarn Taran': {
-    // Sky Blue (#0284C7)
     light: { bg: 'rgba(2, 132, 199, 0.15)', border: '#0284C7', text: '#075985', glow: 'rgba(2, 132, 199, 0.25)' },
     dark: { bg: 'rgba(14, 165, 233, 0.25)', border: '#38bdf8', text: '#f0f9ff', glow: 'rgba(56, 189, 248, 0.4)' }
   }
 };
-
 function getDistrictStyle(name, forceDark = false) {
   const cleanName = (name || '').trim();
   const isDark = forceDark || document.documentElement.classList.contains('dark');
@@ -759,13 +663,10 @@ function getDistrictStyle(name, forceDark = false) {
     dark: { bg: `${border}40`, border, text: '#f8fafc', glow: `${border}66` }
   };
   const themeStyle = isDark ? dist.dark : dist.light;
-
-  // Custom topbar style overrides for high contrast on navy navbar
   const topbarBg = (isDark || forceDark) ? themeStyle.bg : 'rgba(255, 255, 255, 0.95)';
   const topbarColor = themeStyle.text;
   const topbarBorder = themeStyle.border;
   const topbarGlow = themeStyle.glow;
-
   return {
     bg: themeStyle.bg,
     color: themeStyle.text,
@@ -777,7 +678,6 @@ function getDistrictStyle(name, forceDark = false) {
     topbarGlow
   };
 }
-
 function paintDistrictThemeOnElement(el, districtName) {
   if (!el || !districtName) return;
   const style = getDistrictStyle(districtName);
@@ -787,7 +687,6 @@ function paintDistrictThemeOnElement(el, districtName) {
   el.style.setProperty('--district-glow', style.glow);
   el.dataset.district = districtName;
 }
-
 function applyDistrictBadgeStyles(el, districtName) {
   if (!el || !districtName) return;
   const style = getDistrictStyle(districtName);
@@ -798,18 +697,15 @@ function applyDistrictBadgeStyles(el, districtName) {
   el.style.border = `2px solid ${style.border}`;
   el.style.boxShadow = `0 1px 3px ${style.glow}`;
 }
-
 function getDistrictBadgeHTML(districtName) {
   const safe = (districtName || '').replace(/"/g, '&quot;');
   return `<span class="badge district-badge" data-district="${safe}">${districtName}</span>`;
 }
-
 function refreshDistrictBadgesInDOM() {
   document.querySelectorAll('.district-badge[data-district]').forEach((el) => {
     applyDistrictBadgeStyles(el, el.dataset.district);
   });
 }
-
 function ensureActiveProjectCardHost(containerEl) {
   if (!containerEl) return null;
   let host = containerEl.querySelector(':scope > .active-dsr-project-card-host');
@@ -820,7 +716,6 @@ function ensureActiveProjectCardHost(containerEl) {
   }
   return host;
 }
-
 function ensureDistrictManagementHost(containerEl) {
   if (!containerEl) return null;
   let panel = containerEl.querySelector(':scope > #district-management-panel');
@@ -831,7 +726,6 @@ function ensureDistrictManagementHost(containerEl) {
   }
   return panel;
 }
-
 function ensureActiveProjectCardStructure(hostEl) {
   if (!hostEl) return null;
   let card = hostEl.querySelector('.active-dsr-project-card');
@@ -848,7 +742,6 @@ function ensureActiveProjectCardStructure(hostEl) {
   }
   return card;
 }
-
 function paintActiveProjectCard(card, project) {
   if (!card || !project) return;
   const dist = project.district;
@@ -859,19 +752,16 @@ function paintActiveProjectCard(card, project) {
   paintDistrictThemeOnElement(card, dist);
   if (badgeEl) applyDistrictBadgeStyles(badgeEl, dist);
 }
-
 function updateActiveProjectCardUI() {
   const containers = [
     document.getElementById('workflow-active-district-header'),
     document.getElementById('dash-right-sidebar')
   ];
-
   containers.forEach((container) => {
     if (!container) return;
     const host = container.id === 'workflow-active-district-header'
       ? container
       : ensureActiveProjectCardHost(container);
-
     if (!S.activeProject) {
       if (container.id === 'workflow-active-district-header') {
         container.style.display = 'none';
@@ -882,28 +772,23 @@ function updateActiveProjectCardUI() {
       }
       return;
     }
-
     if (container.id === 'workflow-active-district-header') {
       container.style.display = 'block';
     }
-
     const card = ensureActiveProjectCardStructure(host);
     if (!card) return;
     card.hidden = false;
     paintActiveProjectCard(card, S.activeProject);
   });
 }
-
 /** Re-apply district + project themed UI after light/dark toggle (no page reload). */
 function refreshThemeDependentUI() {
   if (typeof S === 'undefined' || !S) return;
-
   const dist = S.activeProject ? S.activeProject.district : 'Punjab';
   updateActiveDistrictUI(dist);
   updateActiveProjectCardUI();
   renderDistrictLegends();
   refreshDistrictBadgesInDOM();
-
   if (typeof renderDashboard === 'function') renderDashboard();
   if (typeof renderProjects === 'function') renderProjects();
   if (window.initLucide) initLucide();
@@ -912,11 +797,9 @@ function refreshThemeDependentUI() {
     requestAnimationFrame(() => renderGraphs());
   }
 }
-
 function updateActiveDistrictUI(districtName) {
   const badgeEl = document.getElementById('tb-district-badge');
   if (!badgeEl) return;
-
   if (districtName && districtName !== 'Punjab' && districtName !== 'ALL') {
     const style = getDistrictStyle(districtName);
     badgeEl.textContent = districtName;
@@ -936,7 +819,6 @@ function updateActiveDistrictUI(districtName) {
     badgeEl.style.transition = 'all 0.3s ease';
     badgeEl.style.display = 'inline-flex';
     badgeEl.style.alignItems = 'center';
-
     badgeEl.onmouseover = () => {
       badgeEl.style.transform = 'translateY(-2px)';
       badgeEl.style.boxShadow = `0 6px 16px ${style.topbarGlow}, 0 0 0 2px ${style.topbarBorder}`;
@@ -945,8 +827,6 @@ function updateActiveDistrictUI(districtName) {
       badgeEl.style.transform = 'translateY(-1px)';
       badgeEl.style.boxShadow = `0 4px 12px ${style.topbarGlow}, 0 0 0 1.5px ${style.topbarBorder}`;
     };
-
-    // Update dashboard indicator badge if it exists
     const dashIndicator = document.getElementById('dash-active-district-badge');
     if (dashIndicator) {
       dashIndicator.id = 'dash-active-district-badge';
@@ -957,7 +837,6 @@ function updateActiveDistrictUI(districtName) {
       applyDistrictBadgeStyles(dashIndicator, districtName);
     }
   } else {
-    // Reset to default Punjab styling
     badgeEl.textContent = 'Punjab';
     badgeEl.style.backgroundColor = '';
     badgeEl.style.color = '';
@@ -977,14 +856,12 @@ function updateActiveDistrictUI(districtName) {
     badgeEl.style.alignItems = '';
     badgeEl.onmouseover = null;
     badgeEl.onmouseout = null;
-
     const dashIndicator = document.getElementById('dash-active-district-badge');
     if (dashIndicator) {
       dashIndicator.outerHTML = `<span id="dash-active-district-badge" class="badge" style="background:var(--off); color:var(--text-soft);">None</span>`;
     }
   }
 }
-
 function updateWorkflowDistrictUI() {
   updateActiveProjectCardUI();
   const reviewerActions = document.getElementById('reviewer-actions');
@@ -992,18 +869,13 @@ function updateWorkflowDistrictUI() {
     reviewerActions.style.display = (hasReviewAccess() && S.activeProject) ? 'flex' : 'none';
   }
 }
-
 function renderDistrictLegends() {
   const dashEl = document.getElementById('dash-right-sidebar');
-
   const districts = Array.isArray(window.PUNJAB_DISTRICTS) && window.PUNJAB_DISTRICTS.length
     ? window.PUNJAB_DISTRICTS
     : ['Amritsar', 'Barnala', 'Bathinda', 'Faridkot', 'Fatehgarh Sahib', 'Fazilka', 'Ferozepur', 'Gurdaspur', 'Hoshiarpur', 'Jalandhar', 'Kapurthala', 'Ludhiana', 'Malerkotla', 'Mansa', 'Moga', 'Pathankot', 'Patiala', 'Rupnagar', 'Sahibzada Ajit Singh Nagar', 'Sangrur', 'Shaheed Bhagat Singh Nagar', 'Sri Muktsar Sahib', 'Tarn Taran'];
-
-  // Dashboard right-side district card.
   const renderDetailedCard = (containerEl) => {
     if (!containerEl) return;
-
     const getAbbrev = (name) => {
       if (name === 'ALL') return 'ALL';
       if (name === 'Jalandhar') return 'JAL';
@@ -1015,10 +887,7 @@ function renderDistrictLegends() {
       if (name === 'Tarn Taran') return 'TAR';
       return name.substring(0, 3).toUpperCase();
     };
-
     let listHtml = '';
-
-    // Add "All Districts" option at the top of the detailed legend
     const isAllSelected = currentDistrictFilter === 'ALL';
     listHtml += `
       <div class="whats-new-item ${isAllSelected ? 'active-filter' : ''}" onclick="filterDashboardByDistrict('ALL')">
@@ -1027,17 +896,14 @@ function renderDistrictLegends() {
         <div class="whats-new-arrow"><i data-lucide="chevron-right" style="width:16px; height:16px;"></i></div>
       </div>
     `;
-
     districts.forEach(d => {
       const isActiveFilter = currentDistrictFilter === d;
       const isActiveProj = S.activeProject && S.activeProject.district === d;
       const isSelected = isActiveFilter || isActiveProj;
       const abbrev = getAbbrev(d);
-
       const badgeBg = isActiveProj ? '#ffffff' : '#C49A58';
       const badgeColor = 'var(--p-accent)';
       const editingIndicator = isActiveProj ? ' <span style="font-size:9px; font-weight:800; text-transform:uppercase; background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); padding:1px 5px; border-radius:3px; margin-left:6px; color:#fff;">Editing</span>' : '';
-
       listHtml += `
         <div class="whats-new-item ${isSelected ? 'active-filter' : ''}" onclick="filterDashboardByDistrict('${d}')">
           <div class="whats-new-badge" style="background:${badgeBg}; color:${badgeColor};">${abbrev}</div>
@@ -1046,12 +912,10 @@ function renderDistrictLegends() {
         </div>
       `;
     });
-
     const activeCount = Array.isArray(S.projects) ? S.projects.length : 0;
     const avgProgress = activeCount
       ? Math.round(S.projects.reduce((sum, p) => sum + (Number(p.progress) || 0), 0) / activeCount)
       : 0;
-
     containerEl.innerHTML = `
       <div class="whats-new-sidebar">
         <div class="whats-new-title">
@@ -1078,12 +942,10 @@ function renderDistrictLegends() {
       </div>
     `;
   };
-
   renderDetailedCard(ensureDistrictManagementHost(dashEl));
   if (typeof updateActiveProjectCardUI === 'function') updateActiveProjectCardUI();
   initLucide();
 }
-
 /* ── River Color Identity System ── */
 const RIVER_COLORS = {
   'Sutlej': {
@@ -1115,7 +977,6 @@ const RIVER_COLORS = {
     dark: { bg: 'rgba(71, 85, 105, 0.25)', border: '#94a3b8', text: '#cbd5e1', glow: 'rgba(148, 163, 184, 0.4)' }
   }
 };
-
 function getRiverStyle(name) {
   const cleanName = (name || '').trim();
   const isDark = document.documentElement.classList.contains('dark');
@@ -1131,12 +992,10 @@ function getRiverStyle(name) {
     glow: themeStyle.glow
   };
 }
-
 function getRiverBadgeHTML(riverName) {
   const style = getRiverStyle(riverName);
   return `<span class="badge river-badge" style="background:${style.bg}; color:${style.color}; border: 1.5px solid ${style.border}; box-shadow: 0 1px 2px ${style.glow}; font-weight:700; transition: all 0.2s ease; cursor: pointer; display: inline-flex; align-items: center;" onmouseover="this.style.boxShadow='0 0 6px ${style.border}', this.style.transform='scale(1.03)'" onmouseout="this.style.boxShadow='0 1px 2px ${style.glow}', this.style.transform='scale(1)'">${riverName}</span>`;
 }
-
 document.addEventListener('click', (event) => {
   const item = event.target.closest('#sidebar .sb-item');
   if (!item) return;
@@ -1148,7 +1007,6 @@ document.addEventListener('click', (event) => {
   event.stopPropagation();
   showView(match[1], item);
 }, true);
-
 function openDistrictMap(btn) {
   if (typeof clearActiveProject === 'function') clearActiveProject();
   if (typeof showView === 'function') showView('dashboard', btn || null);
@@ -1156,9 +1014,7 @@ function openDistrictMap(btn) {
     document.getElementById('dash-district-map-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 90);
 }
-
 window.openDistrictMap = openDistrictMap;
-
 function openAboutDsr(btn) {
   if (typeof clearActiveProject === 'function') clearActiveProject();
   if (typeof showView === 'function') showView('dashboard', btn || null);
@@ -1166,9 +1022,7 @@ function openAboutDsr(btn) {
     document.getElementById('dash-about-dsr-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 90);
 }
-
 window.openAboutDsr = openAboutDsr;
-
 function renderRiverTags(riversString) {
   if (!riversString || riversString === 'Not specified') return `<span class="badge" style="background:var(--off); color:var(--text-soft); border: 1px solid var(--border);">No River</span>`;
   const rivers = riversString.split(',').map(r => r.trim()).filter(r => r !== '');

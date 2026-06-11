@@ -18,13 +18,11 @@ const pdfPreview = {
   _textRefreshTimer: null,
   _annexureRefreshTimers: {},
   _objectUrls: {},
-
   fitPdfViewerUrl(src) {
     if (!src || src === 'about:blank' || src.startsWith('blob:') || src.startsWith('data:')) return src || 'about:blank';
     const base = String(src).split('#')[0];
     return `${base}#view=FitH&zoom=page-width`;
   },
-
   SECTION_TITLES: {
     'front-matter': 'PDF Preview',
     'chapters': 'PDF Preview',
@@ -47,7 +45,6 @@ const pdfPreview = {
     'annexure-j': 'PDF Preview',
     'annexure-k': 'PDF Preview'
   },
-
   IFRAME_IDS: {
     'anx1': 'pdf-iframe',
     'anx2': 'pdf-iframe-anx2',
@@ -59,13 +56,10 @@ const pdfPreview = {
     'annexure-f': 'pdf-iframe-annexure-f-preview',
     'annexure-k': 'pdf-iframe-annexure-k-preview'
   },
-
   isAnnexureView(viewId) {
     return !!viewId && (viewId.startsWith('anx') || viewId.startsWith('annexure-'));
   },
-
   FM_ORDER: ['cover', 'toc', 'pref', 'ack', 'cert'],
-
   FM_LABELS: {
     cover: 'Cover Page',
     toc: 'Content Page',
@@ -73,17 +67,13 @@ const pdfPreview = {
     ack: 'Acknowledgement',
     cert: 'Certificate of Compliance'
   },
-
   init() {
     this.panel = document.getElementById('pdf-preview-panel');
     if (!this.panel) return;
-    
-    // Auto-fix HTML layout issues by forcing panel into workspace
     const workspace = document.querySelector('.app-workspace');
     if (workspace && this.panel.parentElement !== workspace) {
       workspace.appendChild(this.panel);
     }
-    
     this.body = this.panel.querySelector('.pdf-preview-body');
     this.scrollEl = document.getElementById('pdf-preview-scroll') || this.body;
     this.viewerEl = document.getElementById('pdf-preview-viewer');
@@ -95,24 +85,20 @@ const pdfPreview = {
     this.bindEvents();
     this.bindMobileTabs();
   },
-
   bindEvents() {
     const el = (id) => document.getElementById(id);
     const zoomIn = () => this.zoomIn();
     const zoomOut = () => this.zoomOut();
-
     el('pdf-preview-zoom-in')?.addEventListener('click', zoomIn);
     el('pdf-preview-zoom-out')?.addEventListener('click', zoomOut);
     el('pdf-preview-inner-zoom-in')?.addEventListener('click', zoomIn);
     el('pdf-preview-inner-zoom-out')?.addEventListener('click', zoomOut);
     el('pdf-preview-float-zoom-in')?.addEventListener('click', zoomIn);
     el('pdf-preview-float-zoom-out')?.addEventListener('click', zoomOut);
-
     el('pdf-preview-refresh')?.addEventListener('click', () => this.refresh());
     el('pdf-preview-fullscreen')?.addEventListener('click', () => this.fullScreen());
     el('pdf-preview-inner-fullscreen')?.addEventListener('click', () => this.fullScreen());
     el('pdf-preview-download')?.addEventListener('click', () => this.download());
-
     if (this.scrollEl) {
       this.scrollEl.addEventListener('scroll', () => {
         if (this._scrollRaf) cancelAnimationFrame(this._scrollRaf);
@@ -120,7 +106,6 @@ const pdfPreview = {
       });
     }
   },
-
   bindMobileTabs() {
     const tabs = document.getElementById('pdf-preview-mobile-tabs');
     if (!tabs) return;
@@ -134,7 +119,6 @@ const pdfPreview = {
       });
     });
   },
-
   show(viewId) {
     this.currentView = viewId;
     document.body.classList.add('preview-open');
@@ -147,10 +131,7 @@ const pdfPreview = {
     }
     const mobileTabs = document.getElementById('pdf-preview-mobile-tabs');
     if (mobileTabs) mobileTabs.setAttribute('aria-hidden', 'false');
-    
     if (this.titleEl) this.titleEl.textContent = this.SECTION_TITLES[viewId] || 'PDF Preview';
-    
-    // Manage iframe vs scroll container display
     const isAnnexure = this.isAnnexureView(viewId);
     const scrollContainer = this.scrollEl;
     const iframe = document.getElementById('pdf-preview-iframe') || document.querySelector('.pdf-preview-viewer iframe');
@@ -158,19 +139,15 @@ const pdfPreview = {
     const floatZoom = document.querySelector('.pdf-preview-float-zoom');
     const floatPage = document.getElementById('pdf-preview-float-page');
     const actionToolbarLeft = document.querySelector('.pdf-preview-actions-left');
-    
     if (isAnnexure) {
       if (scrollContainer) scrollContainer.style.display = 'none';
       if (innerBar) innerBar.style.display = 'none';
       if (floatZoom) floatZoom.style.display = 'none';
       if (floatPage) floatPage.style.display = 'none';
       if (actionToolbarLeft) actionToolbarLeft.style.display = 'none';
-      
       if (iframe) {
         iframe.style.display = 'block';
         iframe.id = this.IFRAME_IDS[viewId] || 'pdf-preview-iframe';
-        
-        // Load existing PDF if available
         const savedPdf = S.activeProject && S.activeProject.pdfData && S.activeProject.pdfData[viewId];
         if (savedPdf) {
           iframe.src = this.fitPdfViewerUrl(savedPdf);
@@ -185,19 +162,16 @@ const pdfPreview = {
       if (floatZoom) floatZoom.style.display = 'flex';
       if (floatPage) floatPage.style.display = 'block';
       if (actionToolbarLeft) actionToolbarLeft.style.display = 'flex';
-      
       if (iframe) {
         iframe.style.display = 'none';
         iframe.src = 'about:blank';
         iframe.id = 'pdf-preview-iframe';
       }
     }
-
     this.scale = 1.0;
     this.refresh();
     if (window.initLucide) initLucide();
   },
-
   hide() {
     this.currentView = null;
     document.body.classList.remove('preview-open', 'preview-mobile-tab-editor', 'preview-mobile-tab-preview');
@@ -214,7 +188,6 @@ const pdfPreview = {
       document.exitFullscreen().catch(() => {});
     }
   },
-
   notifyUpdate(viewId) {
     if (this.currentView === viewId) {
       if (viewId === 'front-matter') {
@@ -225,13 +198,10 @@ const pdfPreview = {
       }
     }
   },
-
   refresh() {
     if (!this.currentView) return;
-    
     const viewId = this.currentView;
     const isAnnexure = this.isAnnexureView(viewId);
-    
     if (isAnnexure) {
       const uploadedImgs = S.uploadedPDFs && S.uploadedPDFs[viewId];
       const targetIframeId = this.IFRAME_IDS[viewId] || 'pdf-preview-iframe';
@@ -241,7 +211,6 @@ const pdfPreview = {
       const floatZoom = document.querySelector('.pdf-preview-float-zoom');
       const floatPage = document.getElementById('pdf-preview-float-page');
       const actionToolbarLeft = document.querySelector('.pdf-preview-actions-left');
-      
       if (uploadedImgs && uploadedImgs.length) {
         if (iframe) iframe.style.display = 'none';
         if (scrollContainer) scrollContainer.style.display = 'flex';
@@ -249,7 +218,6 @@ const pdfPreview = {
         if (floatZoom) floatZoom.style.display = 'flex';
         if (floatPage) floatPage.style.display = 'block';
         if (actionToolbarLeft) actionToolbarLeft.style.display = 'flex';
-        
         this.renderPages(uploadedImgs);
       } else {
         if (scrollContainer) scrollContainer.style.display = 'none';
@@ -257,7 +225,6 @@ const pdfPreview = {
         if (floatZoom) floatZoom.style.display = 'none';
         if (floatPage) floatPage.style.display = 'none';
         if (actionToolbarLeft) actionToolbarLeft.style.display = 'none';
-        
         if (iframe) {
           iframe.style.display = 'block';
           const savedPdf = S.activeProject && S.activeProject.pdfData && S.activeProject.pdfData[viewId];
@@ -288,21 +255,17 @@ const pdfPreview = {
     }
     if (window.initLucide) initLucide();
   },
-
   getAnnexureExportFnName(viewId) {
     if (viewId === 'annexure-f') return 'exportAnnexureFPDF';
     if (viewId === 'annexure-k') return 'exportAnnexureKPDF';
     return 'export' + viewId.charAt(0).toUpperCase() + viewId.slice(1) + 'PDF';
   },
-
   annexureNeedsPdfVendors(viewId) {
     return viewId !== 'anx1';
   },
-
   getAnnexureSourceView(viewId) {
     return document.getElementById(`view-${viewId}`);
   },
-
   escapeHtml(value) {
     return String(value ?? '')
       .replace(/&/g, '&amp;')
@@ -311,7 +274,6 @@ const pdfPreview = {
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
   },
-
   cleanupAnnexurePreviewClone(clone) {
     clone.querySelectorAll([
       'script',
@@ -359,7 +321,6 @@ const pdfPreview = {
     });
     return clone;
   },
-
   buildAnnexureHtmlDocument(viewId) {
     const source = this.getAnnexureSourceView(viewId);
     if (!source) return '';
@@ -403,7 +364,6 @@ const pdfPreview = {
         </body>
       </html>`;
   },
-
   renderAnnexureHtmlPreview(viewId) {
     const iframe = getAnnexurePreviewIframe(viewId);
     const html = this.buildAnnexureHtmlDocument(viewId);
@@ -413,7 +373,6 @@ const pdfPreview = {
     iframe.srcdoc = html;
     return true;
   },
-
   renderAnnexureFallback(viewId, message) {
     const iframe = getAnnexurePreviewIframe(viewId);
     if (!iframe) return;
@@ -429,16 +388,13 @@ const pdfPreview = {
         h1{font-size:24px;margin:0 0 12px;} p{font-size:14px;line-height:1.55;margin:0;color:#526172;}
       </style></head><body><div class="wrap"><div class="box"><h1>${title}</h1><p>${message || 'Live preview is preparing. Use Refresh if it does not appear automatically.'}</p></div></div></body></html>`;
   },
-
   generateAnnexureLivePreview(viewId, delay = 0) {
     if (this.renderAnnexureHtmlPreview(viewId)) return;
-
     const exportFnName = this.getAnnexureExportFnName(viewId);
     if (typeof window[exportFnName] !== 'function') {
       this.renderAnnexureFallback(viewId, 'Live preview function is loading. Please switch back to this annexure or click Refresh once.');
       return;
     }
-
     clearTimeout(this._annexureRefreshTimers[viewId]);
     this._annexureRefreshTimers[viewId] = setTimeout(() => {
       const runExport = () => {
@@ -451,7 +407,6 @@ const pdfPreview = {
           if (typeof toast === 'function') toast('Live preview could not be generated. Please try refresh.', 'error');
         }
       };
-
       if (!this.annexureNeedsPdfVendors(viewId)) {
         runExport();
       } else if (typeof ensurePortalVendors === 'function') {
@@ -465,7 +420,6 @@ const pdfPreview = {
       }
     }, delay);
   },
-
   /** Build a simple A4-style page image from title + body text */
   renderTextPageCanvas(title, bodyText, subtitle) {
     const canvas = document.createElement('canvas');
@@ -476,18 +430,15 @@ const pdfPreview = {
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, H);
-
     ctx.fillStyle = '#0a2540';
     ctx.textAlign = 'center';
     ctx.font = 'bold 22px Georgia, serif';
     ctx.fillText(title, W / 2, 120);
-
     if (subtitle) {
       ctx.font = '12px Georgia, serif';
       ctx.fillStyle = '#64748b';
       ctx.fillText(subtitle, W / 2, 150);
     }
-
     ctx.textAlign = 'left';
     ctx.fillStyle = '#334155';
     ctx.font = '14px Georgia, serif';
@@ -506,7 +457,6 @@ const pdfPreview = {
       }
     });
     if (line) lines.push(line);
-
     let y = 200;
     const lineHeight = 22;
     lines.forEach(l => {
@@ -514,10 +464,8 @@ const pdfPreview = {
       ctx.fillText(l, margin, y);
       y += lineHeight;
     });
-
     return canvas.toDataURL('image/jpeg', 0.92);
   },
-
   renderCoverPageCanvas() {
     const fm = S.frontMatter || {};
     const canvas = document.createElement('canvas');
@@ -528,47 +476,37 @@ const pdfPreview = {
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, H);
-
     const navy = '#0a2540';
     const accent = '#e07b00';
-
     ctx.strokeStyle = navy;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(W / 2, 100, 36, 0, Math.PI * 2);
     ctx.stroke();
-
     ctx.fillStyle = navy;
     ctx.textAlign = 'center';
     ctx.font = '11px Georgia, serif';
     ctx.fillText('GOVERNMENT OF PUNJAB', W / 2, 160);
-
     ctx.font = 'bold 20px Georgia, serif';
     const title = (fm.title || 'District Survey Report').toUpperCase();
     this._wrapCenteredText(ctx, title, W / 2, 220, W - 80, 26);
-
     ctx.font = '16px Georgia, serif';
     ctx.fillStyle = accent;
     ctx.fillText(`${(fm.district || 'District').toUpperCase()} DISTRICT`, W / 2, 310);
-
     ctx.fillStyle = navy;
     ctx.font = '13px Georgia, serif';
     ctx.fillText(`${fm.state || 'Punjab'} · ${fm.year || ''}`, W / 2, 340);
-
     ctx.font = '11px Georgia, serif';
     ctx.fillStyle = '#475569';
     const prep = `Prepared by: ${fm.preparedBy || ''}`;
     this._wrapCenteredText(ctx, prep, W / 2, 420, W - 80, 18);
     const assist = `Assisted by: ${fm.assistedBy || ''}`;
     this._wrapCenteredText(ctx, assist, W / 2, 460, W - 80, 18);
-
     ctx.font = '12px Georgia, serif';
     ctx.fillStyle = navy;
     ctx.fillText(fm.version || '', W / 2, H - 60);
-
     return canvas.toDataURL('image/jpeg', 0.92);
   },
-
   _wrapCenteredText(ctx, text, cx, startY, maxWidth, lineHeight) {
     const words = (text || '').split(/\s+/);
     const lines = [];
@@ -589,15 +527,12 @@ const pdfPreview = {
       y += lineHeight;
     });
   },
-
   getFrontMatterPages() {
     const pages = [];
     const pdfs = S.uploadedPDFs || {};
-
     this.FM_ORDER.forEach(type => {
       const sectionLabel = this.FM_LABELS[type] || type;
       const uploaded = pdfs[type];
-
       if (uploaded && uploaded.length) {
         uploaded.forEach((img, idx) => {
           pages.push({
@@ -607,7 +542,6 @@ const pdfPreview = {
         });
         return;
       }
-
       if (type === 'cover') {
         pages.push({ src: this.renderCoverPageCanvas(), label: sectionLabel, generated: true });
       } else if (type === 'pref' && S.frontMatter && S.frontMatter.preface) {
@@ -624,10 +558,8 @@ const pdfPreview = {
         });
       }
     });
-
     return pages;
   },
-
   getChapterPages() {
     const pages = [];
     S.chapters.forEach((ch, i) => {
@@ -645,7 +577,6 @@ const pdfPreview = {
     });
     return pages;
   },
-
   getPlatePages() {
     const pages = [];
     S.plates.forEach((p, i) => {
@@ -662,19 +593,15 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderFrontMatter() {
     this.renderPages(this.getFrontMatterPages());
   },
-
   renderChapters() {
     this.renderPages(this.getChapterPages());
   },
-
   renderPlates() {
     this.renderPages(this.getPlatePages());
   },
-
   getAnnexureBPages() {
     const pages = [];
     (S.annexureB || []).forEach((p, i) => {
@@ -691,11 +618,9 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderAnnexureB() {
     this.renderPages(this.getAnnexureBPages());
   },
-
   getAnnexureCPages() {
     const pages = [];
     (S.annexureC || []).forEach((p, i) => {
@@ -712,11 +637,9 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderAnnexureC() {
     this.renderPages(this.getAnnexureCPages());
   },
-
   getAnnexureDPages() {
     const pages = [];
     (S.annexureD || []).forEach((p, i) => {
@@ -733,11 +656,9 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderAnnexureD() {
     this.renderPages(this.getAnnexureDPages());
   },
-
   getAnnexureEPages() {
     const pages = [];
     (S.annexureE || []).forEach((p, i) => {
@@ -754,11 +675,9 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderAnnexureE() {
     this.renderPages(this.getAnnexureEPages());
   },
-
   getAnnexureGPages() {
     const pages = [];
     (S.annexureG || []).forEach((p, i) => {
@@ -775,11 +694,9 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderAnnexureG() {
     this.renderPages(this.getAnnexureGPages());
   },
-
   getAnnexureHPages() {
     const pages = [];
     (S.annexureH || []).forEach((p, i) => {
@@ -796,11 +713,9 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderAnnexureH() {
     this.renderPages(this.getAnnexureHPages());
   },
-
   getAnnexureIPages() {
     const pages = [];
     (S.annexureI || []).forEach((p, i) => {
@@ -817,11 +732,9 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderAnnexureI() {
     this.renderPages(this.getAnnexureIPages());
   },
-
   getAnnexureJPages() {
     const pages = [];
     (S.annexureJ || []).forEach((p, i) => {
@@ -838,11 +751,9 @@ const pdfPreview = {
     });
     return pages;
   },
-
   renderAnnexureJ() {
     this.renderPages(this.getAnnexureJPages());
   },
-
   renderPages(pages) {
     if (!this.body) return;
     if (!pages || !pages.length) {
@@ -862,7 +773,6 @@ const pdfPreview = {
       this.updatePageIndicators();
       return;
     }
-
     this.body.innerHTML = pages.map((page, i) => {
       const src = typeof page === 'string' ? page : page.src;
       const label = typeof page === 'string' ? `Page ${i + 1}` : (page.label || `Page ${i + 1}`);
@@ -872,14 +782,12 @@ const pdfPreview = {
           <img src="${src}" class="pdf-preview-page" alt="${safeLabel}" loading="lazy">
         </div>`;
     }).join('');
-
     this.totalPages = pages.length;
     this.currentPage = 1;
     this.applyScale();
     this.updatePageIndicators();
     requestAnimationFrame(() => this.updateVisiblePage());
   },
-
   updatePageIndicators() {
     const indicator = document.getElementById('pdf-preview-page-indicator');
     const floatPage = document.getElementById('pdf-preview-float-page');
@@ -888,7 +796,6 @@ const pdfPreview = {
     if (indicator) indicator.textContent = total ? `${cur} / ${total}` : '0 / 0';
     if (floatPage) floatPage.textContent = total ? `Page ${cur} of ${total}` : 'Page 0 of 0';
   },
-
   updateVisiblePage() {
     if (!this.scrollEl || !this.totalPages) return;
     const wraps = this.scrollEl.querySelectorAll('.pdf-preview-page-wrap');
@@ -905,17 +812,14 @@ const pdfPreview = {
       this.updatePageIndicators();
     }
   },
-
   zoomIn() {
     this.scale = Math.min(this.scale + 0.25, 3);
     this.applyScale();
   },
-
   zoomOut() {
     this.scale = Math.max(this.scale - 0.25, 0.25);
     this.applyScale();
   },
-
   applyScale() {
     if (!this.body) return;
     const pct = `${Math.round(this.scale * 100)}%`;
@@ -925,7 +829,6 @@ const pdfPreview = {
     });
     this.zoomLabels.forEach(el => { el.textContent = pct; });
   },
-
   fullScreen() {
     const target = this.viewerEl || this.panel;
     if (!target) return;
@@ -935,7 +838,6 @@ const pdfPreview = {
       target.requestFullscreen().catch(() => {});
     }
   },
-
   download() {
     const allPages = this.body ? this.body.querySelectorAll('.pdf-preview-page') : [];
     if (!allPages.length) {
@@ -948,7 +850,6 @@ const pdfPreview = {
       toast('Failed to generate merged PDF: ' + e.message, 'error');
     }
   },
-
   getDownloadFilename() {
     const dist = (S.frontMatter && S.frontMatter.district) || 'District';
     const yr = ((S.frontMatter && S.frontMatter.year) || 'year').replace('/', '-');
@@ -965,7 +866,6 @@ const pdfPreview = {
       : this.currentView === 'annexure-j' ? 'annexure-j' : 'preview';
     return `DSR-${dist}-${yr}-${section}.pdf`;
   },
-
   generateMergedPDF(images) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -982,7 +882,6 @@ const pdfPreview = {
     toast(`Merged PDF saved: ${fname}`, 'success');
   }
 };
-
 function getAnnexurePreviewIframe(viewId) {
   const ids = (window.pdfPreview && window.pdfPreview.IFRAME_IDS) || {};
   const preferredId = ids[viewId];
@@ -991,7 +890,6 @@ function getAnnexurePreviewIframe(viewId) {
   if (!iframe) iframe = document.querySelector('#pdf-preview-viewer iframe');
   return iframe || null;
 }
-
 function setAnnexurePreviewIframeSrc(viewId, src) {
   const iframe = getAnnexurePreviewIframe(viewId);
   if (!iframe) return null;
@@ -1000,12 +898,9 @@ function setAnnexurePreviewIframeSrc(viewId, src) {
   iframe.src = src || 'about:blank';
   return iframe;
 }
-
 window.getAnnexurePreviewIframe = getAnnexurePreviewIframe;
 window.setAnnexurePreviewIframeSrc = setAnnexurePreviewIframeSrc;
-
 window.pdfPreview = pdfPreview;
-
 window.addEventListener('DOMContentLoaded', () => {
   pdfPreview.init();
 });
