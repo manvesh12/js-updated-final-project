@@ -5122,7 +5122,7 @@ table {
     zoom: 0.75 !important;
   }
 
-  html:has(#screen-app.active #view-dashboard.active) {
+  html:has(#screen-app.active) {
     zoom: 0.75 !important;
   }
 }

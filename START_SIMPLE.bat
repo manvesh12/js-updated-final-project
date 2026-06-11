@@ -35,7 +35,7 @@ start "DSR Simple Portal" cmd /k "cd /d ""%~dp0apps\web\public\legacy"" && set D
 echo.
 echo Opening the portal...
 timeout /t 2 /nobreak >nul
-start http://localhost:8081/login.html
+start http://localhost:8081/home.html
 
 echo.
 echo Done. Keep the opened Simple Portal window running.
