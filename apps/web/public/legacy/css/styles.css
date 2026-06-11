@@ -5101,3 +5101,18 @@ table {
     font-size: 24px !important;
   }
 }
+
+/* Permanent site zoom adjustment for pages that load only the base stylesheet. */
+@media (min-width: 1024px) {
+  html,
+  html[style] {
+    zoom: 1.06 !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  html,
+  html[style] {
+    zoom: 1 !important;
+  }
+}

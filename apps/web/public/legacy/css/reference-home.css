@@ -50,6 +50,21 @@ body {
   padding: 0;
 }
 
+/* Permanent site zoom adjustment for the reference home page. */
+@media (min-width: 1024px) {
+  html,
+  html[style] {
+    zoom: 1.06 !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  html,
+  html[style] {
+    zoom: 1 !important;
+  }
+}
+
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   font-weight: 700;

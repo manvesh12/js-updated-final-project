@@ -4573,3 +4573,18 @@ body.home-page.page-scrolled .nav-links-hub {
     transform: translateX(-50%);
   }
 }
+
+/* Permanent site zoom adjustment. Keep this at the end so it wins over older desktop zoom rules. */
+@media (min-width: 1024px) {
+  html,
+  html[style] {
+    zoom: 1.06 !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  html,
+  html[style] {
+    zoom: 1 !important;
+  }
+}
