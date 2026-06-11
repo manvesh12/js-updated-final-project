@@ -57,19 +57,36 @@ if errorlevel 1 (
 )
 
 echo Starting database, Redis, and MinIO...
-netstat -ano | findstr ":5440" >nul
-if not errorlevel 1 (
-  echo Existing Postgres/DSR Docker services detected on port 5440. Skipping compose startup.
-) else (
-  docker compose down --remove-orphans
-  docker compose up -d postgres redis minio
-  if errorlevel 1 (
-    echo.
-    echo Docker did not start. Start Docker Desktop, then run START_HERE.bat again.
-    pause
-    exit /b 1
-  )
+docker compose up -d postgres redis minio
+if errorlevel 1 (
+  echo.
+  echo Docker services did not start. Start Docker Desktop, then run START_HERE.bat again.
+  pause
+  exit /b 1
 )
+
+echo Waiting for PostgreSQL to become ready...
+set "PG_READY="
+for /l %%i in (1,1,30) do (
+  docker compose exec -T postgres pg_isready -U dsr -d dsr >nul 2>nul
+  if not errorlevel 1 (
+    set "PG_READY=1"
+    goto postgres_ready
+  )
+  timeout /t 2 /nobreak >nul
+)
+
+:postgres_ready
+if not defined PG_READY (
+  echo.
+  echo PostgreSQL did not become ready on port 5440.
+  echo Run scripts\windows\STOP_ALL.bat, make sure Docker Desktop is running, then run START_HERE.bat again.
+  pause
+  exit /b 1
+)
+
+echo Stopping old local app processes before Prisma generate...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$root=(Resolve-Path '.').Path; Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine.Contains($root) -and $_.Name -eq 'node.exe' } | ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }"
 
 echo Generating Prisma client...
 call npm run prisma:generate
@@ -95,23 +112,34 @@ if errorlevel 1 (
   exit /b 1
 )
 
+echo Building latest legacy portal UI...
+pushd apps\web\public\legacy
+node build.js
+if errorlevel 1 (
+  popd
+  echo Legacy portal build failed.
+  pause
+  exit /b 1
+)
+popd
+
 echo Starting API...
 netstat -ano | findstr ":8080" >nul
 if not errorlevel 1 (
   echo API already running on port 8080.
 ) else (
-  start "DSR API" cmd /k "cd /d %~dp0 && npm run dev:api"
+  start "DSR API" cmd /k "cd /d ""%~dp0..\.."" && npm run dev:api"
 )
 
 echo Starting workers...
-start "DSR Worker" cmd /k "cd /d %~dp0 && npm run dev:worker"
+start "DSR Worker" cmd /k "cd /d ""%~dp0..\.."" && npm run dev:worker"
 
 echo Starting frontend...
 netstat -ano | findstr ":3000" >nul
 if not errorlevel 1 (
   echo Frontend already running on port 3000.
 ) else (
-  start "DSR Web" cmd /k "cd /d %~dp0 && npm run dev:web"
+  start "DSR Web" cmd /k "cd /d ""%~dp0..\.."" && npm run dev:web"
 )
 
 echo.

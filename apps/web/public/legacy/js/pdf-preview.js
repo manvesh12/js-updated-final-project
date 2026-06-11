@@ -18,14 +18,15 @@ const pdfPreview = {
   _textRefreshTimer: null,
   _annexureRefreshTimers: {},
   _objectUrls: {},
+  _pdfRenderJobs: {},
   fitPdfViewerUrl(src) {
     if (!src || src === 'about:blank' || src.startsWith('blob:') || src.startsWith('data:')) return src || 'about:blank';
     const base = String(src).split('#')[0];
     return `${base}#view=FitH&zoom=page-width`;
   },
   SECTION_TITLES: {
-    'front-matter': 'PDF Preview',
-    'chapters': 'PDF Preview',
+    'front-matter': 'Live Preview',
+    'chapters': 'Live Preview',
     'plates': 'PDF Preview',
     'anx1': 'Annexure I Preview',
     'anx2': 'Annexure II Preview',
@@ -273,6 +274,75 @@ const pdfPreview = {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  },
+  async renderPdfUrlToImages(src) {
+    if (!src) throw new Error('Missing PDF source.');
+    if (typeof pdfjsLib === 'undefined') {
+      if (typeof ensurePortalVendor === 'function') {
+        await ensurePortalVendor('pdfjs');
+      } else {
+        throw new Error('PDF.js library is not loaded on this page.');
+      }
+    }
+    if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    }
+    const headers = {};
+    const token = localStorage.getItem('dsr_token');
+    if (token && /^\/?api\//i.test(String(src).replace(/^https?:\/\/[^/]+/i, '').replace(/^\//, ''))) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    const response = await fetch(src, {
+      credentials: 'same-origin',
+      headers
+    });
+    if (!response.ok) throw new Error(`Unable to load uploaded PDF (${response.status}).`);
+    const data = new Uint8Array(await response.arrayBuffer());
+    const pdf = await pdfjsLib.getDocument({ data }).promise;
+    const pages = [];
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const viewport = page.getViewport({ scale: 1.5 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: context, viewport }).promise;
+      pages.push(canvas.toDataURL('image/jpeg', 0.85));
+    }
+    return pages;
+  },
+  ensureUploadedPdfRendered(type, src, meta = {}) {
+    if (!type || !src || !window.S) return;
+    if (!S.uploadedPDFs) S.uploadedPDFs = {};
+    if (Array.isArray(S.uploadedPDFs[type]) && S.uploadedPDFs[type].some(item => /^data:image\//i.test(String(item || '')))) return;
+    const jobKey = `${type}:${src}`;
+    if (this._pdfRenderJobs[jobKey]) return;
+    this._pdfRenderJobs[jobKey] = this.renderPdfUrlToImages(src)
+      .then(pages => {
+        if (!pages || !pages.length) throw new Error('No PDF pages rendered.');
+        if (!S.uploadedPDFs) S.uploadedPDFs = {};
+        S.uploadedPDFs[type] = pages;
+        if (!S.frontMatterFiles) S.frontMatterFiles = {};
+        S.frontMatterFiles[type] = {
+          ...(S.frontMatterFiles[type] || {}),
+          ...meta,
+          pages: pages.length
+        };
+        if (this.currentView === 'front-matter') this.refresh();
+      })
+      .catch(err => {
+        console.warn('Uploaded PDF live preview render failed:', err);
+        if (!S.frontMatterFiles) S.frontMatterFiles = {};
+        S.frontMatterFiles[type] = {
+          ...(S.frontMatterFiles[type] || {}),
+          previewError: err.message || 'Unable to render uploaded PDF.'
+        };
+        if (this.currentView === 'front-matter') this.refresh();
+      })
+      .finally(() => {
+        delete this._pdfRenderJobs[jobKey];
+      });
   },
   cleanupAnnexurePreviewClone(clone) {
     clone.querySelectorAll([
@@ -560,6 +630,83 @@ const pdfPreview = {
     });
     return pages;
   },
+  getFrontMatterPages() {
+    const pages = [];
+    const pdfs = S.uploadedPDFs || {};
+    const fileMeta = S.frontMatterFiles || {};
+    this.FM_ORDER.forEach(type => {
+      const sectionLabel = this.FM_LABELS[type] || type;
+      const uploaded = pdfs[type];
+      const uploadedImages = Array.isArray(uploaded)
+        ? uploaded.filter(src => this.isPreviewImageSource(src))
+        : [];
+      if (uploadedImages.length) {
+        uploadedImages.forEach((img, idx) => {
+          pages.push({
+            src: img,
+            label: uploadedImages.length > 1 ? `${sectionLabel} - Page ${idx + 1}` : sectionLabel
+          });
+        });
+        return;
+      }
+      const storedUrl = fileMeta[type]?.storedUrl || S.activeProject?.pdfData?.[type] || '';
+      const staleOrPdfSource = (Array.isArray(uploaded) && uploaded.find(src => this.isPdfPreviewSource(src))) || storedUrl;
+      if (staleOrPdfSource && storedUrl) {
+        this.ensureUploadedPdfRendered(type, storedUrl, fileMeta[type] || {});
+      }
+      const generatedPage = this.getGeneratedFrontMatterPage(type, sectionLabel);
+      if (generatedPage) pages.push(generatedPage);
+    });
+    return pages;
+  },
+  isPreviewImageSource(src) {
+    const value = String(src || '');
+    return /^data:image\//i.test(value) || /\.(?:png|jpe?g|webp)(?:[?#]|$)/i.test(value);
+  },
+  isPdfPreviewSource(src) {
+    const value = String(src || '');
+    return /^data:application\/pdf/i.test(value)
+      || /(?:download-pdf|\.pdf)(?:[?#]|$)/i.test(value)
+      || /^blob:/i.test(value);
+  },
+  getGeneratedFrontMatterPage(type, sectionLabel) {
+    if (type === 'cover') {
+      return { src: this.renderCoverPageCanvas(), label: sectionLabel, generated: true };
+    }
+    if (type === 'toc') {
+      return {
+        src: this.renderTextPageCanvas('CONTENTS', '1. Cover Page\n2. Preface\n3. Acknowledgement\n4. Certificate of Compliance\n5. Report Chapters', 'District Survey Report'),
+        label: sectionLabel,
+        generated: true
+      };
+    }
+    if (type === 'pref' && S.frontMatter && S.frontMatter.preface) {
+      return {
+        src: this.renderTextPageCanvas('PREFACE', S.frontMatter.preface, 'District Survey Report'),
+        label: sectionLabel,
+        generated: true
+      };
+    }
+    if (type === 'ack' && S.frontMatter && S.frontMatter.acknowledgement) {
+      return {
+        src: this.renderTextPageCanvas('ACKNOWLEDGEMENT', S.frontMatter.acknowledgement, 'District Survey Report'),
+        label: sectionLabel,
+        generated: true
+      };
+    }
+    if (type === 'cert') {
+      const fm = S.frontMatter || {};
+      const district = fm.district || S.activeProject?.district || 'District';
+      const state = fm.state || 'Punjab';
+      const year = fm.year || S.activeProject?.year || '';
+      return {
+        src: this.renderTextPageCanvas('CERTIFICATE OF COMPLIANCE', `This District Survey Report has been prepared for ${district} District, ${state}${year ? `, for ${year}` : ''}.\n\nThe report content is maintained in the DSR Automation Portal and can be reviewed section by section before final PDF generation.`, 'District Survey Report'),
+        label: sectionLabel,
+        generated: true
+      };
+    }
+    return null;
+  },
   getChapterPages() {
     const pages = [];
     S.chapters.forEach((ch, i) => {
@@ -572,6 +719,34 @@ const pdfPreview = {
               ? `Chapter ${i + 1} — Page ${idx + 1}`
               : `Chapter ${i + 1}: ${ch.name}`
           });
+        });
+      }
+    });
+    return pages;
+  },
+  getChapterPages() {
+    const pages = [];
+    S.chapters.forEach((ch, i) => {
+      const imgs = S.chapterPDFs && S.chapterPDFs[ch.id];
+      const uploadedImages = Array.isArray(imgs)
+        ? imgs.filter(src => this.isPreviewImageSource(src))
+        : [];
+      if (uploadedImages.length) {
+        uploadedImages.forEach((img, idx) => {
+          pages.push({
+            src: img,
+            label: uploadedImages.length > 1
+              ? `Chapter ${i + 1} - Page ${idx + 1}`
+              : `Chapter ${i + 1}: ${ch.name}`
+          });
+        });
+        return;
+      }
+      if (String(ch.name || ch.summary || '').trim()) {
+        pages.push({
+          src: this.renderTextPageCanvas(ch.name || `CHAPTER ${i + 1}`, ch.summary || 'Upload a chapter PDF to preview the original chapter document here.', `Chapter ${i + 1}`),
+          label: `Chapter ${i + 1}`,
+          generated: true
         });
       }
     });
@@ -779,9 +954,96 @@ const pdfPreview = {
       const safeLabel = String(label).replace(/"/g, '&quot;');
       return `
         <div class="pdf-preview-page-wrap" data-page="${i + 1}">
-          <img src="${src}" class="pdf-preview-page" alt="${safeLabel}" loading="lazy">
+          <img src="${src}" class="pdf-preview-page" alt="${safeLabel}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'pdf-preview-empty',textContent:'Preview page could not be loaded. Re-upload this PDF once to refresh the saved preview.'}))">
         </div>`;
     }).join('');
+    this.totalPages = pages.length;
+    this.currentPage = 1;
+    this.applyScale();
+    this.updatePageIndicators();
+    requestAnimationFrame(() => this.updateVisiblePage());
+  },
+  getChapterHtmlPages() {
+    const chapters = Array.isArray(S.chapters) ? S.chapters : [];
+    if (!chapters.length) return [];
+    return chapters.flatMap((ch, i) => {
+      const imgs = S.chapterPDFs && S.chapterPDFs[ch.id];
+      const pageCount = imgs && imgs.length ? imgs.length : 0;
+      const fileName = ch.fileName ? this.escapeHtml(ch.fileName) : '';
+      const fileMeta = fileName
+        ? `<div class="html-note"><strong>Uploaded PDF:</strong> ${fileName}${pageCount ? ` (${pageCount} page(s))` : ''}</div>`
+        : '<div class="html-note html-note-muted">No chapter PDF uploaded. Showing chapter title and summary as HTML.</div>';
+      const name = this.escapeHtml(ch.name || `Chapter ${i + 1}`);
+      const summary = this.escapeHtml(ch.summary || 'Chapter summary will appear here.').replace(/\n/g, '<br>');
+      const basePage = {
+        label: `Chapter ${i + 1}`,
+        html: `
+          <article class="html-chapter-page">
+            <div class="html-kicker">Chapter ${i + 1}</div>
+            <h1>${name}</h1>
+            <p>${summary}</p>
+            ${fileMeta}
+          </article>`
+      };
+      const uploadedPages = this.getUploadedHtmlPages(imgs, `Chapter ${i + 1}: ${ch.name || ''}`, {
+        name: ch.fileName,
+        sizeLabel: ch.fileSize,
+        type: 'application/pdf'
+      });
+      return [basePage, ...uploadedPages];
+    });
+  },
+  getUploadedHtmlPages(items, label, meta = {}) {
+    if (!items || !items.length) return [];
+    return items.map((src, idx) => {
+      const rawSrc = String(src || '');
+      const normalizedSrc = /^blob:/.test(rawSrc) && meta.storedUrl ? meta.storedUrl : rawSrc;
+      const title = items.length > 1 ? `${label} - Uploaded Page ${idx + 1}` : `${label} - Uploaded File`;
+      const safeTitle = this.escapeHtml(title);
+      const safeSrc = this.escapeHtml(normalizedSrc);
+      const type = String(meta.type || '').toLowerCase();
+      const isImage = /^data:image\//i.test(normalizedSrc) || /^image\//i.test(type);
+      const isPdfLike = /^data:application\/pdf/i.test(normalizedSrc)
+        || /^blob:/i.test(normalizedSrc)
+        || /(?:download-pdf|\.pdf)(?:[?#]|$)/i.test(normalizedSrc)
+        || type === 'application/pdf';
+      if (isPdfLike && !isImage && meta.typeKey && !meta.previewError) {
+        this.ensureUploadedPdfRendered(meta.typeKey, normalizedSrc, meta);
+      }
+      if (!isImage) return null;
+      return {
+        label: title,
+        direct: true,
+        html: `
+          <img class="html-uploaded-img html-uploaded-direct-img" src="${safeSrc}" alt="${safeTitle}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'html-note html-note-muted',textContent:'Preview image could not be loaded. Please re-upload the file.'}))">`
+      };
+    }).filter(Boolean);
+  },
+  renderHtmlPages(pages, emptySub) {
+    if (!this.body) return;
+    if (!pages || !pages.length) {
+      this.body.innerHTML = `
+        <div class="pdf-preview-empty">
+          <div class="pdf-preview-empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <div class="pdf-preview-empty-title">No HTML preview yet</div>
+          <div class="pdf-preview-empty-sub">${this.escapeHtml(emptySub || 'Content will appear here.')}</div>
+        </div>`;
+      this.totalPages = 0;
+      this.currentPage = 0;
+      this.updatePageIndicators();
+      return;
+    }
+    this.body.innerHTML = pages.map((page, i) => `
+      <div class="pdf-preview-page-wrap pdf-preview-html-wrap" data-page="${i + 1}">
+        <div class="pdf-preview-html-page${page.direct ? ' pdf-preview-uploaded-direct-page' : ''}" aria-label="${this.escapeHtml(page.label || `Page ${i + 1}`)}">
+          ${page.html || ''}
+        </div>
+      </div>`).join('');
     this.totalPages = pages.length;
     this.currentPage = 1;
     this.applyScale();
@@ -827,6 +1089,11 @@ const pdfPreview = {
       el.style.width = `${this.scale * 100}%`;
       el.style.maxWidth = `${620 * this.scale}px`;
     });
+    this.body.querySelectorAll('.pdf-preview-html-page').forEach(el => {
+      el.style.transform = `scale(${this.scale})`;
+      el.style.transformOrigin = 'top center';
+      el.parentElement.style.minHeight = `${el.offsetHeight * this.scale}px`;
+    });
     this.zoomLabels.forEach(el => { el.textContent = pct; });
   },
   fullScreen() {
@@ -839,6 +1106,10 @@ const pdfPreview = {
     }
   },
   download() {
+    if (this.body && this.body.querySelector('.pdf-preview-html-page')) {
+      toast('Front Matter and Chapters are direct HTML previews. Use Final PDF generation for PDF download.', 'info');
+      return;
+    }
     const allPages = this.body ? this.body.querySelectorAll('.pdf-preview-page') : [];
     if (!allPages.length) {
       toast('No pages to download', 'info');

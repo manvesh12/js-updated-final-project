@@ -32,11 +32,12 @@ const MIME_TYPES = {
 };
 
 const PROJECTS_FILE = path.join(__dirname, 'projects.json');
+const USERS_FILE = path.join(__dirname, 'users.json');
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 const workflowHistory = {};
 
 function cacheHeaderFor(ext) {
-  if (ext === '.html') return 'public, max-age=60';
+  if (ext === '.html' || ext === '.js' || ext === '.css') return 'no-cache';
   if (['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico'].includes(ext)) {
     return 'public, max-age=31536000, immutable';
   }
@@ -88,6 +89,73 @@ function writeProjects(projects) {
     return true;
   } catch (err) {
     console.error('Error writing projects.json:', err);
+    return false;
+  }
+}
+
+function normalizeRole(role) {
+  const value = String(role || 'OFFICER').toUpperCase().replace(/^ROLE_/, '');
+  if (value === 'DATA_ENTRY') return 'OFFICER';
+  return value;
+}
+
+function permissionsForRole(role) {
+  const value = normalizeRole(role);
+  if (value === 'ADMIN') return ['UPLOAD', 'REVIEW', 'ADMIN'];
+  if (['IIT_ROPAR', 'GIS', 'REVIEWER', 'REVIEWER_1', 'REVIEWER_2', 'SDLC'].includes(value)) return ['REVIEW'];
+  if (['SDO', 'JE', 'AXEN', 'OFFICER'].includes(value)) return ['UPLOAD'];
+  return [];
+}
+
+function normalizeUser(user = {}) {
+  const email = user.email || user.username || 'user@demo.com';
+  const role = normalizeRole(user.role);
+  return {
+    id: user.id || Date.now(),
+    username: user.username || email,
+    email,
+    fullName: user.fullName || String(email).split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+    role,
+    district: user.district || '',
+    block: user.block || user.blockName || '',
+    blockName: user.blockName || user.block || '',
+    section: user.section || user.sectionName || '',
+    sectionName: user.sectionName || user.section || '',
+    accessLabel: user.accessLabel || role.replace(/_/g, ' '),
+    permissions: Array.isArray(user.permissions) ? user.permissions : permissionsForRole(role),
+    active: user.active === undefined ? true : Boolean(user.active),
+    createdAt: user.createdAt || new Date().toISOString()
+  };
+}
+
+function defaultUsers() {
+  return [
+    { id: 1, username: 'admin@demo.com', email: 'admin@demo.com', fullName: 'Demo Admin', role: 'ADMIN', active: true },
+    { id: 2, username: 'iit@demo.com', email: 'iit@demo.com', fullName: 'IIT Ropar Reviewer', role: 'IIT_ROPAR', active: true },
+    { id: 3, username: 'sdlc@demo.com', email: 'sdlc@demo.com', fullName: 'SDLC Committee', role: 'SDLC', district: 'Jalandhar', active: true },
+    { id: 4, username: 'sdo@demo.com', email: 'sdo@demo.com', fullName: 'SDO Demo User', role: 'SDO', district: 'Jalandhar', active: true },
+    { id: 5, username: 'gis@demo.com', email: 'gis@demo.com', fullName: 'GIS Demo User', role: 'GIS', active: true }
+  ].map(normalizeUser);
+}
+
+function readUsers() {
+  try {
+    if (fs.existsSync(USERS_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
+      if (Array.isArray(parsed)) return parsed.map(normalizeUser);
+    }
+  } catch (err) {
+    console.error('Error reading users.json:', err);
+  }
+  return defaultUsers();
+}
+
+function writeUsers(users) {
+  try {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users.map(normalizeUser), null, 2), 'utf8');
+    return true;
+  } catch (err) {
+    console.error('Error writing users.json:', err);
     return false;
   }
 }
@@ -275,26 +343,37 @@ const server = http.createServer((req, res) => {
           }
 
           const email = String(username || '').toLowerCase();
-          let role = 'ROLE_OFFICER';
-          if (email.includes('admin')) role = 'ROLE_ADMIN';
-          else if (email.includes('iit')) role = 'ROLE_IIT_ROPAR';
-          else if (email.includes('sdo')) role = 'ROLE_SDO';
-          else if (email.includes('sdlc')) role = 'ROLE_SDLC';
-          else if (email.includes('gis')) role = 'ROLE_GIS';
-          else if (email.includes('je')) role = 'ROLE_JE';
-          else if (email.includes('axen')) role = 'ROLE_AXEN';
-          else if (email.includes('reviewer')) role = 'ROLE_REVIEWER';
+          const existingUser = readUsers().find(user =>
+            String(user.email).toLowerCase() === email || String(user.username).toLowerCase() === email
+          );
+          if (existingUser && !existingUser.active) {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'User account is disabled' }));
+            return;
+          }
+
+          let role = existingUser ? `ROLE_${normalizeRole(existingUser.role)}` : 'ROLE_OFFICER';
+          if (!existingUser) {
+            if (email.includes('admin')) role = 'ROLE_ADMIN';
+            else if (email.includes('iit')) role = 'ROLE_IIT_ROPAR';
+            else if (email.includes('sdo')) role = 'ROLE_SDO';
+            else if (email.includes('sdlc')) role = 'ROLE_SDLC';
+            else if (email.includes('gis')) role = 'ROLE_GIS';
+            else if (email.includes('je')) role = 'ROLE_JE';
+            else if (email.includes('axen')) role = 'ROLE_AXEN';
+            else if (email.includes('reviewer')) role = 'ROLE_REVIEWER';
+          }
 
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({
             token: role === 'ROLE_ADMIN' ? 'local-demo-token-admin' : 'local-demo-token-user',
-            username,
-            email: username,
-            fullName: username.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+            username: existingUser?.username || username,
+            email: existingUser?.email || username,
+            fullName: existingUser?.fullName || username.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
             role,
-            permissions: role === 'ROLE_ADMIN' ? ['UPLOAD', 'REVIEW', 'ADMIN'] : [],
-            scope: {},
-            accessLabel: role.replace('ROLE_', '').replace(/_/g, ' ')
+            permissions: existingUser?.permissions || permissionsForRole(role),
+            scope: { district: existingUser?.district || '', block: existingUser?.block || '', section: existingUser?.section || '' },
+            accessLabel: existingUser?.accessLabel || role.replace('ROLE_', '').replace(/_/g, ' ')
           }));
         } catch (e) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -307,16 +386,172 @@ const server = http.createServer((req, res) => {
       return;
     }
 
+    if (pathname === '/api/auth/logout' && req.method === 'POST') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true }));
+      return;
+    }
+
     if (pathname === '/api/auth/register' && req.method === 'POST') {
       readRequestBody(req).then(body => {
         try {
           const { username, email, fullName } = JSON.parse(body || '{}');
+          const users = readUsers();
+          const login = username || email;
+          const existing = users.find(user =>
+            String(user.email).toLowerCase() === String(email || login).toLowerCase() ||
+            String(user.username).toLowerCase() === String(login).toLowerCase()
+          );
+          if (!existing) {
+            users.unshift(normalizeUser({
+              id: Date.now(),
+              username: login,
+              email: email || login,
+              fullName: fullName || login,
+              role: 'OFFICER',
+              active: true
+            }));
+            writeUsers(users);
+          }
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({
             success: true,
             username: username || email,
             fullName: fullName || username || email
           }));
+        } catch (e) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON' }));
+        }
+      }).catch(err => {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      });
+      return;
+    }
+
+    if (pathname === '/api/users' && req.method === 'GET') {
+      if (!isAdminRequest(req)) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Only Admin can manage users' }));
+        return;
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(readUsers()));
+      return;
+    }
+
+    if (pathname === '/api/users' && req.method === 'POST') {
+      if (!isAdminRequest(req)) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Only Admin can manage users' }));
+        return;
+      }
+      readRequestBody(req).then(body => {
+        try {
+          const payload = JSON.parse(body || '{}');
+          const login = payload.username || payload.email;
+          if (!login) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Username/email is required' }));
+            return;
+          }
+          const users = readUsers();
+          if (users.some(user => String(user.username).toLowerCase() === String(login).toLowerCase() || String(user.email).toLowerCase() === String(payload.email || login).toLowerCase())) {
+            res.writeHead(409, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'User already exists' }));
+            return;
+          }
+          const created = normalizeUser({
+            ...payload,
+            id: Date.now(),
+            username: login,
+            email: payload.email || login,
+            active: payload.active === undefined ? true : String(payload.active) !== 'false'
+          });
+          users.unshift(created);
+          writeUsers(users);
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(created));
+        } catch (e) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON' }));
+        }
+      }).catch(err => {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      });
+      return;
+    }
+
+    const userActiveMatch = pathname.match(/^\/api\/users\/([^/]+)\/active$/);
+    if (userActiveMatch && req.method === 'PATCH') {
+      if (!isAdminRequest(req)) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Only Admin can manage users' }));
+        return;
+      }
+      readRequestBody(req).then(body => {
+        try {
+          const payload = JSON.parse(body || '{}');
+          const userId = userActiveMatch[1];
+          const users = readUsers();
+          const index = users.findIndex(user => String(user.id) === String(userId));
+          if (index === -1) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'User not found' }));
+            return;
+          }
+          users[index].active = Boolean(payload.active);
+          writeUsers(users);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(normalizeUser(users[index])));
+        } catch (e) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON' }));
+        }
+      }).catch(err => {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      });
+      return;
+    }
+
+    const userMatch = pathname.match(/^\/api\/users\/([^/]+)$/);
+    if (userMatch && (req.method === 'PUT' || req.method === 'DELETE')) {
+      if (!isAdminRequest(req)) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Only Admin can manage users' }));
+        return;
+      }
+      const userId = userMatch[1];
+      if (req.method === 'DELETE') {
+        const users = readUsers();
+        const remaining = users.filter(user => String(user.id) !== String(userId));
+        if (remaining.length === users.length) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'User not found' }));
+          return;
+        }
+        writeUsers(remaining);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true }));
+        return;
+      }
+      readRequestBody(req).then(body => {
+        try {
+          const payload = JSON.parse(body || '{}');
+          const users = readUsers();
+          const index = users.findIndex(user => String(user.id) === String(userId));
+          if (index === -1) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'User not found' }));
+            return;
+          }
+          users[index] = normalizeUser({ ...users[index], ...payload, id: users[index].id });
+          writeUsers(users);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(users[index]));
         } catch (e) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Invalid JSON' }));
@@ -382,6 +617,114 @@ const server = http.createServer((req, res) => {
         });
         return;
       }
+    }
+
+    const projectPhaseMatch = pathname.match(/^\/api\/projects\/([^/]+)\/phases$/);
+    if (projectPhaseMatch && req.method === 'POST') {
+      if (!isAdminRequest(req)) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Only Administrators can initiate the next phase.' }));
+        return;
+      }
+      readRequestBody(req).then(body => {
+        try {
+          const sourceId = projectPhaseMatch[1];
+          const payload = JSON.parse(body || '{}');
+          const projects = readProjects();
+          const sourceIndex = projects.findIndex(p => String(p.id) === String(sourceId));
+          if (sourceIndex === -1) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Source DSR phase not found' }));
+            return;
+          }
+
+          const source = projects[sourceIndex];
+          const nextPhaseNo = Math.max(2, Number(payload.phaseNo || (Number(source.phaseNo) || 1) + 1));
+          const baseTitle = String(source.title || source.projectName || `District Survey Report - ${source.district || 'Punjab'}`).replace(/\s+-\s+Phase\s+\d+$/i, '');
+          const title = String(payload.title || `${baseTitle} - Phase ${nextPhaseNo}`).trim();
+          const importedAt = new Date().toISOString();
+          let sourceState = {};
+          try {
+            sourceState = source.projectState ? (typeof source.projectState === 'string' ? JSON.parse(source.projectState) : source.projectState) : {};
+          } catch (err) {
+            sourceState = {};
+          }
+
+          projects[sourceIndex] = normalizeProject({
+            ...source,
+            phaseLocked: true,
+            projectState: JSON.stringify({
+              ...sourceState,
+              phaseMetadata: {
+                ...(sourceState.phaseMetadata || {}),
+                phaseNo: Number(source.phaseNo) || 1,
+                locked: true,
+                lockedAt: importedAt,
+                lockedReason: `Phase ${nextPhaseNo} initiated`
+              }
+            })
+          });
+
+          const createdProject = normalizeProject({
+            ...source,
+            id: Date.now(),
+            title,
+            projectName: title,
+            progress: 0,
+            status: 'In Progress',
+            signatures: 0,
+            phaseNo: nextPhaseNo,
+            parentPhaseId: source.id,
+            phaseLocked: false,
+            phaseOrigin: `Imported from project ${source.id} / Phase ${source.phaseNo || 1}`,
+            createdAt: importedAt,
+            finalPdfName: null,
+            finalPdfGeneratedAt: null,
+            projectState: JSON.stringify({
+              ...sourceState,
+              phaseMetadata: {
+                phaseNo: nextPhaseNo,
+                parentPhaseId: source.id,
+                parentPhaseTitle: source.title || source.projectName,
+                parentPhaseNo: Number(source.phaseNo) || 1,
+                importedAt,
+                locked: false,
+                defaultUploadColor: payload.uploadColor || '#34C759',
+                origin: 'PHASE_IMPORTED'
+              },
+              phaseChangeLog: [
+                {
+                  type: 'PHASE_CREATED',
+                  section: 'Project',
+                  label: `Imported data from Phase ${source.phaseNo || 1}`,
+                  color: '#94A3B8',
+                  at: importedAt,
+                  by: 'local-demo-user'
+                }
+              ]
+            })
+          });
+          projects.unshift(createdProject);
+          writeProjects(projects);
+          appendWorkflowAudit(createdProject.id, {
+            projectId: createdProject.id,
+            projectName: getProjectDisplayName(createdProject),
+            action: 'PROJECT_PHASE_INITIATED',
+            remarks: `Phase ${nextPhaseNo} created from Phase ${source.phaseNo || 1} (${source.district || 'Punjab'})`,
+            performedBy: 'local-demo-user',
+            performedAt: importedAt
+          });
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(createdProject));
+        } catch (e) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON' }));
+        }
+      }).catch(err => {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      });
+      return;
     }
 
     const projectStateMatch = pathname.match(/^\/api\/projects\/([^/]+)\/state$/);
@@ -451,6 +794,41 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ success: true }));
         return;
       }
+    }
+
+    if (pathname === '/api/files/upload' && req.method === 'POST') {
+      if (!fs.existsSync(UPLOADS_DIR)) {
+        fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+      }
+      const contentType = req.headers['content-type'] || 'application/octet-stream';
+      const chunks = [];
+      req.on('data', chunk => chunks.push(chunk));
+      req.on('end', () => {
+        try {
+          const raw = Buffer.concat(chunks);
+          const savedName = `${Date.now()}_upload.bin`;
+          const destPath = path.join(UPLOADS_DIR, savedName);
+          fs.writeFileSync(destPath, raw);
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: true,
+            id: Date.now(),
+            fileName: savedName,
+            originalName: savedName,
+            contentType,
+            sizeBytes: raw.length,
+            url: `/uploads/${savedName}`
+          }));
+        } catch (err) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+      });
+      req.on('error', err => {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      });
+      return;
     }
 
     if (pathname === '/api/upload-pdf' && req.method === 'POST') {
@@ -670,10 +1048,10 @@ server.listen(PORT, () => {
 
 // Ensure compiler child process is killed when the server shuts down
 process.on('SIGINT', () => {
-  watcher.kill();
+  if (watcher) watcher.kill();
   process.exit();
 });
 process.on('SIGTERM', () => {
-  watcher.kill();
+  if (watcher) watcher.kill();
   process.exit();
 });

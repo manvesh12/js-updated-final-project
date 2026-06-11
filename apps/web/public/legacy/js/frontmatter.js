@@ -30,7 +30,16 @@ async function uploadFrontMatterPdfToBackend(type, file) {
     return;
   }
   try {
-    await window.storeProjectPdf(type, file);
+    const storedUrl = await window.storeProjectPdf(type, file);
+    if (!S.frontMatterFiles) S.frontMatterFiles = {};
+    S.frontMatterFiles[type] = {
+      ...(S.frontMatterFiles[type] || {}),
+      name: file.name,
+      type: file.type || 'application/pdf',
+      storedUrl
+    };
+    if (window.pdfPreview) window.pdfPreview.notifyUpdate('front-matter');
+    if (window.debouncedSaveState) window.debouncedSaveState();
     toast(`${file.name} saved to project storage.`, 'success');
   } catch (err) {
     console.error('Front matter backend PDF upload failed:', err);
@@ -47,6 +56,12 @@ function renderPdfToImages(file, callback) {
   fileReader.onload = function () {
     const typedarray = new Uint8Array(this.result);
     if (typeof pdfjsLib === 'undefined') {
+      if (typeof ensurePortalVendor === 'function') {
+        ensurePortalVendor('pdfjs')
+          .then(() => renderPdfToImages(file, callback))
+          .catch(err => callback(err, null));
+        return;
+      }
       callback(new Error('PDF.js library is not loaded on this page.'), null);
       return;
     }
@@ -88,6 +103,14 @@ function renderPdfToImages(file, callback) {
 function handleFMUpload(e, type) {
   const f = e.target.files[0];
   if (!f) return;
+  if (!S.frontMatterFiles) S.frontMatterFiles = {};
+  S.frontMatterFiles[type] = {
+    name: f.name,
+    size: f.size,
+    sizeLabel: `${(f.size / 1024).toFixed(1)} KB`,
+    type: f.type || '',
+    pages: 0
+  };
   const el = document.getElementById(`fm-${type}-file`);
   if (el) {
     el.innerHTML = `
@@ -101,6 +124,8 @@ function handleFMUpload(e, type) {
       </div>`;
   }
   if (f.type === 'application/pdf') {
+    if (window.pdfPreview) window.pdfPreview.notifyUpdate('front-matter');
+    if (window.debouncedSaveState) window.debouncedSaveState();
     uploadFrontMatterPdfToBackend(type, f);
     renderPdfToImages(f, (err, imgs) => {
       if (err) {
@@ -109,12 +134,16 @@ function handleFMUpload(e, type) {
         const url = URL.createObjectURL(f);
         if (!S.uploadedPDFs) S.uploadedPDFs = {};
         S.uploadedPDFs[type] = [url];
+        if (!S.frontMatterFiles) S.frontMatterFiles = {};
+        S.frontMatterFiles[type] = { ...(S.frontMatterFiles[type] || {}), pages: 1 };
         if (window.pdfPreview) window.pdfPreview.notifyUpdate('front-matter');
         if (window.debouncedSaveState) window.debouncedSaveState();
         return;
       }
       if (!S.uploadedPDFs) S.uploadedPDFs = {};
       S.uploadedPDFs[type] = imgs;
+      if (!S.frontMatterFiles) S.frontMatterFiles = {};
+      S.frontMatterFiles[type] = { ...(S.frontMatterFiles[type] || {}), pages: imgs.length };
       toast(`📄 ${f.name} uploaded and processed successfully!`, 'success');
       if (window.pdfPreview) window.pdfPreview.notifyUpdate('front-matter');
       if (window.debouncedSaveState) window.debouncedSaveState();
@@ -123,6 +152,8 @@ function handleFMUpload(e, type) {
     const url = URL.createObjectURL(f);
     if (!S.uploadedPDFs) S.uploadedPDFs = {};
     S.uploadedPDFs[type] = [url];
+    if (!S.frontMatterFiles) S.frontMatterFiles = {};
+    S.frontMatterFiles[type] = { ...(S.frontMatterFiles[type] || {}), pages: 1 };
     toast(`📄 ${f.name} uploaded`, 'success');
     if (window.pdfPreview) window.pdfPreview.notifyUpdate('front-matter');
     if (window.debouncedSaveState) window.debouncedSaveState();

@@ -480,10 +480,6 @@ async function submitDeoReply(projectId) {
     toast('Failed to send reply: ' + e.message, 'error');
   }
 }
-window.addEventListener('mousemove', (e) => {
-  document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-  document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
-});
 document.addEventListener('DOMContentLoaded', () => {
   const transitionLinks = document.querySelectorAll('a[href$=".html"], a.nav-link-item, a.btn-premium-cta');
   transitionLinks.forEach(link => {
@@ -498,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         setTimeout(() => {
           window.location.href = targetUrl;
-        }, 400);
+        }, 180);
       }
     });
   });

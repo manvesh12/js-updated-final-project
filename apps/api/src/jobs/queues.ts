@@ -13,3 +13,11 @@ export function redisConnection() {
 
 export const pdfQueue = new Queue("pdf-jobs", { connection: redisConnection() });
 export const excelQueue = new Queue("excel-jobs", { connection: redisConnection() });
+
+pdfQueue.on("error", (error) => {
+  console.warn("PDF queue connection error:", error.message);
+});
+
+excelQueue.on("error", (error) => {
+  console.warn("Excel queue connection error:", error.message);
+});

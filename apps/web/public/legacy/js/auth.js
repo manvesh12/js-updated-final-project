@@ -62,7 +62,11 @@ async function doLogin() {
           method: 'POST',
           body: JSON.stringify({ username: email, password: pass })
       });
-      localStorage.removeItem('dsr_token');
+      if (data.token) {
+          localStorage.setItem('dsr_token', data.token);
+      } else {
+          localStorage.removeItem('dsr_token');
+      }
       const backendRole = data.role || 'ROLE_OFFICER';
       S.backendRole = backendRole;
       S.permissions = data.permissions || [];
@@ -198,7 +202,11 @@ async function doSdlcLogin() {
       method: 'POST',
       body: JSON.stringify({ username: email, password: pass })
     });
-    localStorage.removeItem('dsr_token');
+    if (data.token) {
+      localStorage.setItem('dsr_token', data.token);
+    } else {
+      localStorage.removeItem('dsr_token');
+    }
     S.backendRole = data.role || 'ROLE_SDLC';
     S.permissions = data.permissions || [];
     S.scope = data.scope || {};
@@ -255,6 +263,14 @@ async function showAppScreen() {
   if (navUsers) {
     navUsers.style.display = S.role === 'admin' ? 'block' : 'none';
   }
+  const tbNavUsers = document.getElementById('tb-nav-users');
+  if (tbNavUsers) {
+    tbNavUsers.style.display = S.role === 'admin' ? 'block' : 'none';
+  }
+  ['dash-menu-users', 'projects-menu-users'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = S.role === 'admin' ? 'block' : 'none';
+  });
   const sdlcNav = document.getElementById('sdlc-nav');
   if (sdlcNav) sdlcNav.style.display = isSdlc ? 'block' : 'none';
   ['report-nav', 'annexure-nav', 'tables-nav', 'finalize-nav'].forEach(navId => {

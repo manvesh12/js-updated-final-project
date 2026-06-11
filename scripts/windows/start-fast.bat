@@ -25,10 +25,10 @@ if not exist .env (
 )
 
 echo Starting API in a new window...
-start "DSR API" cmd /k "cd /d %~dp0 && npm run dev:api"
+start "DSR API" cmd /k "cd /d ""%~dp0..\.."" && npm run dev:api"
 
 echo Starting web in a new window...
-start "DSR Web" cmd /k "cd /d %~dp0 && npm run dev:web"
+start "DSR Web" cmd /k "cd /d ""%~dp0..\.."" && npm run dev:web"
 
 echo.
 echo Open: http://localhost:3000

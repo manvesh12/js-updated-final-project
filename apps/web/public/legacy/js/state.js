@@ -83,6 +83,7 @@ const S = {
   annexureI: [],
   annexureJ: [],
   uploadedPDFs: {},
+  frontMatterFiles: {},
   frontMatter: {
     title: 'District Survey Report for Sand Mining',
     district: 'Jalandhar',
@@ -111,3 +112,20 @@ function resetSState() {
     clearActiveProject();
   }
 }
+const PROJECT_WORKING_STATE_KEYS = [
+  'phaseMetadata', 'phaseChangeLog', 'chapters', 'plates', 'graphs', 'graphCharts',
+  'signatures', 'demandDistricts', 'summarySources', 'auctionData',
+  'annexureB', 'annexureC', 'annexureD', 'annexureE', 'annexureG', 'annexureH',
+  'annexureI', 'annexureJ', 'uploadedPDFs', 'frontMatterFiles', 'frontMatter'
+];
+function resetProjectWorkingState(activeProject) {
+  const defaults = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  PROJECT_WORKING_STATE_KEYS.forEach(key => {
+    S[key] = defaults[key] !== undefined ? defaults[key] : {};
+  });
+  S.chapterPDFs = {};
+  S.sdlcData = null;
+  S.activeProject = activeProject || null;
+  window.reviewerNotes = {};
+}
+window.resetProjectWorkingState = resetProjectWorkingState;

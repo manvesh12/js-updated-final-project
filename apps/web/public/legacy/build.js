@@ -3,6 +3,7 @@ const path = require('path');
 
 const SRC_DIR = __dirname;
 const DIST_FILE = path.join(SRC_DIR, 'login.html');
+const JS_BUNDLE_FILE = 'js/portal.bundle.js';
 
 // Ordered JavaScript files to inject at the end of body
 const JS_FILES = [
@@ -46,12 +47,26 @@ const JS_FILES = [
   'js/main.js'
 ];
 
-const ASSET_VERSION = 'grid-live-lines-cleanup-20260611';
+const ASSET_VERSION = 'reference-pages-20260612a';
 const applyAssetVersion = (html) => html.replace(/\{\{ASSET_VERSION\}\}/g, ASSET_VERSION);
+
+function buildJsBundle() {
+  const bundle = JS_FILES.map(file => {
+    const absPath = path.join(SRC_DIR, file);
+    const source = fs.readFileSync(absPath, 'utf8');
+    return `\n/* ${file} */\n${source}\n;`;
+  }).join('\n');
+
+  const outPath = path.join(SRC_DIR, JS_BUNDLE_FILE);
+  fs.writeFileSync(outPath, bundle, 'utf8');
+  console.log(`Successfully bundled ${JS_FILES.length} JS files into ${outPath}`);
+}
 
 function compile() {
   console.log('Compiling DSR Portal...');
   try {
+    buildJsBundle();
+
     // 1. Start with head
     let html = applyAssetVersion(fs.readFileSync(path.join(SRC_DIR, 'templates', 'head.html'), 'utf8'));
 
@@ -85,10 +100,8 @@ function compile() {
     // 5. Append modals & toast overlay
     html += applyAssetVersion(fs.readFileSync(path.join(SRC_DIR, 'templates', 'modals.html'), 'utf8'));
 
-    // 6. Append JS Script tag references
-    JS_FILES.forEach(file => {
-      html += `\n<script defer src="${file}?v=${ASSET_VERSION}"></script>`;
-    });
+    // 6. Append one bundled JS file instead of dozens of network requests.
+    html += `\n<script defer src="${JS_BUNDLE_FILE}?v=${ASSET_VERSION}"></script>`;
 
     // 7. Close body and html
     html += '\n</body>\n</html>';

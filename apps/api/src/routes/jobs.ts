@@ -9,8 +9,12 @@ jobsRouter.post("/pdf", async (req, res) => {
     res.status(403).json({ error: "Access denied" });
     return;
   }
-  const job = await pdfQueue.add("generate-pdf", req.body || {});
-  res.status(202).json({ jobId: job.id, status: "queued" });
+  try {
+    const job = await pdfQueue.add("generate-pdf", req.body || {});
+    res.status(202).json({ jobId: job.id, status: "queued" });
+  } catch (error) {
+    res.status(503).json({ error: "PDF queue is unavailable. Start Redis or use the simple local portal.", details: (error as Error).message });
+  }
 });
 
 jobsRouter.post("/excel", async (req, res) => {
@@ -18,6 +22,10 @@ jobsRouter.post("/excel", async (req, res) => {
     res.status(403).json({ error: "Access denied" });
     return;
   }
-  const job = await excelQueue.add("process-excel", req.body || {});
-  res.status(202).json({ jobId: job.id, status: "queued" });
+  try {
+    const job = await excelQueue.add("process-excel", req.body || {});
+    res.status(202).json({ jobId: job.id, status: "queued" });
+  } catch (error) {
+    res.status(503).json({ error: "Excel queue is unavailable. Start Redis or use the simple local portal.", details: (error as Error).message });
+  }
 });

@@ -464,6 +464,9 @@ window.createNextPhase = createNextPhase;
 async function openProject(id) {
   S.activeProject = S.projects.find(p=>p.id===id);
   if (!S.activeProject) return;
+  if (typeof resetProjectWorkingState === 'function') {
+    resetProjectWorkingState(S.activeProject);
+  }
   S.phaseMetadata = {
     phaseNo: normalizePhaseNo(S.activeProject),
     parentPhaseId: S.activeProject.parentPhaseId || null,
@@ -498,6 +501,7 @@ async function openProject(id) {
       if (stateSnapshot.summarySources) S.summarySources = stateSnapshot.summarySources;
       if (stateSnapshot.auctionData) S.auctionData = stateSnapshot.auctionData;
       if (stateSnapshot.uploadedPDFs) S.uploadedPDFs = stateSnapshot.uploadedPDFs;
+      S.frontMatterFiles = stateSnapshot.frontMatterFiles || {};
       if (stateSnapshot.chapterPDFs) S.chapterPDFs = stateSnapshot.chapterPDFs;
       S.annexureB = stateSnapshot.annexureB || [];
       S.annexureC = stateSnapshot.annexureC || [];
@@ -641,6 +645,7 @@ async function persistProjectState() {
     summarySources: S.summarySources,
     auctionData: S.auctionData,
     uploadedPDFs: S.uploadedPDFs,
+    frontMatterFiles: S.frontMatterFiles,
     chapterPDFs: S.chapterPDFs,
     annexureB: S.annexureB,
     annexureC: S.annexureC,
@@ -673,6 +678,9 @@ async function createProject() {
   const payload = {
     projectName: title,
     district: document.getElementById('proj-district').value,
+    year: document.getElementById('proj-year').value,
+    mineral: document.getElementById('proj-mineral').value,
+    rivers: document.getElementById('proj-rivers').value || 'Not specified',
     status: 'ACTIVE'
   };
   try {

@@ -1,14 +1,25 @@
-<body class="auth-page sidebar-hidden premium-body">
+<body class="sidebar-hidden premium-body">
+
+  <!-- Interactive Live Grid Background -->
+  <div class="interactive-grid-bg"></div>
+
+  <!-- Ambient Gradient Glow Orbs -->
   <div class="ambient-glow">
     <div class="glow-orb glow-orb-1"></div>
     <div class="glow-orb glow-orb-2"></div>
     <div class="glow-orb glow-orb-3"></div>
   </div>
+
+  <!-- UNIVERSAL TRANSLUCENT BACKGROUND WATERMARK -->
   <img class="global-watermark" src="logo/CoE-SEnSRS.jpeg" alt="Watermark" loading="lazy" decoding="async">
-  <!-- ═══════════════════════════════════════════════════════════════
-     SCREEN 1 — AUTH
- ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     SCREEN 1 â€” AUTH
+ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+
   <div id="screen-auth" class="screen active" style="position:relative;">
+
+    <!-- Fixed Top Switcher Bar -->
     <div class="top-switcher-bar" style="display: flex; justify-content: space-between; align-items: center; background: #0F1C2A; padding: 6px 24px; height: 38px; font-size: 12px; z-index: 10000; position: fixed; top: 0; left: 0; width: 100%; border-bottom: 1px solid #1a2a3a; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box;">
       <div class="switcher-tabs" style="display: flex; gap: 8px;">
         <a href="home.html" class="switcher-tab inactive" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 4px; text-decoration: none; font-weight: 700; font-size: 11px; transition: all 0.2s; background: #233549; color: #ffffff;">
@@ -18,10 +29,14 @@
           <i data-lucide="lock" style="width: 12px; height: 12px; stroke-width: 2.5;"></i> Login Page
         </a>
       </div>
-      <div class="switcher-info" style="color: #a0aec0; font-size: 11px; display: flex; align-items: center; gap: 4px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;">
-        Indian Institute of Technology Ropar | COE-SENSRS Secure Systems
+      <div class="switcher-info" style="color: #a0aec0; font-size: 11px; display: flex; align-items: center; gap: 4px;">
+        <i data-lucide="info" style="width: 12px; height: 12px;"></i> Click tabs to switch...
       </div>
     </div>
+
+    <!-- Theme Toggle Switch (Moved inside header nav) -->
+
+    <!-- Top Branding -->
     <header
       style="display:flex; justify-content:space-between; align-items:center; padding:25px 60px; background:var(--card); position:absolute; top:38px; left:0; width:100%; z-index:100; border-bottom:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.05); box-sizing:border-box;">
       <div class="logo"
@@ -42,10 +57,17 @@
         </button>
       </nav>
     </header>
+
+    <!-- Background (Moved to body level) -->
+
+    <!-- Main Container -->
     <div class="auth-wrap"
-      style="position:relative; z-index:10; justify-content: center; align-items: center; background: transparent; box-shadow: none; padding-top: 126px !important;">
+      style="position:relative; z-index:10; justify-content: center; align-items: center; background: transparent; box-shadow: none; padding-top: 170px !important;">
+
+      <!-- CENTERED LOGIN CARD -->
       <div class="auth-right"
-        style="width: 100%; max-width: 400px; margin: 0 auto; animation: fadeInUp 0.6s ease-out forwards; opacity: 0;">
+        style="width: 100%; max-width: 440px; margin: 0 auto; animation: fadeInUp 0.6s ease-out forwards; opacity: 0;">
+
         <div class="auth-tabs">
           <div id="tab-btn-faculty" class="auth-tab active" onclick="switchAuthMode('faculty')">
             Faculty / Staff
@@ -57,19 +79,25 @@
             SDLC Portal
           </div>
         </div>
+
+        <!-- Staff Login -->
         <div id="auth-form-faculty" class="auth-form active">
+
           <div class="auth-form-title">
             Staff Portal
           </div>
+
           <div class="auth-form-sub">
             Sign in to your DSR Coordinator / Reviewer account
           </div>
+
           <div class="f-field">
             <label>Email Address</label>
             <div class="input-wrap">
               <input type="email" id="login-email" value="iit@demo.com">
             </div>
           </div>
+
           <div class="f-field">
             <label style="display:flex; justify-content:space-between; width:100%;">
               <span>Password</span>
@@ -80,8 +108,10 @@
               <input type="password" id="login-pass" value="password123">
             </div>
           </div>
+
           <div class="f-field">
             <label>Demo Account</label>
+
             <select id="login-role" onchange="fillDemoLogin(this.value)">
               <option value="iit@demo.com">IIT Ropar - Front Matter + Chapter 1-4 + Review</option>
               <option value="sdo@demo.com">SDO - Chapter 5-10</option>
@@ -96,23 +126,29 @@
           </div>
           <div class="form-err" id="login-error" style="display:none; color:red; font-size:12px; margin-bottom:10px;">
           </div>
+
           <button class="btn-primary" onclick="doLogin()">
-            Login to Portal →
+            Login to Portal â†’
           </button>
+
           <div style="text-align:center; margin-top: 24px; font-size: 14px; color: var(--text-soft);">
             Don't have an account? <a href="#" onclick="toggleSignUp(true); return false;"
               style="color: #2563eb; font-weight: 700; text-decoration: none;">Sign Up</a>
           </div>
         </div>
+
+        <!-- Authority Login -->
         <div id="auth-form-authority" class="auth-form">
           <div class="auth-form-title">Govt. Portal</div>
           <div class="auth-form-sub">Sign in with your NIC credentials</div>
+
           <div class="f-field">
             <label>NIC ID</label>
             <div class="input-wrap">
               <input type="text" id="auth-nic-id" value="NIC-8821">
             </div>
           </div>
+
           <div class="f-field">
             <label style="display:flex; justify-content:space-between; width:100%;">
               <span>Security PIN</span>
@@ -127,64 +163,83 @@
               </button>
             </div>
           </div>
+
           <div class="form-err" id="auth-error" style="display:none;"></div>
+
           <button class="btn-primary" onclick="doAuthorityVerify()" style="margin-top: 10px;">
-            Verify & Login →
+            Verify & Login â†’
           </button>
         </div>
+
+        <!-- SDLC Login -->
         <div id="auth-form-sdlc" class="auth-form">
           <div class="auth-form-title">SDLC Portal</div>
           <div class="auth-form-sub">Sign in to Sub-Divisional Committee account</div>
+
           <div class="f-field">
             <label>SDLC ID / Email</label>
             <div class="input-wrap">
               <input type="text" id="sdlc-email" value="sdlc@demo.com">
             </div>
           </div>
+
           <div class="f-field">
             <label>Password</label>
             <div class="input-wrap">
               <input type="password" id="sdlc-pass" value="password123">
             </div>
           </div>
+
           <div class="form-err" id="sdlc-error" style="display:none; color:red; font-size:12px; margin-bottom:10px;"></div>
+
           <button class="btn-primary" onclick="doSdlcLogin()">
-            Verify & Access Portal →
+            Verify & Access Portal â†’
           </button>
         </div>
+
+        <!-- Sign Up Form -->
         <div id="auth-form-signup" class="auth-form" style="display:none;">
           <div class="auth-form-title">Create Account</div>
           <div class="auth-form-sub">Register as a new Coordinator / Staff</div>
+
           <div class="f-field">
             <label>Full Name</label>
             <div class="input-wrap">
               <input type="text" id="signup-name" placeholder="Enter your full name">
             </div>
           </div>
+
           <div class="f-field">
             <label>Email Address</label>
             <div class="input-wrap">
               <input type="email" id="signup-email" placeholder="name@domain.gov.in">
             </div>
           </div>
+
           <div class="f-field">
             <label>Create Password</label>
             <div class="input-wrap">
-              <input type="password" id="signup-pass" placeholder="••••••••">
+              <input type="password" id="signup-pass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
             </div>
           </div>
+
           <div class="form-err" id="signup-error" style="display:none; color:red; font-size:12px; margin-bottom:10px;"></div>
           <div class="form-err" id="signup-success" style="display:none; color:green; font-size:12px; margin-bottom:10px;"></div>
+
           <button class="btn-primary"
             onclick="doSignup()"
             style="margin-top: 10px;">
-            Register →
+            Register â†’
           </button>
+
           <div style="text-align:center; margin-top: 24px; font-size: 14px; color: var(--text-soft);">
             Already have an account? <a href="#" onclick="toggleSignUp(false); return false;"
               style="color: #2563eb; font-weight: 700; text-decoration: none;">Login</a>
           </div>
         </div>
+
       </div>
+
     </div>
+
   </div>

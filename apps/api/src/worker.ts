@@ -3,7 +3,7 @@ import { redisConnection } from "./jobs/queues.js";
 
 const connection = redisConnection();
 
-new Worker(
+const pdfWorker = new Worker(
   "pdf-jobs",
   async (job) => {
     console.log("PDF job received", job.id, job.name);
@@ -12,7 +12,7 @@ new Worker(
   { connection }
 );
 
-new Worker(
+const excelWorker = new Worker(
   "excel-jobs",
   async (job) => {
     console.log("Excel job received", job.id, job.name);
@@ -20,5 +20,13 @@ new Worker(
   },
   { connection }
 );
+
+pdfWorker.on("error", (error) => {
+  console.warn("PDF worker connection error:", error.message);
+});
+
+excelWorker.on("error", (error) => {
+  console.warn("Excel worker connection error:", error.message);
+});
 
 console.log("DSR background workers running.");
