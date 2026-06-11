@@ -4578,7 +4578,7 @@ body.home-page.page-scrolled .nav-links-hub {
 @media (min-width: 1024px) {
   html,
   html[style] {
-    zoom: 1.03 !important;
+    zoom: 1.02 !important;
   }
 }
 
@@ -4586,5 +4586,15 @@ body.home-page.page-scrolled .nav-links-hub {
   html,
   html[style] {
     zoom: 1 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  html:has(#screen-auth.active) {
+    zoom: 0.75 !important;
+  }
+
+  html:has(#screen-app.active #view-dashboard.active) {
+    zoom: 0.75 !important;
   }
 }
